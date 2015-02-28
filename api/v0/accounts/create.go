@@ -1,6 +1,10 @@
 package accounts
 
+import "errors"
+
 import "github.com/gin-gonic/gin"
+
+import "github.com/JordanPotter/gosu-server/api/v0/accounts/auth"
 
 type CreateRequest struct {
 	Name     string `json:"name" form:"name" binding:"required"`
@@ -8,8 +12,8 @@ type CreateRequest struct {
 }
 
 type CreateResponse struct {
-	Id          string `json:"id"`
-	EventsToken string `json:"eventsToken"`
+	Id   string    `json:"id"`
+	Auth auth.Auth `json:"auth"`
 }
 
 func create(c *gin.Context) {
@@ -19,7 +23,13 @@ func create(c *gin.Context) {
 	}
 
 	// TODO: create account in database
+	id := "id"
 
-	res := CreateResponse{"id", "token"}
-	c.JSON(200, res)
+	auth, err := auth.New(id)
+	if err != nil {
+		c.Fail(500, errors.New("accounts: failed to create authentication data"))
+		return
+	}
+
+	c.JSON(200, CreateResponse{id, auth})
 }
