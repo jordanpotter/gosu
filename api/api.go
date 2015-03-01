@@ -1,9 +1,11 @@
 package main
 
-import "fmt"
-import "github.com/gin-gonic/gin"
+import (
+	"fmt"
 
-import "github.com/JordanPotter/gosu-server/api/v0"
+	"github.com/JordanPotter/gosu-server/api/v0"
+	"github.com/gin-gonic/gin"
+)
 
 func main() {
 	fmt.Println("api")
