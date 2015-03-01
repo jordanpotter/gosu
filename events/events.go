@@ -2,13 +2,11 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 )
 
-func main() {
-	viper.SetConfigName("config")
-	viper.ReadInConfig()
+const address = ":8081"
 
+func main() {
 	startServer()
 }
 
@@ -18,6 +16,5 @@ func startServer() {
 		c.String(200, "pong")
 	})
 
-	port := viper.GetStringMapString("events")["port"]
-	r.Run(":" + port)
+	r.Run(address)
 }

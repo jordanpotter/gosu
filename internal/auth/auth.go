@@ -1,23 +1,17 @@
 package auth
 
 import (
-	"encoding/hex"
 	"errors"
-	"sync"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/spf13/viper"
 )
 
-const (
-	duration = time.Hour
-)
+const duration = time.Hour
 
 var (
-	signatureMethod  = jwt.SigningMethodHS256
-	signatureKey     []byte
-	signatureKeyOnce sync.Once
+	signatureMethod = jwt.SigningMethodHS256
+	signatureKey    = []byte{78, 217, 118, 44, 83, 152, 15, 40, 165, 52, 191, 235, 169, 203, 8, 138}
 )
 
 type Auth struct {
@@ -31,8 +25,6 @@ func New(id string) *Auth {
 }
 
 func Decrypt(str string) (*Auth, error) {
-	signatureKeyOnce.Do(loadSignatureKey)
-
 	token, err := jwt.Parse(str, func(token *jwt.Token) (interface{}, error) {
 		return signatureKey, nil
 	})
@@ -49,21 +41,8 @@ func Decrypt(str string) (*Auth, error) {
 }
 
 func (a *Auth) Encrypt() (string, error) {
-	signatureKeyOnce.Do(loadSignatureKey)
-
 	token := jwt.New(signatureMethod)
 	token.Claims["id"] = a.Id
 	token.Claims["expires"] = a.Expires.Unix()
 	return token.SignedString(signatureKey)
-}
-
-func loadSignatureKey() {
-	var err error
-	signatureKeyHex := viper.GetStringMapString("auth")["signatureKey"]
-	signatureKey, err = hex.DecodeString(signatureKeyHex)
-	if err != nil {
-		panic(err)
-	} else if len(signatureKey) == 0 {
-		panic("auth: invalid signature key with length 0")
-	}
 }

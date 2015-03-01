@@ -3,8 +3,9 @@ package accounts
 import (
 	"time"
 
-	"github.com/JordanPotter/gosu-server/internal/auth"
 	"github.com/gin-gonic/gin"
+
+	"github.com/JordanPotter/gosu-server/internal/auth"
 )
 
 type CreateRequest struct {

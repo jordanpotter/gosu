@@ -1,15 +1,14 @@
 package main
 
 import (
-	"github.com/JordanPotter/gosu-server/api/v0"
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
+
+	"github.com/JordanPotter/gosu-server/api/v0"
 )
 
-func main() {
-	viper.SetConfigName("config")
-	viper.ReadInConfig()
+const address = ":8080"
 
+func main() {
 	startServer()
 }
 
@@ -21,6 +20,5 @@ func startServer() {
 
 	v0.AddRoutes(r.Group("/v0"))
 
-	port := viper.GetStringMapString("api")["port"]
-	r.Run(":" + port)
+	r.Run(address)
 }
