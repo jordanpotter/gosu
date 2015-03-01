@@ -1,7 +1,6 @@
 package accounts
 
 import (
-	"errors"
 	"time"
 
 	"github.com/JordanPotter/gosu-server/internal/auth"

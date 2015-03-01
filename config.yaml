@@ -1,0 +1,9 @@
+---
+auth:
+    signatureKey: DEADBEEF
+api:
+    port: 8080
+events:
+    port: 8081
+relay:
+    port: 8082
