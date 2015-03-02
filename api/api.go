@@ -27,7 +27,8 @@ func startServer(dbConn db.Conn) {
 		c.String(200, "pong")
 	})
 
-	v0.AddRoutes(r.Group("/v0"))
+	v0Handler := v0.New(dbConn)
+	v0Handler.AddRoutes(r.Group("/v0"))
 
 	r.Run(address)
 }

@@ -19,26 +19,29 @@ type LoginResponse struct {
 	AuthExpires   time.Time `json:"authExpires"`
 }
 
-func login(c *gin.Context) {
-	var req CreateRequest
+func (h *Handler) login(c *gin.Context) {
+	var req LoginRequest
 	if !c.Bind(&req) {
 		return
 	}
 
-	// TODO: create account in database
-	id := "id"
+	account, err := h.dbConn.GetAccount(req.Name, req.Password)
+	if err != nil {
+		c.Fail(500, err)
+		return
+	}
 
-	auth := auth.New(id)
+	auth := auth.New(account.Id)
 	authEncrypted, err := auth.Encrypt()
 	if err != nil {
 		c.Fail(500, err)
 		return
 	}
 
-	c.JSON(200, CreateResponse{id, authEncrypted, auth.Expires})
+	c.JSON(200, CreateResponse{account.Id, authEncrypted, auth.Expires})
 }
 
-func logout(c *gin.Context) {
+func (h *Handler) logout(c *gin.Context) {
 	authEncrypted := c.Request.Header.Get("authorization")
 	auth, err := auth.Decrypt(authEncrypted)
 	if err != nil {
