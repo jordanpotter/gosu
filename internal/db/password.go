@@ -1,14 +1,19 @@
 package db
 
 import (
+	"code.google.com/p/go-uuid/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func ComputePasswordHash(p string) ([]byte, error) {
-	return bcrypt.GenerateFromPassword([]byte(p), bcrypt.DefaultCost)
+func GeneratePassword() string {
+	return uuid.New()
 }
 
-func DoesPasswordMatchHash(p string, h []byte) bool {
-	err := bcrypt.CompareHashAndPassword(h, []byte(p))
+func ComputePasswordHash(password string) ([]byte, error) {
+	return bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+}
+
+func DoesPasswordMatchHash(password string, hash []byte) bool {
+	err := bcrypt.CompareHashAndPassword(hash, []byte(password))
 	return err == nil
 }

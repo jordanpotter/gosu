@@ -1,7 +1,6 @@
 package db
 
 type Conn interface {
+	AccountConn
 	Close()
-	CreateAccount(name, password string) (*Account, error)
-	GetAccount(name, password string) (*Account, error)
 }

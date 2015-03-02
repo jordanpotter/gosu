@@ -1,23 +1,15 @@
 package db
 
 import (
-	"fmt"
+	"time"
 )
 
-const (
-	minAccountNameLength = 16
-	maxAccountNameLength = 32
-)
-
-type Account struct {
-	Id           string `json:"-", bson:"-"`
-	Name         string `json:"name", bson:"name"`
-	PasswordHash []byte `json:"passwordHash", bson:"passwordHash"`
+type AccountConn interface {
+	CreateAccount() (*Account, string, error)
+	GetAccount(id, password string) (*Account, error)
 }
 
-func CheckAccountName(name string) error {
-	if len(name) < minAccountNameLength || len(name) > maxAccountNameLength {
-		return fmt.Errorf("db: invalid name length %d", len(name))
-	}
-	return nil
+type Account struct {
+	Id      string
+	Created time.Time
 }

@@ -3,29 +3,19 @@ package accounts
 import (
 	"time"
 
-	"github.com/gin-gonic/gin"
-
 	"github.com/JordanPotter/gosu-server/internal/auth"
+	"github.com/gin-gonic/gin"
 )
-
-type CreateRequest struct {
-	Name     string `json:"name" form:"name" binding:"required"`
-	Password string `json:"password" form:"password" binding:"required"`
-}
 
 type CreateResponse struct {
 	Id            string    `json:"id"`
-	AuthEncrypted string    `json:"authToken"`
+	Password      string    `json:"password"`
+	AuthEncrypted string    `json:"auth"`
 	AuthExpires   time.Time `json:"authExpires"`
 }
 
 func (h *Handler) create(c *gin.Context) {
-	var req CreateRequest
-	if !c.Bind(&req) {
-		return
-	}
-
-	account, err := h.dbConn.CreateAccount(req.Name, req.Password)
+	account, password, err := h.dbConn.CreateAccount()
 	if err != nil {
 		c.Fail(500, err)
 		return
@@ -38,5 +28,5 @@ func (h *Handler) create(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, CreateResponse{account.Id, authEncrypted, auth.Expires})
+	c.JSON(200, CreateResponse{account.Id, password, authEncrypted, auth.Expires})
 }

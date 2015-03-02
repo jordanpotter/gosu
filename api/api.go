@@ -4,15 +4,17 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/JordanPotter/gosu-server/api/v0"
-
 	"github.com/JordanPotter/gosu-server/internal/db"
 	"github.com/JordanPotter/gosu-server/internal/db/mongo"
 )
 
-const address = ":8080"
+var (
+	webserverAddress  = ":8080"
+	databaseAddresses = []string{"localhost"}
+)
 
 func main() {
-	dbConn, err := mongo.New()
+	dbConn, err := mongo.New(databaseAddresses)
 	if err != nil {
 		panic(err)
 	}
@@ -30,5 +32,5 @@ func startServer(dbConn db.Conn) {
 	v0Handler := v0.New(dbConn)
 	v0Handler.AddRoutes(r.Group("/v0"))
 
-	r.Run(address)
+	r.Run(webserverAddress)
 }
