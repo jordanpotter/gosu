@@ -5,11 +5,18 @@ import (
 )
 
 type AccountConn interface {
-	CreateAccount() (*Account, string, error)
-	GetAccount(id, password string) (*Account, error)
+	CreateAccount(email, clientName, clientPassword string) error
+	GetAccount(email string) (*Account, error)
 }
 
 type Account struct {
 	Id      string
-	Created time.Time
+	Email   string
+	Clients []Client
+}
+
+type Client struct {
+	Name         string
+	PasswordHash []byte
+	Created      time.Time
 }

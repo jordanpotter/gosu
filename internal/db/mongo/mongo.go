@@ -18,15 +18,15 @@ type conn struct {
 
 func New(addresses []string) (db.Conn, error) {
 	// TODO: use a username and password
-	session, err := mgo.Dial(strings.Join(addresses, ","))
+	s, err := mgo.Dial(strings.Join(addresses, ","))
 	if err != nil {
 		return nil, err
 	}
 
-	session.SetMode(mgo.Strong, false)
-	session.SetSafe(&mgo.Safe{WMode: "majority", WTimeout: 1000, J: true})
+	s.SetMode(mgo.Strong, false)
+	s.SetSafe(&mgo.Safe{WMode: "majority", WTimeout: 1000, J: true})
 
-	return &conn{session}, nil
+	return &conn{s}, nil
 }
 
 func (c *conn) Close() {

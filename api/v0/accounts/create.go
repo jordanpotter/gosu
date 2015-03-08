@@ -1,32 +1,26 @@
 package accounts
 
 import (
-	"time"
-
-	"github.com/JordanPotter/gosu-server/internal/auth"
 	"github.com/gin-gonic/gin"
 )
 
-type CreateResponse struct {
-	Id            string    `json:"id"`
-	Password      string    `json:"password"`
-	AuthEncrypted string    `json:"auth"`
-	AuthExpires   time.Time `json:"authExpires"`
+type CreateRequest struct {
+	Email          string `json:"email" form:"email" binding:"required"`
+	ClientName     string `json:"clientName" form:"clientName" binding:"required"`
+	ClientPassword string `json:"clientPassword" form:"clientPassword" binding:"required"`
 }
 
 func (h *Handler) create(c *gin.Context) {
-	account, password, err := h.dbConn.CreateAccount()
+	var req CreateRequest
+	if !c.Bind(&req) {
+		return
+	}
+
+	err := h.dbConn.CreateAccount(req.Email, req.ClientName, req.ClientPassword)
 	if err != nil {
 		c.Fail(500, err)
 		return
 	}
 
-	auth := auth.New(account.Id)
-	authEncrypted, err := auth.Encrypt()
-	if err != nil {
-		c.Fail(500, err)
-		return
-	}
-
-	c.JSON(200, CreateResponse{account.Id, password, authEncrypted, auth.Expires})
+	c.String(200, "ok")
 }
