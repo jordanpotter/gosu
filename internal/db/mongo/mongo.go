@@ -1,32 +1,29 @@
 package mongo
 
 import (
-	"strings"
-
 	mgo "gopkg.in/mgo.v2"
 
+	"github.com/JordanPotter/gosu-server/internal/config"
 	"github.com/JordanPotter/gosu-server/internal/db"
-)
-
-const (
-	databaseName = "gosu"
 )
 
 type conn struct {
 	session *mgo.Session
+	config  *config.DBMongo
 }
 
-func New(addresses []string) (db.Conn, error) {
+func New(config *config.DBMongo) (db.Conn, error) {
 	// TODO: use a username and password
-	s, err := mgo.Dial(strings.Join(addresses, ","))
+
+	session, err := mgo.Dial(config.Address)
 	if err != nil {
 		return nil, err
 	}
 
-	s.SetMode(mgo.Strong, false)
-	s.SetSafe(&mgo.Safe{WMode: "majority", WTimeout: 1000, J: true})
+	session.SetMode(mgo.Strong, false)
+	session.SetSafe(&mgo.Safe{WMode: config.WriteMode, WTimeout: config.WriteTimeout, J: config.Journaling})
 
-	return &conn{s}, nil
+	return &conn{session, config}, nil
 }
 
 func (c *conn) Close() {

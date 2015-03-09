@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/JordanPotter/gosu-server/api/v0/accounts"
+	"github.com/JordanPotter/gosu-server/internal/auth/token"
 	"github.com/JordanPotter/gosu-server/internal/db"
 )
 
@@ -11,9 +12,9 @@ type Handler struct {
 	accountsHandler *accounts.Handler
 }
 
-func New(dbConn db.Conn) *Handler {
+func New(dbConn db.Conn, tokenFactory *token.Factory) *Handler {
 	return &Handler{
-		accountsHandler: accounts.New(dbConn),
+		accountsHandler: accounts.New(dbConn, tokenFactory),
 	}
 }
 

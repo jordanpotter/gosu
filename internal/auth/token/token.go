@@ -7,26 +7,35 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
-const duration = time.Hour
+type Factory struct {
+	signatureKey []byte
+	duration     time.Duration
+}
 
-var (
-	signatureMethod = jwt.SigningMethodHS256
-	signatureKey    = []byte{78, 217, 118, 44, 83, 152, 15, 40, 165, 52, 191, 235, 169, 203, 8, 138}
-)
-
-type Auth struct {
+type Token struct {
 	Id      string
 	Expires time.Time
 }
 
-func New(id string) *Auth {
-	expires := time.Now().Add(duration)
-	return &Auth{id, expires}
+func NewFactory(signatureKey []byte, duration time.Duration) *Factory {
+	return &Factory{signatureKey, duration}
 }
 
-func Decrypt(str string) (*Auth, error) {
+func (f *Factory) New(id string) *Token {
+	expires := time.Now().Add(f.duration)
+	return &Token{id, expires}
+}
+
+func (f *Factory) Encrypt(token *Token) (string, error) {
+	jwt := jwt.New(jwt.SigningMethodHS256)
+	jwt.Claims["id"] = token.Id
+	jwt.Claims["expires"] = token.Expires.Unix()
+	return jwt.SignedString(f.signatureKey)
+}
+
+func (f *Factory) Decrypt(str string) (*Token, error) {
 	token, err := jwt.Parse(str, func(token *jwt.Token) (interface{}, error) {
-		return signatureKey, nil
+		return f.signatureKey, nil
 	})
 	if err != nil {
 		return nil, err
@@ -37,12 +46,5 @@ func Decrypt(str string) (*Auth, error) {
 	id := token.Claims["id"].(string)
 	expiresUnix := int64(token.Claims["expires"].(float64))
 	expires := time.Unix(expiresUnix, 0)
-	return &Auth{id, expires}, nil
-}
-
-func (a *Auth) Encrypt() (string, error) {
-	token := jwt.New(signatureMethod)
-	token.Claims["id"] = a.Id
-	token.Claims["expires"] = a.Expires.Unix()
-	return token.SignedString(signatureKey)
+	return &Token{id, expires}, nil
 }

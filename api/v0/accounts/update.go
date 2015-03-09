@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/JordanPotter/gosu-server/internal/auth/password"
-	"github.com/JordanPotter/gosu-server/internal/auth/token"
 	"github.com/JordanPotter/gosu-server/internal/db"
 )
 
@@ -43,8 +42,8 @@ func (h *Handler) login(c *gin.Context) {
 		return
 	}
 
-	authToken := token.New(account.Id)
-	authTokenEncrypted, err := authToken.Encrypt()
+	authToken := h.tokenFactory.New(account.Id)
+	authTokenEncrypted, err := h.tokenFactory.Encrypt(authToken)
 	if err != nil {
 		c.Fail(500, err)
 		return

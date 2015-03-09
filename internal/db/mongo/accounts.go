@@ -10,10 +10,6 @@ import (
 	"github.com/JordanPotter/gosu-server/internal/db"
 )
 
-const (
-	accountsCollectionName = "accounts"
-)
-
 type storedAccount struct {
 	Id      bson.ObjectId  `bson:"_id,omitempty"`
 	Email   string         `bson:"email"`
@@ -56,14 +52,14 @@ func (c *conn) CreateAccount(email, clientName, clientPassword string) error {
 	findBson := bson.M{"email": email}
 	clientBson := bson.M{"name": clientName, "passwordHash": cpHash, "created": time.Now()}
 	dataBson := bson.M{"$push": bson.M{"clients": clientBson}}
-	col := c.session.DB(databaseName).C(accountsCollectionName)
+	col := c.session.DB(c.config.Name).C(c.config.Collections.Accounts)
 	_, err = col.Upsert(findBson, dataBson)
 	return err
 }
 
 func (c *conn) GetAccount(email string) (*db.Account, error) {
 	var sa storedAccount
-	col := c.session.DB(databaseName).C(accountsCollectionName)
+	col := c.session.DB(c.config.Name).C(c.config.Collections.Accounts)
 	err := col.Find(bson.M{"email": email}).One(&sa)
 	if err == mgo.ErrNotFound {
 		return nil, db.ErrNotFound

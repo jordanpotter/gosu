@@ -2,19 +2,24 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+
+	"github.com/JordanPotter/gosu-server/internal/config"
 )
 
-const address = ":8082"
-
 func main() {
-	startServer()
+	config, err := config.Get()
+	if err != nil {
+		panic(err)
+	}
+
+	startServer(&config.Relay)
 }
 
-func startServer() {
+func startServer(relayConfig *config.Relay) {
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong")
 	})
 
-	r.Run(address)
+	r.Run(relayConfig.Address)
 }

@@ -1,0 +1,22 @@
+---
+api:
+    address: localhost:8080
+events:
+    address: localhost:8081
+relay:
+    address: localhost:8082
+db:
+    mongo:
+        address: localhost:27017
+        username: username
+        password: password
+        name: gosu
+        collections:
+            accounts: accounts
+        writeMode: majority
+        writeTimeout: 1000
+        journaling: true
+auth:
+    token:
+        keyInHex: 60b25ceba96c78e336dc0a642097138eb98e0d215fb7cdcb33294a62b4b0c344
+        duration: 1h
