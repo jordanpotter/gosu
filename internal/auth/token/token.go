@@ -1,4 +1,4 @@
-package auth
+package token
 
 import (
 	"errors"
@@ -31,7 +31,7 @@ func Decrypt(str string) (*Auth, error) {
 	if err != nil {
 		return nil, err
 	} else if !token.Valid {
-		return nil, errors.New("auth: invalid token")
+		return nil, errors.New("invalid token")
 	}
 
 	id := token.Claims["id"].(string)

@@ -18,9 +18,9 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	Id            string    `json:"id"`
-	AuthEncrypted string    `json:"auth"`
-	AuthExpires   time.Time `json:"authExpires"`
+	Id          string    `json:"id"`
+	AuthToken   string    `json:"authToken"`
+	AuthExpires time.Time `json:"authExpires"`
 }
 
 func (h *Handler) login(c *gin.Context) {
@@ -43,14 +43,14 @@ func (h *Handler) login(c *gin.Context) {
 		return
 	}
 
-	auth := auth.New(account.Id)
-	authEncrypted, err := auth.Encrypt()
+	authToken := token.New(account.Id)
+	authTokenEncrypted, err := authToken.Encrypt()
 	if err != nil {
 		c.Fail(500, err)
 		return
 	}
 
-	c.JSON(200, LoginResponse{account.Id, authEncrypted, auth.Expires})
+	c.JSON(200, LoginResponse{account.Id, authTokenEncrypted, authToken.Expires})
 }
 
 func hasValidClientCredentials(clientName, clientPassword string, clients []db.Client) bool {
