@@ -1,12 +1,16 @@
 package main
 
 import (
+	"runtime"
+
 	"github.com/gin-gonic/gin"
 
 	"github.com/JordanPotter/gosu-server/internal/config"
 )
 
 func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
 	config, err := config.Get()
 	if err != nil {
 		panic(err)
