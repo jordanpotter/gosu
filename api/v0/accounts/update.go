@@ -12,8 +12,8 @@ import (
 
 type LoginRequest struct {
 	Email          string `json:"email" form:"email" binding:"required"`
-	ClientName     string `json:"clientName" form:"clientName" binding:"required"`
-	ClientPassword string `json:"clientPassword" form:"clientPassword" binding:"required"`
+	DeviceName     string `json:"deviceName" form:"deviceName" binding:"required"`
+	DevicePassword string `json:"devicePassword" form:"devicePassword" binding:"required"`
 }
 
 type LoginResponse struct {
@@ -37,8 +37,8 @@ func (h *Handler) login(c *gin.Context) {
 		return
 	}
 
-	if !hasValidClientCredentials(req.ClientName, req.ClientPassword, account.Clients) {
-		c.Fail(403, errors.New("no matching client name and password"))
+	if !hasValidDeviceCredentials(req.DeviceName, req.DevicePassword, account.Devices) {
+		c.Fail(403, errors.New("no matching device name and password"))
 		return
 	}
 
@@ -52,9 +52,9 @@ func (h *Handler) login(c *gin.Context) {
 	c.JSON(200, LoginResponse{account.Id, authTokenEncrypted, authToken.Expires})
 }
 
-func hasValidClientCredentials(clientName, clientPassword string, clients []db.Client) bool {
-	for _, client := range clients {
-		if clientName == client.Name && password.MatchesHash(clientPassword, client.PasswordHash) {
+func hasValidDeviceCredentials(deviceName, devicePassword string, devices []db.Device) bool {
+	for _, device := range devices {
+		if deviceName == device.Name && password.MatchesHash(devicePassword, device.PasswordHash) {
 			return true
 		}
 	}

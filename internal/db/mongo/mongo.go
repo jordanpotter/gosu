@@ -1,6 +1,8 @@
 package mongo
 
 import (
+	"time"
+
 	mgo "gopkg.in/mgo.v2"
 
 	"github.com/JordanPotter/gosu-server/internal/config"
@@ -13,9 +15,16 @@ type conn struct {
 }
 
 func New(config *config.DBMongo) (db.Conn, error) {
-	// TODO: use a username and password
-
-	session, err := mgo.Dial(config.Address)
+	dialInfo := mgo.DialInfo{
+		Addrs:    []string{config.Address},
+		Database: config.Name,
+		// Username:  config.Username,
+		// Password:  config.Password,
+		// Mechanism: "SCRAM-SHA-1",
+		Direct:  false,
+		Timeout: 10 * time.Second,
+	}
+	session, err := mgo.DialWithInfo(&dialInfo)
 	if err != nil {
 		return nil, err
 	}

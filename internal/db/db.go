@@ -1,6 +1,7 @@
 package db
 
 type Conn interface {
-	AccountConn
+	AccountsConn
+	RoomsConn
 	Close()
 }

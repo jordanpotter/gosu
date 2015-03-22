@@ -6,8 +6,8 @@ import (
 
 type CreateRequest struct {
 	Email          string `json:"email" form:"email" binding:"required"`
-	ClientName     string `json:"clientName" form:"clientName" binding:"required"`
-	ClientPassword string `json:"clientPassword" form:"clientPassword" binding:"required"`
+	DeviceName     string `json:"deviceName" form:"deviceName" binding:"required"`
+	DevicePassword string `json:"devicePassword" form:"devicePassword" binding:"required"`
 }
 
 func (h *Handler) create(c *gin.Context) {
@@ -16,7 +16,7 @@ func (h *Handler) create(c *gin.Context) {
 		return
 	}
 
-	err := h.dbConn.CreateAccount(req.Email, req.ClientName, req.ClientPassword)
+	err := h.dbConn.CreateAccount(req.Email, req.DeviceName, req.DevicePassword)
 	if err != nil {
 		c.Fail(500, err)
 		return

@@ -34,6 +34,8 @@ type DB struct {
 
 type DBMongo struct {
 	Address      string             `yaml:"address"`
+	Username     string             `yaml:"username"`
+	Password     string             `yaml:"password"`
 	Name         string             `yaml:"name"`
 	Collections  DBMongoCollections `yaml:"collections"`
 	WriteMode    string             `yaml:"writeMode"`

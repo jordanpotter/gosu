@@ -13,45 +13,45 @@ import (
 type storedAccount struct {
 	Id      bson.ObjectId  `bson:"_id,omitempty"`
 	Email   string         `bson:"email"`
-	Clients []storedClient `bson:"clients"`
+	Devices []storedDevice `bson:"devices"`
 }
 
-type storedClient struct {
+type storedDevice struct {
 	Name         string    `bson:"name"`
 	PasswordHash []byte    `bson:"passwordHash"`
 	Created      time.Time `bson:"created"`
 }
 
 func (sa *storedAccount) toAccount() *db.Account {
-	clients := make([]db.Client, len(sa.Clients))
-	for _, sClient := range sa.Clients {
-		clients = append(clients, *sClient.toClient())
+	devices := make([]db.Device, len(sa.Devices))
+	for _, sDevice := range sa.Devices {
+		devices = append(devices, *sDevice.toDevice())
 	}
 
 	return &db.Account{
 		Id:      sa.Id.Hex(),
 		Email:   sa.Email,
-		Clients: clients,
+		Devices: devices,
 	}
 }
 
-func (sc *storedClient) toClient() *db.Client {
-	return &db.Client{
+func (sc *storedDevice) toDevice() *db.Device {
+	return &db.Device{
 		Name:         sc.Name,
 		PasswordHash: sc.PasswordHash,
 		Created:      sc.Created,
 	}
 }
 
-func (c *conn) CreateAccount(email, clientName, clientPassword string) error {
-	cpHash, err := password.ComputeHash(clientPassword)
+func (c *conn) CreateAccount(email, deviceName, devicePassword string) error {
+	dpHash, err := password.ComputeHash(devicePassword)
 	if err != nil {
 		return err
 	}
 
 	findBson := bson.M{"email": email}
-	clientBson := bson.M{"name": clientName, "passwordHash": cpHash, "created": time.Now()}
-	dataBson := bson.M{"$push": bson.M{"clients": clientBson}}
+	deviceBson := bson.M{"name": deviceName, "passwordHash": dpHash, "created": time.Now()}
+	dataBson := bson.M{"$push": bson.M{"devices": deviceBson}}
 	col := c.session.DB(c.config.Name).C(c.config.Collections.Accounts)
 	_, err = col.Upsert(findBson, dataBson)
 	return err
