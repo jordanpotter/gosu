@@ -8,11 +8,12 @@ relay:
 db:
     mongo:
         address: localhost:27017
-        username: username
-        password: password
+        username: # empty during development
+        password: # empty during development
         name: gosu
         collections:
             accounts: accounts
+            rooms: rooms
         writeMode: majority
         writeTimeout: 1000
         journaling: true
