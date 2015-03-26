@@ -28,7 +28,7 @@ func (h *Handler) login(c *gin.Context) {
 		return
 	}
 
-	account, err := h.dbConn.GetAccount(req.Email)
+	account, err := h.dbConn.Accounts.Get(req.Email)
 	if err == db.NotFoundError {
 		c.Fail(403, err)
 		return

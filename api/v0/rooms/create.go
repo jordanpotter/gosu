@@ -21,7 +21,7 @@ func (h *Handler) create(c *gin.Context) {
 
 	fmt.Println("TODO: make sure auth token is provided and valid first")
 
-	err := h.dbConn.CreateRoom(req.Name, req.Password)
+	err := h.dbConn.Rooms.Create(req.Name, req.Password)
 	if err == db.DuplicateError {
 		c.Fail(409, err)
 		return

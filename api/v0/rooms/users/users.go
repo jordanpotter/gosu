@@ -7,10 +7,10 @@ import (
 )
 
 type Handler struct {
-	dbConn db.Conn
+	dbConn *db.Conn
 }
 
-func New(dbConn db.Conn) *Handler {
+func New(dbConn *db.Conn) *Handler {
 	return &Handler{dbConn}
 }
 

@@ -5,7 +5,7 @@ import (
 )
 
 type RoomsConn interface {
-	CreateRoom(name, password string) error
+	Create(name, password string) error
 	// GetRoom(id string) (*Room, error)
 	// DeleteRoom(id string) error
 
@@ -27,14 +27,14 @@ type Room struct {
 }
 
 type Channel struct {
-	Id      uint8
+	Id      string
 	Name    string
 	Peers   []Peer
 	Created time.Time
 }
 
 type Peer struct {
-	Id        uint8
+	Id        string
 	AccountId string
 	Name      string
 	Created   time.Time

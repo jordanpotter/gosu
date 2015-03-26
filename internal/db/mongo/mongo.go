@@ -7,14 +7,35 @@ import (
 
 	"github.com/JordanPotter/gosu-server/internal/config"
 	"github.com/JordanPotter/gosu-server/internal/db"
+	"github.com/JordanPotter/gosu-server/internal/db/mongo/accounts"
+	"github.com/JordanPotter/gosu-server/internal/db/mongo/rooms"
 )
 
-type conn struct {
-	session *mgo.Session
-	config  *config.DBMongo
+func New(config *config.DBMongo) (*db.Conn, error) {
+	session, err := createSession(config)
+	if err != nil {
+		return nil, err
+	}
+
+	accountsConn, err := accounts.New(session, config)
+	if err != nil {
+		return nil, err
+	}
+
+	roomsConn, err := rooms.New(session, config)
+	if err != nil {
+		return nil, err
+	}
+
+	conn := &db.Conn{
+		Accounts: accountsConn,
+		Rooms:    roomsConn,
+		Closer:   session,
+	}
+	return conn, nil
 }
 
-func New(config *config.DBMongo) (db.Conn, error) {
+func createSession(config *config.DBMongo) (*mgo.Session, error) {
 	dialInfo := mgo.DialInfo{
 		Addrs:     []string{config.Address},
 		Database:  config.Name,
@@ -24,6 +45,7 @@ func New(config *config.DBMongo) (db.Conn, error) {
 		Direct:    false,
 		Timeout:   10 * time.Second,
 	}
+
 	session, err := mgo.DialWithInfo(&dialInfo)
 	if err != nil {
 		return nil, err
@@ -31,26 +53,5 @@ func New(config *config.DBMongo) (db.Conn, error) {
 
 	session.SetMode(mgo.Strong, false)
 	session.SetSafe(&mgo.Safe{WMode: config.WriteMode, WTimeout: config.WriteTimeout, J: config.Journaling})
-
-	c := &conn{session, config}
-	err = c.ensureIndices()
-	if err != nil {
-		c.Close()
-		return nil, err
-	}
-
-	return c, nil
-}
-
-func (c *conn) Close() {
-	c.session.Close()
-}
-
-func (c *conn) ensureIndices() error {
-	err := c.ensureAccountIndices()
-	if err != nil {
-		return err
-	}
-
-	return c.ensureRoomIndices()
+	return session, nil
 }

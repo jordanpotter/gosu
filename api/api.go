@@ -31,7 +31,7 @@ func main() {
 	startServer(dbConn, tokenFactory, &config.API)
 }
 
-func startServer(dbConn db.Conn, tokenFactory *token.Factory, apiConfig *config.API) {
+func startServer(dbConn *db.Conn, tokenFactory *token.Factory, apiConfig *config.API) {
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong")

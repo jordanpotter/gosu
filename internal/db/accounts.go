@@ -5,9 +5,8 @@ import (
 )
 
 type AccountsConn interface {
-	CreateAccount(email, clientName, clientPassword string) error
-	GetAccount(email string) (*Account, error)
-
+	Create(email, deviceName, devicePassword string) error
+	Get(email string) (*Account, error)
 	// SetMembershipAdmin(id, roomId string, admin bool) error
 	// SetMembershipBanned(id, roomId string, banned bool) error
 	// RemoveMembership(id, roomId string) error
