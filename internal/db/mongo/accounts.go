@@ -35,12 +35,24 @@ func (sa *storedAccount) toAccount() *db.Account {
 	}
 }
 
-func (sc *storedDevice) toDevice() *db.Device {
+func (sd *storedDevice) toDevice() *db.Device {
 	return &db.Device{
-		Name:         sc.Name,
-		PasswordHash: sc.PasswordHash,
-		Created:      sc.Created,
+		Name:         sd.Name,
+		PasswordHash: sd.PasswordHash,
+		Created:      sd.Created,
 	}
+}
+
+func (c *conn) ensureAccountIndices() error {
+	emailIndex := mgo.Index{
+		Key:        []string{"email"},
+		Unique:     true,
+		DropDups:   false,
+		Background: true,
+		Sparse:     false,
+	}
+	col := c.session.DB(c.config.Name).C(c.config.Collections.Accounts)
+	return col.EnsureIndex(emailIndex)
 }
 
 func (c *conn) CreateAccount(email, deviceName, devicePassword string) error {
@@ -62,7 +74,7 @@ func (c *conn) GetAccount(email string) (*db.Account, error) {
 	col := c.session.DB(c.config.Name).C(c.config.Collections.Accounts)
 	err := col.Find(bson.M{"email": email}).One(&sa)
 	if err == mgo.ErrNotFound {
-		return nil, db.ErrNotFound
+		return nil, db.NotFoundError
 	} else if err != nil {
 		return nil, err
 	}

@@ -32,9 +32,25 @@ func New(config *config.DBMongo) (db.Conn, error) {
 	session.SetMode(mgo.Strong, false)
 	session.SetSafe(&mgo.Safe{WMode: config.WriteMode, WTimeout: config.WriteTimeout, J: config.Journaling})
 
-	return &conn{session, config}, nil
+	c := &conn{session, config}
+	err = c.ensureIndices()
+	if err != nil {
+		c.Close()
+		return nil, err
+	}
+
+	return c, nil
 }
 
 func (c *conn) Close() {
 	c.session.Close()
+}
+
+func (c *conn) ensureIndices() error {
+	err := c.ensureAccountIndices()
+	if err != nil {
+		return err
+	}
+
+	return c.ensureRoomIndices()
 }

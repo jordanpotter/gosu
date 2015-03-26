@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+
+	"github.com/JordanPotter/gosu-server/internal/db"
 )
 
 type CreateRequest struct {
@@ -17,7 +19,16 @@ func (h *Handler) create(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("TODO: create room %s with password %s if doesn't exist\n", req.Name, req.Password)
+	fmt.Println("TODO: make sure auth token is provided and valid first")
+
+	err := h.dbConn.CreateRoom(req.Name, req.Password)
+	if err == db.DuplicateError {
+		c.Fail(409, err)
+		return
+	} else if err != nil {
+		c.Fail(500, err)
+		return
+	}
 
 	c.String(200, "ok")
 }

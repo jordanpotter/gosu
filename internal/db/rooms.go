@@ -5,7 +5,7 @@ import (
 )
 
 type RoomsConn interface {
-	// CreateRoom(name, password string) (*Room, error)
+	CreateRoom(name, password string) error
 	// GetRoom(id string) (*Room, error)
 	// DeleteRoom(id string) error
 

@@ -45,6 +45,7 @@ type DBMongo struct {
 
 type DBMongoCollections struct {
 	Accounts string `yaml:"accounts"`
+	Rooms    string `yaml:"rooms"`
 }
 
 type Auth struct {
