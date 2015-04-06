@@ -14,10 +14,7 @@ type conn struct {
 
 func New(session *mgo.Session, config *config.DBMongo) (db.AccountsConn, error) {
 	err := ensureIndices(session, config)
-	if err != nil {
-		return nil, err
-	}
-	return &conn{session, config}, nil
+	return &conn{session, config}, err
 }
 
 func ensureIndices(session *mgo.Session, config *config.DBMongo) error {

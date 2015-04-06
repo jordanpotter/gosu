@@ -12,8 +12,8 @@ import (
 
 const defaultChannelName = "Lobby"
 
-func (c *conn) Create(name, pwd string) error {
-	pHash, err := password.ComputeHash(pwd)
+func (c *conn) Create(name, passwd string) error {
+	pHash, err := password.ComputeHash(passwd)
 	if err != nil {
 		return err
 	}
