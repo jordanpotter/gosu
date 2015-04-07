@@ -3,10 +3,10 @@ package v0
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/JordanPotter/gosu-server/server/api/v0/accounts"
-	"github.com/JordanPotter/gosu-server/server/api/v0/rooms"
-	"github.com/JordanPotter/gosu-server/server/internal/auth/token"
-	"github.com/JordanPotter/gosu-server/server/internal/db"
+	"github.com/JordanPotter/gosu/server/api/v0/accounts"
+	"github.com/JordanPotter/gosu/server/api/v0/rooms"
+	"github.com/JordanPotter/gosu/server/internal/auth/token"
+	"github.com/JordanPotter/gosu/server/internal/db"
 )
 
 type Handler struct {

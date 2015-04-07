@@ -1,1 +1,1 @@
-# gosu-server
+# gosu

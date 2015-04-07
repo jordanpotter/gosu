@@ -7,11 +7,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/JordanPotter/gosu-server/server/api/v0"
-	"github.com/JordanPotter/gosu-server/server/internal/auth/token"
-	"github.com/JordanPotter/gosu-server/server/internal/config"
-	"github.com/JordanPotter/gosu-server/server/internal/db"
-	"github.com/JordanPotter/gosu-server/server/internal/db/mongo"
+	"github.com/JordanPotter/gosu/server/api/v0"
+	"github.com/JordanPotter/gosu/server/internal/auth/token"
+	"github.com/JordanPotter/gosu/server/internal/config"
+	"github.com/JordanPotter/gosu/server/internal/db"
+	"github.com/JordanPotter/gosu/server/internal/db/mongo"
 )
 
 var configPath string

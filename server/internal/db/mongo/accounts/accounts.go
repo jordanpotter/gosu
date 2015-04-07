@@ -3,8 +3,8 @@ package accounts
 import (
 	mgo "gopkg.in/mgo.v2"
 
-	"github.com/JordanPotter/gosu-server/server/internal/config"
-	"github.com/JordanPotter/gosu-server/server/internal/db"
+	"github.com/JordanPotter/gosu/server/internal/config"
+	"github.com/JordanPotter/gosu/server/internal/db"
 )
 
 type conn struct {

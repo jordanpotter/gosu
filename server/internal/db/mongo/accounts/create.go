@@ -5,7 +5,7 @@ import (
 
 	"gopkg.in/mgo.v2/bson"
 
-	"github.com/JordanPotter/gosu-server/server/internal/auth/password"
+	"github.com/JordanPotter/gosu/server/internal/auth/password"
 )
 
 func (c *conn) Create(email, deviceName, devicePassword string) error {
