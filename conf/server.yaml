@@ -1,0 +1,24 @@
+---
+api:
+    port: 8080
+events:
+    port: 8081
+relay:
+    port: 8082
+db:
+    mongo:
+        addresses:
+            - 'localhost:27017'
+        username: # empty during development
+        password: # empty during development
+        name: gosu
+        collections:
+            accounts: accounts
+            rooms: rooms
+        writeMode: majority
+        writeTimeout: 1000
+        journaling: true
+auth:
+    token:
+        keyInHex: 60b25ceba96c78e336dc0a642097138eb98e0d215fb7cdcb33294a62b4b0c344
+        duration: 1h
