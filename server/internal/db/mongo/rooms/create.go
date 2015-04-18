@@ -6,8 +6,8 @@ import (
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
-	"github.com/JordanPotter/gosu/server/internal/auth/password"
-	"github.com/JordanPotter/gosu/server/internal/db"
+	"github.com/jordanpotter/gosu/server/internal/auth/password"
+	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
 const defaultChannelName = "Lobby"

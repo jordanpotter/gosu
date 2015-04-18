@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/JordanPotter/gosu-server",
+	"ImportPath": "github.com/jordanpotter/gosu",
 	"GoVersion": "go1.4.2",
 	"Packages": [
 		"./..."

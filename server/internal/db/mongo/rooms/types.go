@@ -5,7 +5,7 @@ import (
 
 	"gopkg.in/mgo.v2/bson"
 
-	"github.com/JordanPotter/gosu/server/internal/db"
+	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
 type storedRoom struct {

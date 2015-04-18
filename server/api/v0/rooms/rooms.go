@@ -3,10 +3,10 @@ package rooms
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/JordanPotter/gosu/server/api/v0/rooms/channels"
-	"github.com/JordanPotter/gosu/server/api/v0/rooms/users"
-	"github.com/JordanPotter/gosu/server/internal/auth/token"
-	"github.com/JordanPotter/gosu/server/internal/db"
+	"github.com/jordanpotter/gosu/server/api/v0/rooms/channels"
+	"github.com/jordanpotter/gosu/server/api/v0/rooms/users"
+	"github.com/jordanpotter/gosu/server/internal/auth/token"
+	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
 type Handler struct {

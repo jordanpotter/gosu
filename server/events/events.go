@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/JordanPotter/gosu/server/internal/config"
+	"github.com/jordanpotter/gosu/server/internal/config"
 )
 
 var configPath string

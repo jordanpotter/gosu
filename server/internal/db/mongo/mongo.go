@@ -5,10 +5,10 @@ import (
 
 	mgo "gopkg.in/mgo.v2"
 
-	"github.com/JordanPotter/gosu/server/internal/config"
-	"github.com/JordanPotter/gosu/server/internal/db"
-	"github.com/JordanPotter/gosu/server/internal/db/mongo/accounts"
-	"github.com/JordanPotter/gosu/server/internal/db/mongo/rooms"
+	"github.com/jordanpotter/gosu/server/internal/config"
+	"github.com/jordanpotter/gosu/server/internal/db"
+	"github.com/jordanpotter/gosu/server/internal/db/mongo/accounts"
+	"github.com/jordanpotter/gosu/server/internal/db/mongo/rooms"
 )
 
 func New(config *config.DBMongo) (*db.Conn, error) {

@@ -3,7 +3,7 @@ package channels
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/JordanPotter/gosu/server/internal/db"
+	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
 type Handler struct {
