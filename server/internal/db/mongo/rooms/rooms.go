@@ -9,15 +9,15 @@ import (
 
 type conn struct {
 	session *mgo.Session
-	config  *config.DBMongo
+	config  *config.Mongo
 }
 
-func New(session *mgo.Session, config *config.DBMongo) (db.RoomsConn, error) {
+func New(session *mgo.Session, config *config.Mongo) (db.RoomsConn, error) {
 	err := ensureIndices(session, config)
 	return &conn{session, config}, err
 }
 
-func ensureIndices(session *mgo.Session, config *config.DBMongo) error {
+func ensureIndices(session *mgo.Session, config *config.Mongo) error {
 	nameIndex := mgo.Index{
 		Key:        []string{"name"},
 		Unique:     true,

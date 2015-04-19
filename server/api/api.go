@@ -10,37 +10,57 @@ import (
 	"github.com/jordanpotter/gosu/server/api/v0"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/config"
+	"github.com/jordanpotter/gosu/server/internal/config/etcd"
 	"github.com/jordanpotter/gosu/server/internal/db"
 	"github.com/jordanpotter/gosu/server/internal/db/mongo"
 )
 
-var configPath string
+var (
+	port     int
+	etcdAddr string
+)
 
 func init() {
-	flag.StringVar(&configPath, "config", "conf/server.yaml", "Specify the configuration file path")
+	flag.IntVar(&port, "port", 8080, "the port to use")
+	flag.StringVar(&etcdAddr, "etcd", "http://localhost:4001", "the etcd server addresses")
 	flag.Parse()
 }
 
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	config, err := config.Load(configPath)
-	if err != nil {
-		panic(err)
-	}
+	configConn := etcd.New([]string{etcdAddr})
 
-	dbConn, err := mongo.New(&config.DB.Mongo)
-	if err != nil {
-		panic(err)
-	}
+	dbConn := getDBConn(configConn)
 	defer dbConn.Close()
 
-	tokenFactory := token.NewFactory(config.Auth.Token.Key, config.Auth.Token.Duration)
+	tokenFactory := getTokenFactory(configConn)
 
-	startServer(dbConn, tokenFactory, &config.API)
+	startServer(dbConn, tokenFactory)
 }
 
-func startServer(dbConn *db.Conn, tokenFactory *token.Factory, apiConfig *config.API) {
+func getDBConn(configConn config.Conn) *db.Conn {
+	mongoConfig, err := configConn.GetMongo()
+	if err != nil {
+		panic(err)
+	}
+
+	dbConn, err := mongo.New(mongoConfig)
+	if err != nil {
+		panic(err)
+	}
+	return dbConn
+}
+
+func getTokenFactory(configConn config.Conn) *token.Factory {
+	authTokenConfig, err := configConn.GetAuthToken()
+	if err != nil {
+		panic(err)
+	}
+	return token.NewFactory(authTokenConfig.Key, authTokenConfig.Duration)
+}
+
+func startServer(dbConn *db.Conn, tokenFactory *token.Factory) {
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong")
@@ -49,5 +69,5 @@ func startServer(dbConn *db.Conn, tokenFactory *token.Factory, apiConfig *config
 	v0Handler := v0.New(dbConn, tokenFactory)
 	v0Handler.AddRoutes(r.Group("/v0"))
 
-	r.Run(fmt.Sprintf(":%d", apiConfig.Port))
+	r.Run(fmt.Sprintf(":%d", port))
 }

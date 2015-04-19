@@ -1,0 +1,14 @@
+{
+	"username": "",
+	"password": "",
+	"name": "gosu",
+	"collections": {
+		"accounts": "accounts",
+		"rooms": "rooms"
+  },
+	"writeParams": {
+		"mode": "majority",
+		"journaling": true,
+		"timeoutNs": 10000000000
+	}
+}

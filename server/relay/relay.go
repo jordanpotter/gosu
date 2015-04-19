@@ -10,10 +10,14 @@ import (
 	"github.com/jordanpotter/gosu/server/internal/config"
 )
 
-var configPath string
+var (
+	port        int
+	etcdAddress string
+)
 
 func init() {
-	flag.StringVar(&configPath, "config", "conf/server.yaml", "Specify the configuration file path")
+	flag.IntVar(&port, "port", 8082, "the port to use")
+	flag.StringVar(&etcdAddress, "etcd", "http://127.0.0.1:4001", "the etcd server address")
 	flag.Parse()
 }
 
