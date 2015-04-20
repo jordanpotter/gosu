@@ -14,7 +14,7 @@ func (c *conn) GetAuthToken() (*config.AuthToken, error) {
 		return nil, err
 	}
 
-	authToken := new(config.AuthToken)
-	err = json.Unmarshal([]byte(resp.Node.Value), authToken)
-	return authToken, err
+	authTokenConfig := new(config.AuthToken)
+	err = json.Unmarshal([]byte(resp.Node.Value), authTokenConfig)
+	return authTokenConfig, err
 }

@@ -11,8 +11,8 @@ type conn struct {
 	client *etcd.Client
 }
 
-func New(addresses []string) config.Conn {
-	client := etcd.NewClient(addresses)
+func New(addrs []string) config.Conn {
+	client := etcd.NewClient(addrs)
 	client.SetDialTimeout(10 * time.Second)
 	client.SetConsistency("STRONG_CONSISTENCY")
 	return &conn{client}
