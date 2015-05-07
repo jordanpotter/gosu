@@ -12,8 +12,8 @@ For simplicity, etcd can be run locally via [Docker](docker.com)
 
 For simplicity, the `conf` directory includes some cluster-wide configuration files to insert into our etcd service
 
-    curl -L http://127.0.0.1:4001/v2/keys/authToken -XPUT --data-urlencode value@conf/authToken.json
     curl -L http://127.0.0.1:4001/v2/keys/mongo -XPUT --data-urlencode value@conf/mongo.json
+    curl -L http://127.0.0.1:4001/v2/keys/auth/token -XPUT --data-urlencode value@conf/authToken.json
 
 If you wish to modify some configuration parameters in the `conf` directory, be sure to update etcd by running the above commands again.
 
