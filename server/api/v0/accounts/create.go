@@ -1,8 +1,6 @@
 package accounts
 
-import (
-	"github.com/gin-gonic/gin"
-)
+import "github.com/gin-gonic/gin"
 
 type CreateRequest struct {
 	Email          string `json:"email" form:"email" binding:"required"`
