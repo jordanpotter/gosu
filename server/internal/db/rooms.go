@@ -6,7 +6,8 @@ import (
 
 type RoomsConn interface {
 	Create(name, password string) error
-	// GetRoom(id string) (*Room, error)
+	Get(id string) (*Room, error)
+	GetByName(name string) (*Room, error)
 	// DeleteRoom(id string) error
 
 	// ConnectToRoom(id, accountId string) (*Room, error)
@@ -15,7 +16,7 @@ type RoomsConn interface {
 	// CreateChannel(id, name string) (*Channel, error)
 	// DeleteChannel(id string, channelId uint8) error
 
-	// MoveToChannel(id string, channelId uint8, accountId string) error
+	// MovePeerToChannel(id string, channelId uint8, accountId string) error
 }
 
 type Room struct {

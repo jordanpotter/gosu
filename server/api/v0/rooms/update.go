@@ -1,13 +1,18 @@
 package rooms
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+
+	"github.com/jordanpotter/gosu/server/api/middleware"
+	"github.com/jordanpotter/gosu/server/internal/auth/password"
 )
 
 type LoginRequest struct {
 	Password string `json:"password" form:"password" binding:"required"`
+	PeerName string `json:"peerName" form:"peerName" binding:"required"`
 }
 
 type SetPasswordRequest struct {
@@ -21,7 +26,31 @@ func (h *Handler) login(c *gin.Context) {
 	}
 
 	roomName := c.Params.ByName("roomName")
-	fmt.Printf("TODO: login to room %s\n", roomName)
+	room, err := h.dbConn.Rooms.GetByName(roomName)
+	if err != nil {
+		c.Fail(500, err)
+		return
+	}
+
+	fmt.Println("TODO: check if account has membership already. If so, do not check password")
+
+	passwordMatches := password.MatchesHash(req.Password, room.PasswordHash)
+	if !passwordMatches {
+		c.Fail(403, errors.New("invalid password"))
+		return
+	}
+
+	accountId, err := c.Get(middleware.AccountIdKey)
+	if err != nil {
+		c.Fail(500, err)
+		return
+	}
+
+	err = h.dbConn.Accounts.AddMembership(accountId.(string), room.Id, req.PeerName)
+	if err != nil {
+		c.Fail(500, err)
+		return
+	}
 
 	c.String(200, "ok")
 }

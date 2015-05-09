@@ -3,6 +3,7 @@ package rooms
 import (
 	"github.com/gin-gonic/gin"
 
+	"github.com/jordanpotter/gosu/server/api/middleware"
 	"github.com/jordanpotter/gosu/server/api/v0/rooms/channels"
 	"github.com/jordanpotter/gosu/server/api/v0/rooms/users"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
@@ -26,6 +27,8 @@ func New(dbConn *db.Conn, tokenFactory *token.Factory) *Handler {
 }
 
 func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
+	rg.Use(middleware.AuthRequired(h.tokenFactory))
+
 	rg.POST("/", h.create)
 	rg.GET("/:roomName", h.get)
 	rg.POST("/:roomName/login", h.login)

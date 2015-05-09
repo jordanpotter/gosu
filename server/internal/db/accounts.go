@@ -8,7 +8,7 @@ type AccountsConn interface {
 	Create(email, deviceName, devicePassword string) error
 	Get(id string) (*Account, error)
 	GetByEmail(email string) (*Account, error)
-	// AddMembership(id, roomId string) error
+	AddMembership(id, roomId, peerName string) error
 	// SetMembershipAdmin(id, roomId string, admin bool) error
 	// SetMembershipBanned(id, roomId string, banned bool) error
 	// RemoveMembership(id, roomId string) error
