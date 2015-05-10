@@ -31,6 +31,7 @@ func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
 
 	rg.POST("/", h.create)
 	rg.GET("/:roomName", h.get)
+	rg.POST("/:roomName/join", h.join)
 	rg.POST("/:roomName/login", h.login)
 	rg.POST("/:roomName/logout", h.logout)
 	rg.PUT("/:roomName/password", h.setPassword)

@@ -22,7 +22,7 @@ type storedDevice struct {
 }
 
 type storedMembership struct {
-	RoomId   bson.ObjectId `bson:"_id,omitempty"`
+	RoomId   bson.ObjectId `bson:"roomId"`
 	PeerName string        `bson:"peerName"`
 	Admin    bool          `bson:"admin"`
 	Banned   bool          `bson:"banned"`

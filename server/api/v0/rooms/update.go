@@ -10,7 +10,7 @@ import (
 	"github.com/jordanpotter/gosu/server/internal/auth/password"
 )
 
-type LoginRequest struct {
+type JoinRequest struct {
 	Password string `json:"password" form:"password" binding:"required"`
 	PeerName string `json:"peerName" form:"peerName" binding:"required"`
 }
@@ -19,8 +19,8 @@ type SetPasswordRequest struct {
 	Password string `json:"password" form:"password" binding:"required"`
 }
 
-func (h *Handler) login(c *gin.Context) {
-	var req LoginRequest
+func (h *Handler) join(c *gin.Context) {
+	var req JoinRequest
 	if !c.Bind(&req) {
 		return
 	}
@@ -31,8 +31,6 @@ func (h *Handler) login(c *gin.Context) {
 		c.Fail(500, err)
 		return
 	}
-
-	fmt.Println("TODO: check if account has membership already. If so, do not check password")
 
 	passwordMatches := password.MatchesHash(req.Password, room.PasswordHash)
 	if !passwordMatches {
@@ -53,6 +51,38 @@ func (h *Handler) login(c *gin.Context) {
 	}
 
 	c.String(200, "ok")
+}
+
+func (h *Handler) login(c *gin.Context) {
+	roomName := c.Params.ByName("roomName")
+	room, err := h.dbConn.Rooms.GetByName(roomName)
+	if err != nil {
+		c.Fail(500, err)
+		return
+	}
+
+	accountId, err := c.Get(middleware.AccountIdKey)
+	if err != nil {
+		c.Fail(500, err)
+		return
+	}
+
+	account, err := h.dbConn.Accounts.Get(accountId.(string))
+	if err != nil {
+		c.Fail(500, err)
+		return
+	}
+
+	for _, membership := range account.Memberships {
+		fmt.Println(membership)
+		if membership.RoomId == room.Id {
+			fmt.Println("TODO: add to channel")
+			c.String(200, "ok")
+			return
+		}
+	}
+
+	c.Fail(403, fmt.Errorf("missing membership to room %s", roomName))
 }
 
 func (h *Handler) logout(c *gin.Context) {
