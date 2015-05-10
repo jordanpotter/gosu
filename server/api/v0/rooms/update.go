@@ -53,6 +53,29 @@ func (h *Handler) join(c *gin.Context) {
 	c.String(200, "ok")
 }
 
+func (h *Handler) leave(c *gin.Context) {
+	roomName := c.Params.ByName("roomName")
+	room, err := h.dbConn.Rooms.GetByName(roomName)
+	if err != nil {
+		c.Fail(500, err)
+		return
+	}
+
+	accountId, err := c.Get(middleware.AccountIdKey)
+	if err != nil {
+		c.Fail(500, err)
+		return
+	}
+
+	err = h.dbConn.Accounts.RemoveMembership(accountId.(string), room.Id)
+	if err != nil {
+		c.Fail(500, err)
+		return
+	}
+
+	c.String(200, "ok")
+}
+
 func (h *Handler) login(c *gin.Context) {
 	roomName := c.Params.ByName("roomName")
 	room, err := h.dbConn.Rooms.GetByName(roomName)
@@ -73,8 +96,9 @@ func (h *Handler) login(c *gin.Context) {
 		return
 	}
 
+	fmt.Println(account.Memberships)
+
 	for _, membership := range account.Memberships {
-		fmt.Println(membership)
 		if membership.RoomId == room.Id {
 			fmt.Println("TODO: add to channel")
 			c.String(200, "ok")

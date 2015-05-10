@@ -23,3 +23,7 @@ Currently Gosu uses [MongoDB](mongodb.org) as its backing data store. MongoDB's 
 MongoDB can be run locally via [Docker](docker.com)
 
     docker run --name mongo -d -p 27017:27017 mongo:3.0.2
+
+Likewise, we can use [Docker](docker.com) to enter the mongo shell
+
+    docker run -it --rm --link mongo:mongo mongo:3.0.2 sh -c 'exec mongo "$MONGO_PORT_27017_TCP_ADDR:$MONGO_PORT_27017_TCP_PORT/gosu"'

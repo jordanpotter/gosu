@@ -13,6 +13,7 @@ type storedAccount struct {
 	Email       string             `bson:"email"`
 	Devices     []storedDevice     `bson:"devices"`
 	Memberships []storedMembership `bson:"memberships"`
+	Created     time.Time          `bson:"created"`
 }
 
 type storedDevice struct {
@@ -45,6 +46,7 @@ func (sa *storedAccount) toAccount() *db.Account {
 		Email:       sa.Email,
 		Devices:     devices,
 		Memberships: memberships,
+		Created:     sa.Created,
 	}
 }
 

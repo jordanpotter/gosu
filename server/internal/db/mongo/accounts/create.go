@@ -16,7 +16,8 @@ func (c *conn) Create(email, deviceName, devicePassword string) error {
 
 	findBson := bson.M{"email": email}
 	deviceBson := bson.M{"name": deviceName, "passwordHash": dpHash, "created": time.Now()}
-	dataBson := bson.M{"$push": bson.M{"devices": deviceBson}}
+	onInsertBson := bson.M{"created": time.Now()}
+	dataBson := bson.M{"$push": bson.M{"devices": deviceBson}, "$setOnInsert": onInsertBson}
 	col := c.session.DB(c.config.Name).C(c.config.Collections.Accounts)
 	_, err = col.Upsert(findBson, dataBson)
 	return err

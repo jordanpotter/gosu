@@ -9,6 +9,7 @@ type AccountsConn interface {
 	Get(id string) (*Account, error)
 	GetByEmail(email string) (*Account, error)
 	AddMembership(id, roomId, peerName string) error
+	RemoveMembership(id, roomId string) error
 	// SetMembershipAdmin(id, roomId string, admin bool) error
 	// SetMembershipBanned(id, roomId string, banned bool) error
 	// RemoveMembership(id, roomId string) error
@@ -19,6 +20,7 @@ type Account struct {
 	Email       string
 	Devices     []Device
 	Memberships []Membership
+	Created     time.Time
 }
 
 type Device struct {
