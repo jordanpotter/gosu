@@ -19,6 +19,12 @@ type SetPasswordRequest struct {
 	Password string `json:"password" form:"password" binding:"required"`
 }
 
+type SetAdminRequest struct {
+}
+
+type SetBannedRequest struct {
+}
+
 func (h *Handler) join(c *gin.Context) {
 	var req JoinRequest
 	if !c.Bind(&req) {
