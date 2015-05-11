@@ -11,6 +11,7 @@ import (
 
 const (
 	AccountIDKey = "accountID"
+	RoomNameKey  = "roomName"
 	authHeader   = "Authorization"
 )
 
@@ -27,7 +28,7 @@ func AuthRequired(tf *token.Factory) gin.HandlerFunc {
 		}
 
 		c.Set(AccountIDKey, t.ID)
-		// c.Set(RoomIdKey, t.RoomId)
+		c.Set(RoomNameKey, t.RoomName)
 		c.Next()
 	}
 }

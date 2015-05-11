@@ -12,22 +12,29 @@ import (
 
 const defaultChannelName = "Lobby"
 
-func (c *conn) Create(name, passwd string) error {
+func (c *conn) Create(name, passwd, adminName, adminAccountID string) error {
 	pHash, err := password.ComputeHash(passwd)
 	if err != nil {
 		return err
 	}
 
 	sChannel := storedChannel{
-		ID:      bson.NewObjectId(),
 		Name:    defaultChannelName,
 		Created: time.Now(),
+	}
+
+	sMember := storedMember{
+		Name:      adminName,
+		AccountID: bson.ObjectIdHex(adminAccountID),
+		Admin:     true,
+		Created:   time.Now(),
 	}
 
 	sRoom := storedRoom{
 		Name:         name,
 		PasswordHash: pHash,
 		Channels:     []storedChannel{sChannel},
+		Members:      []storedMember{sMember},
 		Created:      time.Now(),
 	}
 

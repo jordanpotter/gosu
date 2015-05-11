@@ -18,13 +18,14 @@ func New(session *mgo.Session, config *config.Mongo) (db.AccountsConn, error) {
 }
 
 func ensureIndices(session *mgo.Session, config *config.Mongo) error {
+	col := session.DB(config.Name).C(config.Collections.Accounts)
+
 	emailIndex := mgo.Index{
 		Key:        []string{"email"},
 		Unique:     true,
 		DropDups:   false,
-		Background: true,
+		Background: false,
 		Sparse:     false,
 	}
-	col := session.DB(config.Name).C(config.Collections.Accounts)
 	return col.EnsureIndex(emailIndex)
 }

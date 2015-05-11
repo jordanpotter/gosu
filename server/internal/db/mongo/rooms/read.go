@@ -7,14 +7,7 @@ import (
 	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
-func (c *conn) Get(id string) (*db.Room, error) {
-	var sr storedRoom
-	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
-	err := col.FindId(bson.ObjectIdHex(id)).One(&sr)
-	return handleStoredRoom(&sr, err)
-}
-
-func (c *conn) GetByName(name string) (*db.Room, error) {
+func (c *conn) Get(name string) (*db.Room, error) {
 	var sr storedRoom
 	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
 	err := col.Find(bson.M{"name": name}).One(&sr)

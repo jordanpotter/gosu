@@ -18,13 +18,14 @@ func New(session *mgo.Session, config *config.Mongo) (db.RoomsConn, error) {
 }
 
 func ensureIndices(session *mgo.Session, config *config.Mongo) error {
+	col := session.DB(config.Name).C(config.Collections.Rooms)
+
 	nameIndex := mgo.Index{
 		Key:        []string{"name"},
 		Unique:     true,
 		DropDups:   false,
-		Background: true,
+		Background: false,
 		Sparse:     false,
 	}
-	col := session.DB(config.Name).C(config.Collections.Rooms)
 	return col.EnsureIndex(nameIndex)
 }

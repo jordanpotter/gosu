@@ -9,7 +9,6 @@ import (
 )
 
 type storedRoom struct {
-	ID           bson.ObjectId   `bson:"_id,omitempty"`
 	Name         string          `bson:"name"`
 	PasswordHash []byte          `bson:"passwordHash"`
 	Channels     []storedChannel `bson:"channels"`
@@ -18,19 +17,17 @@ type storedRoom struct {
 }
 
 type storedChannel struct {
-	ID      bson.ObjectId `bson:"id"`
-	Name    string        `bson:"name"`
-	Created time.Time     `bson:"created"`
+	Name    string    `bson:"name"`
+	Created time.Time `bson:"created"`
 }
 
 type storedMember struct {
-	ID        bson.ObjectId `bson:"id"`
-	AccountID bson.ObjectId `bson:"accountId"`
-	Name      string        `bson:"name"`
-	ChannelID bson.ObjectId `bson:"channelId"`
-	Admin     bool          `bson:"admin"`
-	Banned    bool          `bson:"banned"`
-	Created   time.Time     `bson:"created"`
+	Name        string        `bson:"name"`
+	AccountID   bson.ObjectId `bson:"accountId"`
+	ChannelName string        `bson:"channelName"`
+	Admin       bool          `bson:"admin"`
+	Banned      bool          `bson:"banned"`
+	Created     time.Time     `bson:"created"`
 }
 
 func (sr *storedRoom) toRoom() *db.Room {
@@ -45,7 +42,6 @@ func (sr *storedRoom) toRoom() *db.Room {
 	}
 
 	return &db.Room{
-		ID:           sr.ID.Hex(),
 		Name:         sr.Name,
 		PasswordHash: sr.PasswordHash,
 		Channels:     channels,
@@ -56,7 +52,6 @@ func (sr *storedRoom) toRoom() *db.Room {
 
 func (sc *storedChannel) toChannel() *db.Channel {
 	return &db.Channel{
-		ID:      sc.ID.Hex(),
 		Name:    sc.Name,
 		Created: sc.Created,
 	}
@@ -64,12 +59,11 @@ func (sc *storedChannel) toChannel() *db.Channel {
 
 func (sm *storedMember) toMember() *db.Member {
 	return &db.Member{
-		ID:        sm.ID.Hex(),
-		AccountID: sm.AccountID.Hex(),
-		Name:      sm.Name,
-		ChannelID: sm.ChannelID.Hex(),
-		Admin:     sm.Admin,
-		Banned:    sm.Banned,
-		Created:   sm.Created,
+		Name:        sm.Name,
+		AccountID:   sm.AccountID.Hex(),
+		ChannelName: sm.ChannelName,
+		Admin:       sm.Admin,
+		Banned:      sm.Banned,
+		Created:     sm.Created,
 	}
 }

@@ -5,41 +5,37 @@ import (
 )
 
 type RoomsConn interface {
-	Create(name, password string) error
-	Get(id string) (*Room, error)
-	GetByName(name string) (*Room, error)
-	Delete(id string) error
+	Create(name, password, adminName, adminAccountID string) error
+	Get(name string) (*Room, error)
+	Delete(name string) error
 
 	// CreateChannel(id, name string) (*Channel, error)
 	// DeleteChannel(id channelID string) error
 
-	// AddMember(id, name string) error
-	// SetMemberAdmin(id, mDmberId string, admin bool) error
-	// SetMemberBanned(id, memberId string, banned bool) error
-	// RemoveMember(id, memberID string) error
+	AddMember(name, memberName, accountID string) error
+	SetMemberAdmin(name, memberName string, admin bool) error
+	SetMemberBanned(name, memberName string, banned bool) error
+	RemoveMember(name, memberName string) error
 }
 
 type Room struct {
-	ID           string
-	Name         string
-	PasswordHash []byte
-	Channels     []Channel
-	Members      []Member
-	Created      time.Time
+	Name         string    `json:"name"`
+	PasswordHash []byte    `json:"-"`
+	Channels     []Channel `json:"channels"`
+	Members      []Member  `json:"members"`
+	Created      time.Time `json:"created"`
 }
 
 type Channel struct {
-	ID      string
-	Name    string
-	Created time.Time
+	Name    string    `json:"name"`
+	Created time.Time `json:"created"`
 }
 
 type Member struct {
-	ID        string
-	AccountID string
-	Name      string
-	ChannelID string
-	Admin     bool
-	Banned    bool
-	Created   time.Time
+	Name        string    `json:"name"`
+	AccountID   string    `json:"-"`
+	ChannelName string    `json:"channelName"`
+	Admin       bool      `json:"admin"`
+	Banned      bool      `json:"banned"`
+	Created     time.Time `json:"created"`
 }

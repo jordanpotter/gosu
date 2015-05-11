@@ -8,6 +8,7 @@ type AccountsConn interface {
 	Create(email, deviceName, devicePassword string) error
 	Get(id string) (*Account, error)
 	GetByEmail(email string) (*Account, error)
+	Delete(id string) error
 }
 
 type Account struct {
