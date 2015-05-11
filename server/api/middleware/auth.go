@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	AccountIdKey = "accountId"
+	AccountIDKey = "accountID"
 	authHeader   = "Authorization"
 )
 
@@ -26,7 +26,8 @@ func AuthRequired(tf *token.Factory) gin.HandlerFunc {
 			return
 		}
 
-		c.Set(AccountIdKey, t.Id)
+		c.Set(AccountIDKey, t.ID)
+		// c.Set(RoomIdKey, t.RoomId)
 		c.Next()
 	}
 }

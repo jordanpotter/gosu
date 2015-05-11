@@ -8,35 +8,38 @@ type RoomsConn interface {
 	Create(name, password string) error
 	Get(id string) (*Room, error)
 	GetByName(name string) (*Room, error)
-	// DeleteRoom(id string) error
-
-	// ConnectToRoom(id, accountId string) (*Room, error)
-	// DisconnectFromRoom(id, accountId string) error
+	Delete(id string) error
 
 	// CreateChannel(id, name string) (*Channel, error)
-	// DeleteChannel(id string, channelId uint8) error
+	// DeleteChannel(id channelID string) error
 
-	// MovePeerToChannel(id string, channelId uint8, accountId string) error
+	// AddMember(id, name string) error
+	// SetMemberAdmin(id, mDmberId string, admin bool) error
+	// SetMemberBanned(id, memberId string, banned bool) error
+	// RemoveMember(id, memberID string) error
 }
 
 type Room struct {
-	Id           string
+	ID           string
 	Name         string
 	PasswordHash []byte
 	Channels     []Channel
+	Members      []Member
 	Created      time.Time
 }
 
 type Channel struct {
-	Id      string
+	ID      string
 	Name    string
-	Peers   []Peer
 	Created time.Time
 }
 
-type Peer struct {
-	Id        string
-	AccountId string
+type Member struct {
+	ID        string
+	AccountID string
 	Name      string
+	ChannelID string
+	Admin     bool
+	Banned    bool
 	Created   time.Time
 }

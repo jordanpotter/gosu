@@ -19,7 +19,7 @@ func (c *conn) Create(name, passwd string) error {
 	}
 
 	sChannel := storedChannel{
-		Id:      bson.NewObjectId(),
+		ID:      bson.NewObjectId(),
 		Name:    defaultChannelName,
 		Created: time.Now(),
 	}

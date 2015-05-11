@@ -29,14 +29,14 @@ func New(dbConn *db.Conn, tokenFactory *token.Factory) *Handler {
 func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
 	rg.Use(middleware.AuthRequired(h.tokenFactory))
 
-	rg.POST("/", h.create)
-	rg.GET("/:roomName", h.get)
-	rg.POST("/:roomName/join", h.join)
-	rg.POST("/:roomName/leave", h.leave)
-	rg.POST("/:roomName/login", h.login)
-	rg.POST("/:roomName/logout", h.logout)
-	rg.PUT("/:roomName/password", h.setPassword)
-
-	h.usersHandler.AddRoutes(rg.Group("/:roomName/users"))
-	h.channelsHandler.AddRoutes(rg.Group("/:roomName/channels"))
+	// rg.POST("/", h.create)
+	// rg.GET("/:roomName", h.get)
+	// rg.POST("/:roomName/join", h.join)
+	// rg.POST("/:roomName/leave", h.leave)
+	// rg.POST("/:roomName/login", h.login)
+	// rg.POST("/:roomName/logout", h.logout)
+	// rg.PUT("/:roomName/password", h.setPassword)
+	//
+	// h.usersHandler.AddRoutes(rg.Group("/:roomName/users"))
+	// h.channelsHandler.AddRoutes(rg.Group("/:roomName/channels"))
 }

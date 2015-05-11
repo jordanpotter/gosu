@@ -9,24 +9,27 @@ import (
 )
 
 type storedRoom struct {
-	Id           bson.ObjectId   `bson:"_id,omitempty"`
+	ID           bson.ObjectId   `bson:"_id,omitempty"`
 	Name         string          `bson:"name"`
 	PasswordHash []byte          `bson:"passwordHash"`
 	Channels     []storedChannel `bson:"channels"`
+	Members      []storedMember  `bson:"members"`
 	Created      time.Time       `bson:"created"`
 }
 
 type storedChannel struct {
-	Id      bson.ObjectId `bson:"id"`
+	ID      bson.ObjectId `bson:"id"`
 	Name    string        `bson:"name"`
-	Peers   []storedPeer  `bson:"peers"`
 	Created time.Time     `bson:"created"`
 }
 
-type storedPeer struct {
-	Id        bson.ObjectId `bson:"id"`
-	AccountId bson.ObjectId `bson:"accountId"`
+type storedMember struct {
+	ID        bson.ObjectId `bson:"id"`
+	AccountID bson.ObjectId `bson:"accountId"`
 	Name      string        `bson:"name"`
+	ChannelID bson.ObjectId `bson:"channelId"`
+	Admin     bool          `bson:"admin"`
+	Banned    bool          `bson:"banned"`
 	Created   time.Time     `bson:"created"`
 }
 
@@ -36,34 +39,37 @@ func (sr *storedRoom) toRoom() *db.Room {
 		channels = append(channels, *sChannel.toChannel())
 	}
 
+	members := make([]db.Member, len(sr.Members))
+	for _, sMember := range sr.Members {
+		members = append(members, *sMember.toMember())
+	}
+
 	return &db.Room{
-		Id:           sr.Id.Hex(),
+		ID:           sr.ID.Hex(),
 		Name:         sr.Name,
 		PasswordHash: sr.PasswordHash,
 		Channels:     channels,
+		Members:      members,
 		Created:      sr.Created,
 	}
 }
 
 func (sc *storedChannel) toChannel() *db.Channel {
-	peers := make([]db.Peer, len(sc.Peers))
-	for _, sPeer := range sc.Peers {
-		peers = append(peers, *sPeer.toPeer())
-	}
-
 	return &db.Channel{
-		Id:      sc.Id.Hex(),
+		ID:      sc.ID.Hex(),
 		Name:    sc.Name,
-		Peers:   peers,
 		Created: sc.Created,
 	}
 }
 
-func (sp *storedPeer) toPeer() *db.Peer {
-	return &db.Peer{
-		Id:        sp.Id.Hex(),
-		AccountId: sp.AccountId.Hex(),
-		Name:      sp.Name,
-		Created:   sp.Created,
+func (sm *storedMember) toMember() *db.Member {
+	return &db.Member{
+		ID:        sm.ID.Hex(),
+		AccountID: sm.AccountID.Hex(),
+		Name:      sm.Name,
+		ChannelID: sm.ChannelID.Hex(),
+		Admin:     sm.Admin,
+		Banned:    sm.Banned,
+		Created:   sm.Created,
 	}
 }

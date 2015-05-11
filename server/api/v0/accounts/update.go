@@ -6,24 +6,25 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/jordanpotter/gosu/server/api/middleware"
 	"github.com/jordanpotter/gosu/server/internal/auth/password"
 	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
-type LoginRequest struct {
+type AuthenticateRequest struct {
 	Email          string `json:"email" form:"email" binding:"required"`
 	DeviceName     string `json:"deviceName" form:"deviceName" binding:"required"`
 	DevicePassword string `json:"devicePassword" form:"devicePassword" binding:"required"`
 }
 
-type LoginResponse struct {
-	Id          string    `json:"id"`
+type AuthenticateResponse struct {
+	ID          string    `json:"id"`
 	AuthToken   string    `json:"authToken"`
 	AuthExpires time.Time `json:"authExpires"`
 }
 
-func (h *Handler) login(c *gin.Context) {
-	var req LoginRequest
+func (h *Handler) authenticate(c *gin.Context) {
+	var req AuthenticateRequest
 	if !c.Bind(&req) {
 		return
 	}
@@ -42,14 +43,31 @@ func (h *Handler) login(c *gin.Context) {
 		return
 	}
 
-	authToken := h.tokenFactory.New(account.Id)
+	authToken := h.tokenFactory.New(account.ID)
 	authTokenEncrypted, err := h.tokenFactory.Encrypt(authToken)
 	if err != nil {
 		c.Fail(500, err)
 		return
 	}
 
-	c.JSON(200, LoginResponse{account.Id, authTokenEncrypted, authToken.Expires})
+	c.JSON(200, AuthenticateResponse{account.ID, authTokenEncrypted, authToken.Expires})
+}
+
+func (h *Handler) reauthenticate(c *gin.Context) {
+	accountID, err := c.Get(middleware.AccountIDKey)
+	if err != nil {
+		c.Fail(500, err)
+		return
+	}
+
+	authToken := h.tokenFactory.New(accountID.(string))
+	authTokenEncrypted, err := h.tokenFactory.Encrypt(authToken)
+	if err != nil {
+		c.Fail(500, err)
+		return
+	}
+
+	c.JSON(200, AuthenticateResponse{accountID.(string), authTokenEncrypted, authToken.Expires})
 }
 
 func hasValidDeviceCredentials(deviceName, devicePassword string, devices []db.Device) bool {
