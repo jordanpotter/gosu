@@ -13,7 +13,7 @@ type Factory struct {
 }
 
 type Token struct {
-	Id      string
+	ID      string
 	Expires time.Time
 }
 
@@ -22,13 +22,13 @@ func NewFactory(signatureKey []byte, duration time.Duration) *Factory {
 }
 
 func (f *Factory) New(id string) *Token {
-	expires := time.Now().Add(f.duration)
+	expires := time.Now().Add(f.duration).UTC()
 	return &Token{id, expires}
 }
 
 func (f *Factory) Encrypt(token *Token) (string, error) {
 	jwt := jwt.New(jwt.SigningMethodHS256)
-	jwt.Claims["id"] = token.Id
+	jwt.Claims["id"] = token.ID
 	jwt.Claims["expires"] = token.Expires.Unix()
 	return jwt.SignedString(f.signatureKey)
 }
@@ -45,6 +45,6 @@ func (f *Factory) Decrypt(str string) (*Token, error) {
 
 	id := token.Claims["id"].(string)
 	expiresUnix := int64(token.Claims["expires"].(float64))
-	expires := time.Unix(expiresUnix, 0)
+	expires := time.Unix(expiresUnix, 0).UTC()
 	return &Token{id, expires}, nil
 }
