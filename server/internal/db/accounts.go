@@ -12,14 +12,14 @@ type AccountsConn interface {
 }
 
 type Account struct {
-	ID      string
-	Email   string
-	Devices []Device
-	Created time.Time
+	ID      string    `json:"id"`
+	Email   string    `json:"email"`
+	Devices []Device  `json:"devices"`
+	Created time.Time `json:"created"`
 }
 
 type Device struct {
-	Name         string
-	PasswordHash []byte
-	Created      time.Time
+	Name         string    `json:"name"`
+	PasswordHash []byte    `json:"-"`
+	Created      time.Time `json:"created"`
 }

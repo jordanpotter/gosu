@@ -5,7 +5,7 @@ import (
 
 	"github.com/jordanpotter/gosu/server/api/middleware"
 	"github.com/jordanpotter/gosu/server/api/v0/rooms/channels"
-	"github.com/jordanpotter/gosu/server/api/v0/rooms/users"
+	"github.com/jordanpotter/gosu/server/api/v0/rooms/members"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
 )
@@ -13,7 +13,7 @@ import (
 type Handler struct {
 	dbConn          *db.Conn
 	tokenFactory    *token.Factory
-	usersHandler    *users.Handler
+	membersHandler  *members.Handler
 	channelsHandler *channels.Handler
 }
 
@@ -21,7 +21,7 @@ func New(dbConn *db.Conn, tokenFactory *token.Factory) *Handler {
 	return &Handler{
 		dbConn:          dbConn,
 		tokenFactory:    tokenFactory,
-		usersHandler:    users.New(dbConn),
+		membersHandler:  members.New(dbConn),
 		channelsHandler: channels.New(dbConn),
 	}
 }
@@ -31,10 +31,8 @@ func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
 
 	rg.POST("/", h.create)
 	rg.GET("/", h.get)
-	rg.POST("/:roomName/join", h.join)
 	// rg.POST("/:roomName/authenticate", h.authenticate)
-	// rg.DELETE("/:roomName", h.delete)
-	//
-	// h.usersHandler.AddRoutes(rg.Group("/:roomName/users"))
-	// h.channelsHandler.AddRoutes(rg.Group("/:roomName/channels"))
+
+	h.membersHandler.AddRoutes(rg.Group("/:roomName/members"))
+	h.channelsHandler.AddRoutes(rg.Group("/:roomName/channels"))
 }

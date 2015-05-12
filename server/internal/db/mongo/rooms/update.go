@@ -8,6 +8,34 @@ import (
 	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
+func (c *conn) AddChannel(name, channelName string) error {
+	exists, err := c.doesChannelExist(name, channelName)
+	if err != nil {
+		return err
+	} else if exists {
+		return db.DuplicateError
+	}
+
+	channelBson := bson.M{"name": channelName, "created": time.Now()}
+	dataBson := bson.M{"$push": bson.M{"channels": channelBson}}
+	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
+	return col.Update(bson.M{"name": name}, dataBson)
+}
+
+func (c *conn) RemoveChannel(name, channelName string) error {
+	channelBson := bson.M{"name": channelName}
+	dataBson := bson.M{"$pull": bson.M{"channels": channelBson}}
+	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
+	return col.Update(bson.M{"name": name}, dataBson)
+}
+
+func (c *conn) doesChannelExist(name, channelName string) (bool, error) {
+	queryBson := bson.M{"name": name, "channels.name": channelName}
+	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
+	num, err := col.Find(queryBson).Count()
+	return num > 0, err
+}
+
 func (c *conn) AddMember(name, memberName, accountID string) error {
 	exists, err := c.doesMemberExist(name, memberName, accountID)
 	if err != nil {

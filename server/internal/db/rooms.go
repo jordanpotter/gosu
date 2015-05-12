@@ -9,8 +9,8 @@ type RoomsConn interface {
 	Get(name string) (*Room, error)
 	Delete(name string) error
 
-	// CreateChannel(id, name string) (*Channel, error)
-	// DeleteChannel(id channelID string) error
+	AddChannel(name, channelName string) error
+	RemoveChannel(name, channelName string) error
 
 	AddMember(name, memberName, accountID string) error
 	SetMemberAdmin(name, memberName string, admin bool) error

@@ -9,7 +9,14 @@ import (
 func (h *Handler) delete(c *gin.Context) {
 	roomName := c.Params.ByName("roomName")
 	channelName := c.Params.ByName("channelName")
-	fmt.Printf("TODO: delete channel %s in room %s\n", channelName, roomName)
+
+	fmt.Println("TODO: make sure admin for room")
+
+	err := h.dbConn.Rooms.RemoveChannel(roomName, channelName)
+	if err != nil {
+		c.Fail(500, err)
+		return
+	}
 
 	c.String(200, "ok")
 }

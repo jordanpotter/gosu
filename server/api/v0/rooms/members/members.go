@@ -1,4 +1,4 @@
-package users
+package members
 
 import (
 	"github.com/gin-gonic/gin"
@@ -16,7 +16,9 @@ func New(dbConn *db.Conn) *Handler {
 
 func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
 	rg.GET("/", h.getAll)
-	rg.PUT("/:userName/admin", h.setAdmin)
-	rg.PUT("/:userName/banned", h.setBanned)
-	rg.DELETE("/:userName", h.delete)
+	rg.POST("/", h.join)
+	rg.DELETE("/", h.leave)
+	rg.PUT("/:memberName/admin", h.setAdmin)
+	rg.PUT("/:memberName/banned", h.setBanned)
+	rg.DELETE("/:memberName", h.delete)
 }

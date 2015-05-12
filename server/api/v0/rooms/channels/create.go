@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
 type CreateRequest struct {
@@ -16,8 +17,17 @@ func (h *Handler) create(c *gin.Context) {
 		return
 	}
 
+	fmt.Println("TODO: make sure admin for room")
+
 	roomName := c.Params.ByName("roomName")
-	fmt.Printf("TODO: create channel %s in %s if doesn't exist\n", req.Name, roomName)
+	err := h.dbConn.Rooms.AddChannel(roomName, req.Name)
+	if err == db.DuplicateError {
+		c.Fail(409, err)
+		return
+	} else if err != nil {
+		c.Fail(500, err)
+		return
+	}
 
 	c.String(200, "ok")
 }

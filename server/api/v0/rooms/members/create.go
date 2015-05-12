@@ -1,23 +1,28 @@
-package rooms
+package members
 
 import (
 	"errors"
 
 	"github.com/gin-gonic/gin"
-
 	"github.com/jordanpotter/gosu/server/api/middleware"
 	"github.com/jordanpotter/gosu/server/internal/auth/password"
 	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
 type JoinRequest struct {
-	MemberName string `json:"memberName" form:"memberName" binding:"required"`
-	Password   string `json:"password" form:"password" binding:"required"`
+	Name     string `json:"name" form:"name" binding:"required"`
+	Password string `json:"password" form:"password" binding:"required"`
 }
 
 func (h *Handler) join(c *gin.Context) {
 	var req JoinRequest
 	if !c.Bind(&req) {
+		return
+	}
+
+	accountID, err := c.Get(middleware.AccountIDKey)
+	if err != nil {
+		c.Fail(500, err)
 		return
 	}
 
@@ -34,13 +39,7 @@ func (h *Handler) join(c *gin.Context) {
 		return
 	}
 
-	accountID, err := c.Get(middleware.AccountIDKey)
-	if err != nil {
-		c.Fail(500, err)
-		return
-	}
-
-	err = h.dbConn.Rooms.AddMember(roomName, req.MemberName, accountID.(string))
+	err = h.dbConn.Rooms.AddMember(roomName, req.Name, accountID.(string))
 	if err == db.DuplicateError {
 		c.Fail(409, err)
 		return

@@ -17,6 +17,4 @@ func New(dbConn *db.Conn) *Handler {
 func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
 	rg.POST("/", h.create)
 	rg.DELETE("/:channelName", h.delete)
-	rg.POST("/:channelName/move", h.move)
-	rg.GET("/:channelName/relays", h.getRelayConns)
 }
