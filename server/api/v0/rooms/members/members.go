@@ -16,9 +16,11 @@ func New(dbConn *db.Conn) *Handler {
 
 func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
 	rg.GET("/", h.getAll)
-	rg.POST("/", h.join)
-	rg.DELETE("/", h.leave)
-	rg.PUT("/:memberName/admin", h.setAdmin)
-	rg.PUT("/:memberName/banned", h.setBanned)
-	rg.DELETE("/:memberName", h.delete)
+	rg.POST("/join", h.join)
+	rg.POST("/authenticate", h.authenticate)
+	rg.DELETE("/leave", h.leave)
+
+	rg.PUT("/manage/:memberAccountID/admin", h.setAdmin)
+	rg.PUT("/manage/:memberAccountID/banned", h.setBanned)
+	rg.DELETE("/manage/:memberAccountID", h.delete)
 }

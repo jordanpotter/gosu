@@ -24,7 +24,7 @@ func ensureIndices(session *mgo.Session, config *config.Mongo) error {
 		Key:        []string{"name"},
 		Unique:     true,
 		DropDups:   false,
-		Background: false,
+		Background: true,
 		Sparse:     false,
 	}
 	return col.EnsureIndex(nameIndex)

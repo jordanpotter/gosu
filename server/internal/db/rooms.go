@@ -12,10 +12,11 @@ type RoomsConn interface {
 	AddChannel(name, channelName string) error
 	RemoveChannel(name, channelName string) error
 
-	AddMember(name, memberName, accountID string) error
-	SetMemberAdmin(name, memberName string, admin bool) error
-	SetMemberBanned(name, memberName string, banned bool) error
-	RemoveMember(name, memberName string) error
+	AddMember(name, accountID, memberName string) error
+	GetMember(name, accountID string) (*Member, error)
+	SetMemberAdmin(name, accountID string, admin bool) error
+	SetMemberBanned(name, accountID string, banned bool) error
+	RemoveMember(name, accountID string) error
 }
 
 type Room struct {
@@ -32,8 +33,8 @@ type Channel struct {
 }
 
 type Member struct {
+	AccountID   string    `json:"accountID"`
 	Name        string    `json:"name"`
-	AccountID   string    `json:"-"`
 	ChannelName string    `json:"channelName"`
 	Admin       bool      `json:"admin"`
 	Banned      bool      `json:"banned"`

@@ -23,7 +23,7 @@ type storedChannel struct {
 
 type storedMember struct {
 	Name        string        `bson:"name"`
-	AccountID   bson.ObjectId `bson:"accountId"`
+	AccountID   bson.ObjectId `bson:"accountID"`
 	ChannelName string        `bson:"channelName"`
 	Admin       bool          `bson:"admin"`
 	Banned      bool          `bson:"banned"`

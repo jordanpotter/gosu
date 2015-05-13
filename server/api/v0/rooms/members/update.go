@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jordanpotter/gosu/server/api/middleware"
+	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
 type SetAdminRequest struct {
@@ -18,6 +20,30 @@ type SetBannedRequest struct {
 	Banned bool `json:"banned" form:"banned"`
 }
 
+func (h *Handler) authenticate(c *gin.Context) {
+	accountID, err := c.Get(middleware.AccountIDKey)
+	if err != nil {
+		c.Fail(500, err)
+		return
+	}
+
+	roomName := c.Params.ByName("roomName")
+	member, err := h.dbConn.Rooms.GetMember(roomName, accountID.(string))
+	if err == db.NotFoundError {
+		c.Fail(404, err)
+		return
+	} else if err != nil {
+		c.Fail(500, err)
+		return
+	}
+
+	fmt.Println("TODO: add room and admin info to auth token")
+	fmt.Println("TODO: add account to channel")
+	fmt.Println(member)
+
+	c.String(200, "ok")
+}
+
 func (h *Handler) setAdmin(c *gin.Context) {
 	var req SetAdminRequest
 	if !c.Bind(&req) {
@@ -28,9 +54,12 @@ func (h *Handler) setAdmin(c *gin.Context) {
 	fmt.Println("TODO: check not revoking admin for self")
 
 	roomName := c.Params.ByName("roomName")
-	memberName := c.Params.ByName("memberName")
-	err := h.dbConn.Rooms.SetMemberAdmin(roomName, memberName, req.Admin)
-	if err != nil {
+	accountID := c.Params.ByName("memberAccountID")
+	err := h.dbConn.Rooms.SetMemberAdmin(roomName, accountID, req.Admin)
+	if err == db.NotFoundError {
+		c.Fail(404, err)
+		return
+	} else if err != nil {
 		c.Fail(500, err)
 		return
 	}
@@ -48,9 +77,12 @@ func (h *Handler) setBanned(c *gin.Context) {
 	fmt.Println("TODO: check not trying to ban self")
 
 	roomName := c.Params.ByName("roomName")
-	memberName := c.Params.ByName("memberName")
-	err := h.dbConn.Rooms.SetMemberBanned(roomName, memberName, req.Banned)
-	if err != nil {
+	accountID := c.Params.ByName("memberAccountID")
+	err := h.dbConn.Rooms.SetMemberBanned(roomName, accountID, req.Banned)
+	if err == db.NotFoundError {
+		c.Fail(404, err)
+		return
+	} else if err != nil {
 		c.Fail(500, err)
 		return
 	}

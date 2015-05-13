@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
 func (h *Handler) leave(c *gin.Context) {
@@ -17,10 +18,12 @@ func (h *Handler) delete(c *gin.Context) {
 	fmt.Println("TODO: check not revoking admin for self")
 
 	roomName := c.Params.ByName("roomName")
-	memberName := c.Params.ByName("memberName")
-
-	err := h.dbConn.Rooms.RemoveMember(roomName, memberName)
-	if err != nil {
+	accountID := c.Params.ByName("memberAccountID")
+	err := h.dbConn.Rooms.RemoveMember(roomName, accountID)
+	if err == db.NotFoundError {
+		c.Fail(404, err)
+		return
+	} else if err != nil {
 		c.Fail(500, err)
 		return
 	}

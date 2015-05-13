@@ -16,68 +16,86 @@ func (c *conn) AddChannel(name, channelName string) error {
 		return db.DuplicateError
 	}
 
-	channelBson := bson.M{"name": channelName, "created": time.Now()}
-	dataBson := bson.M{"$push": bson.M{"channels": channelBson}}
+	query := bson.M{"name": name}
+	channel := bson.M{"name": channelName, "created": time.Now()}
+	data := bson.M{"$push": bson.M{"channels": channel}}
 	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
-	return col.Update(bson.M{"name": name}, dataBson)
+	return col.Update(query, data)
 }
 
 func (c *conn) RemoveChannel(name, channelName string) error {
-	channelBson := bson.M{"name": channelName}
-	dataBson := bson.M{"$pull": bson.M{"channels": channelBson}}
+	exists, err := c.doesChannelExist(name, channelName)
+	if err != nil {
+		return err
+	} else if !exists {
+		return db.NotFoundError
+	}
+
+	query := bson.M{"name": name}
+	channel := bson.M{"name": channelName}
+	data := bson.M{"$pull": bson.M{"channels": channel}}
 	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
-	return col.Update(bson.M{"name": name}, dataBson)
+	return col.Update(query, data)
 }
 
 func (c *conn) doesChannelExist(name, channelName string) (bool, error) {
-	queryBson := bson.M{"name": name, "channels.name": channelName}
+	query := bson.M{"name": name, "channels.name": channelName}
 	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
-	num, err := col.Find(queryBson).Count()
+	num, err := col.Find(query).Count()
 	return num > 0, err
 }
 
-func (c *conn) AddMember(name, memberName, accountID string) error {
-	exists, err := c.doesMemberExist(name, memberName, accountID)
+func (c *conn) AddMember(name, accountID, memberName string) error {
+	exists, err := c.doesMemberExist(name, accountID, memberName)
 	if err != nil {
 		return err
 	} else if exists {
 		return db.DuplicateError
 	}
 
-	memberBson := bson.M{"name": memberName, "accountId": bson.ObjectIdHex(accountID), "created": time.Now()}
-	dataBson := bson.M{"$push": bson.M{"members": memberBson}}
+	query := bson.M{"name": name}
+	member := bson.M{"accountID": bson.ObjectIdHex(accountID), "name": memberName, "created": time.Now()}
+	data := bson.M{"$push": bson.M{"members": member}}
 	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
-	return col.Update(bson.M{"name": name}, dataBson)
+	return col.Update(query, data)
 }
 
-func (c *conn) SetMemberAdmin(name, memberName string, admin bool) error {
-	queryBson := bson.M{"name": name, "members.name": memberName}
-	dataBson := bson.M{"$set": bson.M{"members.$.admin": admin}}
+func (c *conn) SetMemberAdmin(name, accountID string, admin bool) error {
+	query := bson.M{"name": name, "members.accountID": accountID}
+	data := bson.M{"$set": bson.M{"members.$.admin": admin}}
 	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
-	return col.Update(queryBson, dataBson)
+	return col.Update(query, data)
 }
 
-func (c *conn) SetMemberBanned(name, memberName string, banned bool) error {
-	queryBson := bson.M{"name": name, "members.name": memberName}
-	dataBson := bson.M{"$set": bson.M{"members.$.banned": banned}}
+func (c *conn) SetMemberBanned(name, accountID string, banned bool) error {
+	query := bson.M{"name": name, "members.accountID": accountID}
+	data := bson.M{"$set": bson.M{"members.$.banned": banned}}
 	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
-	return col.Update(queryBson, dataBson)
+	return col.Update(query, data)
 }
 
-func (c *conn) RemoveMember(name, memberName string) error {
-	memberBson := bson.M{"name": memberName}
-	dataBson := bson.M{"$pull": bson.M{"members": memberBson}}
-	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
-	return col.Update(bson.M{"name": name}, dataBson)
-}
-
-func (c *conn) doesMemberExist(name, memberName, accountID string) (bool, error) {
-	nameOrAccountBson := []bson.M{
-		bson.M{"members.name": memberName},
-		bson.M{"members.accountId": bson.ObjectIdHex(accountID)},
+func (c *conn) RemoveMember(name, accountID string) error {
+	exists, err := c.doesMemberExist(name, accountID, "")
+	if err != nil {
+		return err
+	} else if !exists {
+		return db.NotFoundError
 	}
-	queryBson := bson.M{"name": name, "$or": nameOrAccountBson}
+
+	query := bson.M{"name": name}
+	member := bson.M{"name": accountID}
+	data := bson.M{"$pull": bson.M{"members": member}}
 	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
-	num, err := col.Find(queryBson).Count()
+	return col.Update(query, data)
+}
+
+func (c *conn) doesMemberExist(name, accountID, memberName string) (bool, error) {
+	accountOrName := []bson.M{
+		bson.M{"members.accountID": bson.ObjectIdHex(accountID)},
+		bson.M{"members.name": memberName},
+	}
+	query := bson.M{"name": name, "$or": accountOrName}
+	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
+	num, err := col.Find(query).Count()
 	return num > 0, err
 }

@@ -8,8 +8,9 @@ import (
 )
 
 func (c *conn) Delete(name string) error {
+	query := bson.M{"name": name}
 	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
-	err := col.Remove(bson.M{"name": name})
+	err := col.Remove(query)
 	if err == mgo.ErrNotFound {
 		return db.NotFoundError
 	}

@@ -39,7 +39,7 @@ func (h *Handler) join(c *gin.Context) {
 		return
 	}
 
-	err = h.dbConn.Rooms.AddMember(roomName, req.Name, accountID.(string))
+	err = h.dbConn.Rooms.AddMember(roomName, accountID.(string), req.Name)
 	if err == db.DuplicateError {
 		c.Fail(409, err)
 		return

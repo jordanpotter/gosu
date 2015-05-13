@@ -14,11 +14,11 @@ func (c *conn) Create(email, deviceName, devicePassword string) error {
 		return err
 	}
 
-	findBson := bson.M{"email": email}
-	deviceBson := bson.M{"name": deviceName, "passwordHash": dpHash, "created": time.Now()}
-	onInsertBson := bson.M{"created": time.Now()}
-	dataBson := bson.M{"$push": bson.M{"devices": deviceBson}, "$setOnInsert": onInsertBson}
+	query := bson.M{"email": email}
+	device := bson.M{"name": deviceName, "passwordHash": dpHash, "created": time.Now()}
+	onInsert := bson.M{"created": time.Now()}
+	data := bson.M{"$push": bson.M{"devices": device}, "$setOnInsert": onInsert}
 	col := c.session.DB(c.config.Name).C(c.config.Collections.Accounts)
-	_, err = col.Upsert(findBson, dataBson)
+	_, err = col.Upsert(query, data)
 	return err
 }

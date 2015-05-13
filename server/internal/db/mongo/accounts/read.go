@@ -16,8 +16,9 @@ func (c *conn) Get(id string) (*db.Account, error) {
 
 func (c *conn) GetByEmail(email string) (*db.Account, error) {
 	var sa storedAccount
+	query := bson.M{"email": email}
 	col := c.session.DB(c.config.Name).C(c.config.Collections.Accounts)
-	err := col.Find(bson.M{"email": email}).One(&sa)
+	err := col.Find(query).One(&sa)
 	return handleStoredAccount(&sa, err)
 }
 
