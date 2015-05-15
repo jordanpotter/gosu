@@ -8,12 +8,12 @@ import (
 )
 
 func (h *Handler) delete(c *gin.Context) {
-	roomName := c.Params.ByName("roomName")
-	channelName := c.Params.ByName("channelName")
+	roomID := c.Params.ByName("roomID")
+	channelID := c.Params.ByName("channelID")
 
 	fmt.Println("TODO: make sure admin for room")
 
-	err := h.dbConn.Rooms.RemoveChannel(roomName, channelName)
+	err := h.dbConn.Rooms.RemoveChannel(roomID, channelID)
 	if err == db.NotFoundError {
 		c.Fail(404, err)
 		return

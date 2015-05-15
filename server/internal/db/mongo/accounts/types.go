@@ -16,9 +16,10 @@ type storedAccount struct {
 }
 
 type storedDevice struct {
-	Name         string    `bson:"name"`
-	PasswordHash []byte    `bson:"passwordHash"`
-	Created      time.Time `bson:"created"`
+	ID           bson.ObjectId `bson:"id"`
+	Name         string        `bson:"name"`
+	PasswordHash []byte        `bson:"passwordHash"`
+	Created      time.Time     `bson:"created"`
 }
 
 func (sa *storedAccount) toAccount() *db.Account {
@@ -37,6 +38,7 @@ func (sa *storedAccount) toAccount() *db.Account {
 
 func (sd *storedDevice) toDevice() *db.Device {
 	return &db.Device{
+		ID:           sd.ID.Hex(),
 		Name:         sd.Name,
 		PasswordHash: sd.PasswordHash,
 		Created:      sd.Created,

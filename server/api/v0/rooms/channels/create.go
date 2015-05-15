@@ -19,8 +19,8 @@ func (h *Handler) create(c *gin.Context) {
 
 	fmt.Println("TODO: make sure admin for room")
 
-	roomName := c.Params.ByName("roomName")
-	err := h.dbConn.Rooms.AddChannel(roomName, req.Name)
+	roomID := c.Params.ByName("roomID")
+	err := h.dbConn.Rooms.AddChannel(roomID, req.Name)
 	if err == db.DuplicateError {
 		c.Fail(409, err)
 		return

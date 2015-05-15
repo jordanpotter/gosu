@@ -7,7 +7,14 @@ import (
 	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
-func (c *conn) Get(name string) (*db.Room, error) {
+func (c *conn) Get(id string) (*db.Room, error) {
+	var sr storedRoom
+	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
+	err := col.FindId(bson.ObjectIdHex(id)).One(&sr)
+	return handleStoredRoom(&sr, err)
+}
+
+func (c *conn) GetByName(name string) (*db.Room, error) {
 	var sr storedRoom
 	query := bson.M{"name": name}
 	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
@@ -22,18 +29,4 @@ func handleStoredRoom(sr *storedRoom, err error) (*db.Room, error) {
 		return nil, err
 	}
 	return sr.toRoom(), nil
-}
-
-func (c *conn) GetMember(name, accountID string) (*db.Member, error) {
-	room, err := c.Get(name)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, member := range room.Members {
-		if member.AccountID == accountID {
-			return &member, nil
-		}
-	}
-	return nil, db.NotFoundError
 }

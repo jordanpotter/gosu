@@ -5,21 +5,22 @@ import (
 )
 
 type RoomsConn interface {
-	Create(name, password, adminName, adminAccountID string) error
-	Get(name string) (*Room, error)
-	Delete(name string) error
+	Create(name, password, adminAccountID, adminName string) error
+	Get(id string) (*Room, error)
+	GetByName(name string) (*Room, error)
+	Delete(id string) error
 
-	AddChannel(name, channelName string) error
-	RemoveChannel(name, channelName string) error
+	AddChannel(id, channelName string) error
+	RemoveChannel(id, channelID string) error
 
-	AddMember(name, accountID, memberName string) error
-	GetMember(name, accountID string) (*Member, error)
-	SetMemberAdmin(name, accountID string, admin bool) error
-	SetMemberBanned(name, accountID string, banned bool) error
-	RemoveMember(name, accountID string) error
+	AddMember(id, accountID, memberName string) error
+	SetMemberAdmin(id, memberID string, admin bool) error
+	SetMemberBanned(id, memberID string, banned bool) error
+	RemoveMember(id, memberID string) error
 }
 
 type Room struct {
+	ID           string    `json:"id"`
 	Name         string    `json:"name"`
 	PasswordHash []byte    `json:"-"`
 	Channels     []Channel `json:"channels"`
@@ -28,11 +29,13 @@ type Room struct {
 }
 
 type Channel struct {
+	ID      string    `json:"id"`
 	Name    string    `json:"name"`
 	Created time.Time `json:"created"`
 }
 
 type Member struct {
+	ID          string    `json:"id"`
 	AccountID   string    `json:"accountID"`
 	Name        string    `json:"name"`
 	ChannelName string    `json:"channelName"`

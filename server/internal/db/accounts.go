@@ -19,6 +19,7 @@ type Account struct {
 }
 
 type Device struct {
+	ID           string    `json:"id"`
 	Name         string    `json:"name"`
 	PasswordHash []byte    `json:"-"`
 	Created      time.Time `json:"created"`

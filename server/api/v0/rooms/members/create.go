@@ -26,8 +26,8 @@ func (h *Handler) join(c *gin.Context) {
 		return
 	}
 
-	roomName := c.Params.ByName("roomName")
-	room, err := h.dbConn.Rooms.Get(roomName)
+	roomID := c.Params.ByName("roomID")
+	room, err := h.dbConn.Rooms.Get(roomID)
 	if err != nil {
 		c.Fail(500, err)
 		return
@@ -39,7 +39,7 @@ func (h *Handler) join(c *gin.Context) {
 		return
 	}
 
-	err = h.dbConn.Rooms.AddMember(roomName, accountID.(string), req.Name)
+	err = h.dbConn.Rooms.AddMember(roomID, accountID.(string), req.Name)
 	if err == db.DuplicateError {
 		c.Fail(409, err)
 		return

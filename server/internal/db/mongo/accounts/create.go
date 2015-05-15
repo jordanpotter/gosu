@@ -15,7 +15,12 @@ func (c *conn) Create(email, deviceName, devicePassword string) error {
 	}
 
 	query := bson.M{"email": email}
-	device := bson.M{"name": deviceName, "passwordHash": dpHash, "created": time.Now()}
+	device := bson.M{
+		"id":           bson.NewObjectId(),
+		"name":         deviceName,
+		"passwordHash": dpHash,
+		"created":      time.Now(),
+	}
 	onInsert := bson.M{"created": time.Now()}
 	data := bson.M{"$push": bson.M{"devices": device}, "$setOnInsert": onInsert}
 	col := c.session.DB(c.config.Name).C(c.config.Collections.Accounts)

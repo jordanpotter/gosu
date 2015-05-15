@@ -8,8 +8,8 @@ import (
 )
 
 func (h *Handler) leave(c *gin.Context) {
-	roomName := c.Params.ByName("roomName")
-	fmt.Printf("TODO: leave room %s", roomName)
+	roomID := c.Params.ByName("roomID")
+	fmt.Printf("TODO: leave room %s", roomID)
 	c.String(200, "ok")
 }
 
@@ -17,9 +17,9 @@ func (h *Handler) delete(c *gin.Context) {
 	fmt.Println("TODO: check account is admin for room")
 	fmt.Println("TODO: check not revoking admin for self")
 
-	roomName := c.Params.ByName("roomName")
-	accountID := c.Params.ByName("memberAccountID")
-	err := h.dbConn.Rooms.RemoveMember(roomName, accountID)
+	roomID := c.Params.ByName("roomID")
+	memberID := c.Params.ByName("memberID")
+	err := h.dbConn.Rooms.RemoveMember(roomID, memberID)
 	if err == db.NotFoundError {
 		c.Fail(404, err)
 		return

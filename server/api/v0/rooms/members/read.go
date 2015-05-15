@@ -7,7 +7,7 @@ import (
 )
 
 func (h *Handler) getAll(c *gin.Context) {
-	roomName := c.Params.ByName("roomName")
-	fmt.Printf("TODO: get users in room %s\n", roomName)
+	roomID := c.Params.ByName("roomID")
+	fmt.Printf("TODO: get users in room %s\n", roomID)
 	c.String(200, "ok")
 }

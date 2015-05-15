@@ -30,9 +30,9 @@ func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
 	rg.Use(middleware.AuthRequired(h.tokenFactory))
 
 	rg.POST("/", h.create)
-	rg.GET("/", h.get)
+	// rg.GET("/", h.get)
 	// rg.POST("/:roomName/authenticate", h.authenticate)
 
-	h.membersHandler.AddRoutes(rg.Group("/:roomName/members"))
-	h.channelsHandler.AddRoutes(rg.Group("/:roomName/channels"))
+	h.membersHandler.AddRoutes(rg.Group("/:roomID/members"))
+	h.channelsHandler.AddRoutes(rg.Group("/:roomID/channels"))
 }
