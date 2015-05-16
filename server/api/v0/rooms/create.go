@@ -25,7 +25,7 @@ func (h *Handler) create(c *gin.Context) {
 		return
 	}
 
-	err = h.dbConn.Rooms.Create(req.Name, req.Password, req.MemberName, accountID.(string))
+	err = h.dbConn.Rooms.Create(req.Name, req.Password, accountID.(string), req.MemberName)
 	if err == db.DuplicateError {
 		c.Fail(409, err)
 		return

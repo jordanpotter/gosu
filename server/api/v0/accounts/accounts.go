@@ -3,7 +3,6 @@ package accounts
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/jordanpotter/gosu/server/api/middleware"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
 )
@@ -20,5 +19,5 @@ func New(dbConn *db.Conn, tokenFactory *token.Factory) *Handler {
 func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
 	rg.POST("/create", h.create)
 	rg.POST("/authenticate", h.authenticate)
-	rg.POST("/reauthenticate", middleware.AuthRequired(h.tokenFactory), h.reauthenticate)
+	// rg.POST("/reauthenticate", middleware.AuthRequired(h.tokenFactory), h.reauthenticate)
 }

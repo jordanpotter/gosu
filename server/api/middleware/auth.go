@@ -10,9 +10,10 @@ import (
 )
 
 const (
-	AccountIDKey = "accountID"
-	RoomNameKey  = "roomName"
-	authHeader   = "Authorization"
+	AccountIDKey    = "accountID"
+	RoomIDKey       = "roomID"
+	RoomMemberIDKey = "roomMemberID"
+	authHeader      = "Authorization"
 )
 
 func AuthRequired(tf *token.Factory) gin.HandlerFunc {
@@ -27,8 +28,9 @@ func AuthRequired(tf *token.Factory) gin.HandlerFunc {
 			return
 		}
 
-		c.Set(AccountIDKey, t.ID)
-		c.Set(RoomNameKey, t.RoomName)
+		c.Set(AccountIDKey, t.Account.ID)
+		c.Set(RoomIDKey, t.Room.ID)
+		c.Set(RoomMemberIDKey, t.Room.MemberID)
 		c.Next()
 	}
 }

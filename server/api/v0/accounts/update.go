@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/jordanpotter/gosu/server/api/middleware"
 	"github.com/jordanpotter/gosu/server/internal/auth/password"
 	"github.com/jordanpotter/gosu/server/internal/db"
 )
@@ -43,7 +42,8 @@ func (h *Handler) authenticate(c *gin.Context) {
 		return
 	}
 
-	authToken := h.tokenFactory.New(account.ID)
+	authToken := h.tokenFactory.New()
+	authToken.Account.ID = account.ID
 	authTokenEncrypted, err := h.tokenFactory.Encrypt(authToken)
 	if err != nil {
 		c.Fail(500, err)
@@ -51,23 +51,6 @@ func (h *Handler) authenticate(c *gin.Context) {
 	}
 
 	c.JSON(200, AuthenticateResponse{account.ID, authTokenEncrypted, authToken.Expires})
-}
-
-func (h *Handler) reauthenticate(c *gin.Context) {
-	accountID, err := c.Get(middleware.AccountIDKey)
-	if err != nil {
-		c.Fail(500, err)
-		return
-	}
-
-	authToken := h.tokenFactory.New(accountID.(string))
-	authTokenEncrypted, err := h.tokenFactory.Encrypt(authToken)
-	if err != nil {
-		c.Fail(500, err)
-		return
-	}
-
-	c.JSON(200, AuthenticateResponse{accountID.(string), authTokenEncrypted, authToken.Expires})
 }
 
 func hasValidDeviceCredentials(deviceName, devicePassword string, devices []db.Device) bool {
