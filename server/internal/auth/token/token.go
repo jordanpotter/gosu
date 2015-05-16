@@ -11,6 +11,7 @@ const (
 	accountIDKey    = "accountID"
 	roomIDKey       = "roomID"
 	roomMemberIDKey = "roomMemberID"
+	roomAdminKey    = "roomAdmin"
 	expiresKey      = "expires"
 )
 
@@ -32,6 +33,7 @@ type Account struct {
 type Room struct {
 	ID       string
 	MemberID string
+	Admin    bool
 }
 
 func NewFactory(signatureKey []byte, duration time.Duration) *Factory {
@@ -48,6 +50,7 @@ func (f *Factory) Encrypt(t *Token) (string, error) {
 	jwt.Claims[accountIDKey] = t.Account.ID
 	jwt.Claims[roomIDKey] = t.Room.ID
 	jwt.Claims[roomMemberIDKey] = t.Room.MemberID
+	jwt.Claims[roomAdminKey] = t.Room.Admin
 	jwt.Claims[expiresKey] = t.Expires.Unix()
 	return jwt.SignedString(f.signatureKey)
 }
@@ -68,6 +71,7 @@ func (f *Factory) Decrypt(str string) (*Token, error) {
 	room := Room{}
 	room.ID, _ = t.Claims[roomIDKey].(string)
 	room.MemberID, _ = t.Claims[roomMemberIDKey].(string)
+	room.Admin, _ = t.Claims[roomMemberIDKey].(bool)
 
 	expiresUnix := int64(t.Claims[expiresKey].(float64))
 	expires := time.Unix(expiresUnix, 0).UTC()
