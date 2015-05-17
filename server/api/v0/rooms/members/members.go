@@ -20,7 +20,7 @@ func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
 	rg.POST("/authenticate", h.authenticate)
 	rg.DELETE("/leave", h.leave)
 
-	rg.PUT("/manage/:memberID/admin", h.setAdmin)
-	rg.PUT("/manage/:memberID/banned", h.setBanned)
-	rg.DELETE("/manage/:memberID", h.delete)
+	rg.PUT("/id/:memberID/admin", h.setAdmin)
+	rg.PUT("/id/:memberID/banned", h.setBanned)
+	rg.DELETE("/id/:memberID", h.delete)
 }

@@ -16,5 +16,5 @@ func New(dbConn *db.Conn) *Handler {
 
 func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
 	rg.POST("/", h.create)
-	rg.DELETE("/:channelID", h.delete)
+	rg.DELETE("/id/:channelID", h.delete)
 }
