@@ -31,8 +31,9 @@ func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
 
 	rg.POST("/", h.create)
 	// rg.GET("/", h.get)
+	rg.GET("/id", h.getID)
 	// rg.POST("/:roomName/authenticate", h.authenticate)
 
-	h.membersHandler.AddRoutes(rg.Group("/:roomID/members"))
-	h.channelsHandler.AddRoutes(rg.Group("/:roomID/channels"))
+	h.membersHandler.AddRoutes(rg.Group("/id/:roomID/members"))
+	h.channelsHandler.AddRoutes(rg.Group("/id/:roomID/channels"))
 }
