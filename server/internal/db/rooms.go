@@ -11,9 +11,12 @@ type RoomsConn interface {
 	Delete(id string) error
 
 	AddChannel(id, channelName string) error
+	GetChannel(id, channelID string) (*Channel, error)
 	RemoveChannel(id, channelID string) error
 
 	AddMember(id, accountID, memberName string) error
+	GetMember(id, memberID string) (*Member, error)
+	GetMemberByAccount(id, accountID string) (*Member, error)
 	SetMemberAdmin(id, memberID string, admin bool) error
 	SetMemberBanned(id, memberID string, banned bool) error
 	RemoveMember(id, memberID string) error

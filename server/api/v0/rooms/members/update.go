@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jordanpotter/gosu/server/api/middleware"
 	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
@@ -20,25 +21,25 @@ type SetBannedRequest struct {
 }
 
 func (h *Handler) authenticate(c *gin.Context) {
-	// accountID, err := c.Get(middleware.AccountIDKey)
-	// if err != nil {
-	// 	c.Fail(500, err)
-	// 	return
-	// }
-	//
-	// roomID := c.Params.ByName("roomID")
-	// member, err := h.dbConn.Rooms.GetMemberByAccount(roomID, accountID.(string))
-	// if err == db.NotFoundError {
-	// 	c.Fail(404, err)
-	// 	return
-	// } else if err != nil {
-	// 	c.Fail(500, err)
-	// 	return
-	// }
-	//
-	// fmt.Println("TODO: add room and admin info to auth token")
-	// fmt.Println("TODO: add account to channel")
-	// fmt.Println(member)
+	accountID, err := c.Get(middleware.AccountIDKey)
+	if err != nil {
+		c.Fail(500, err)
+		return
+	}
+
+	roomID := c.Params.ByName("roomID")
+	member, err := h.dbConn.Rooms.GetMemberByAccount(roomID, accountID.(string))
+	if err == db.NotFoundError {
+		c.Fail(404, err)
+		return
+	} else if err != nil {
+		c.Fail(500, err)
+		return
+	}
+
+	fmt.Println("TODO: add room and admin info to auth token")
+	fmt.Println("TODO: add account to channel")
+	fmt.Println(member)
 
 	c.String(200, "ok")
 }
