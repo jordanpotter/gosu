@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -27,6 +28,48 @@ func AuthRequired(tf *token.Factory) gin.HandlerFunc {
 		}
 
 		c.Set(TokenKey, t)
+		c.Next()
+	}
+}
+
+func AuthMatchesRoom(roomIDParam string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		t, err := c.Get(TokenKey)
+		if err != nil {
+			c.Fail(500, err)
+			return
+		}
+
+		roomID := c.Params.ByName(roomIDParam)
+		if roomID == "" {
+			c.Fail(403, errors.New("invalid room id"))
+			return
+		}
+
+		authRoomID := t.(*token.Token).Room.ID
+		if roomID != authRoomID {
+			c.Fail(403, fmt.Errorf("room id %s does not match auth token's room", roomID))
+			return
+		}
+
+		c.Next()
+	}
+}
+
+func IsRoomAdmin() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		t, err := c.Get(TokenKey)
+		if err != nil {
+			c.Fail(500, err)
+			return
+		}
+
+		admin := t.(*token.Token).Room.Admin
+		if !admin {
+			c.Fail(403, errors.New("must be admin for room"))
+			return
+		}
+
 		c.Next()
 	}
 }

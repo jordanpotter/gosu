@@ -31,7 +31,7 @@ func (h *Handler) authenticate(c *gin.Context) {
 		return
 	}
 
-	accountID := t.(token.Token).Account.ID
+	accountID := t.(*token.Token).Account.ID
 	member, err := h.dbConn.Rooms.GetMemberByAccount(req.ID, accountID)
 	if err == db.NotFoundError {
 		c.Fail(404, err)

@@ -40,7 +40,7 @@ func (h *Handler) join(c *gin.Context) {
 		return
 	}
 
-	accountID := t.(token.Token).Account.ID
+	accountID := t.(*token.Token).Account.ID
 	err = h.dbConn.Rooms.AddMember(roomID, accountID, req.Name)
 	if err == db.DuplicateError {
 		c.Fail(409, err)

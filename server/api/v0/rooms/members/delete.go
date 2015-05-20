@@ -16,7 +16,7 @@ func (h *Handler) leave(c *gin.Context) {
 	}
 
 	roomID := c.Params.ByName("roomID")
-	accountID := t.(token.Token).Account.ID
+	accountID := t.(*token.Token).Account.ID
 	err = h.dbConn.Rooms.RemoveMemberByAccount(roomID, accountID)
 	if err != nil {
 		c.Fail(500, err)

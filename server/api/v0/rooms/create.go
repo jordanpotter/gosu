@@ -26,7 +26,7 @@ func (h *Handler) create(c *gin.Context) {
 		return
 	}
 
-	accountID := t.(token.Token).Account.ID
+	accountID := t.(*token.Token).Account.ID
 	err = h.dbConn.Rooms.Create(req.Name, req.Password, accountID, req.MemberName)
 	if err == db.DuplicateError {
 		c.Fail(409, err)
