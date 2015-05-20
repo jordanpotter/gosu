@@ -1,10 +1,11 @@
-package accounts
+package rooms
 
 import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
+	"github.com/jordanpotter/gosu/server/internal/middleware"
 )
 
 type Handler struct {
@@ -17,5 +18,5 @@ func New(dbConn *db.Conn, tf *token.Factory) *Handler {
 }
 
 func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
-	rg.POST("/create", h.create)
+	rg.POST("/authenticate", middleware.AuthRequired(h.tf), h.authenticate)
 }

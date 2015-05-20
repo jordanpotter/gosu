@@ -41,5 +41,6 @@ func (h *Handler) getID(c *gin.Context) {
 		c.Fail(500, err)
 		return
 	}
+
 	c.String(200, room.ID)
 }

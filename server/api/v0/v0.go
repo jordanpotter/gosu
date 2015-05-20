@@ -14,10 +14,10 @@ type Handler struct {
 	roomsHandler    *rooms.Handler
 }
 
-func New(dbConn *db.Conn, tokenFactory *token.Factory) *Handler {
+func New(dbConn *db.Conn, tf *token.Factory) *Handler {
 	return &Handler{
-		accountsHandler: accounts.New(dbConn, tokenFactory),
-		roomsHandler:    rooms.New(dbConn, tokenFactory),
+		accountsHandler: accounts.New(dbConn, tf),
+		roomsHandler:    rooms.New(dbConn, tf),
 	}
 }
 

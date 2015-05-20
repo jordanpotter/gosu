@@ -12,26 +12,25 @@ import (
 
 type Handler struct {
 	dbConn          *db.Conn
-	tokenFactory    *token.Factory
+	tf              *token.Factory
 	membersHandler  *members.Handler
 	channelsHandler *channels.Handler
 }
 
-func New(dbConn *db.Conn, tokenFactory *token.Factory) *Handler {
+func New(dbConn *db.Conn, tf *token.Factory) *Handler {
 	return &Handler{
 		dbConn:          dbConn,
-		tokenFactory:    tokenFactory,
+		tf:              tf,
 		membersHandler:  members.New(dbConn),
 		channelsHandler: channels.New(dbConn),
 	}
 }
 
 func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
-	rg.Use(middleware.AuthRequired(h.tokenFactory))
+	rg.Use(middleware.AuthRequired(h.tf))
 
 	rg.POST("/", h.create)
 	rg.GET("/id", h.getID)
-
 	rg.GET("/id/:roomID", h.get)
 
 	h.membersHandler.AddRoutes(rg.Group("/id/:roomID/members"))

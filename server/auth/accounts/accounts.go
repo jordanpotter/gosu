@@ -5,6 +5,7 @@ import (
 
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
+	"github.com/jordanpotter/gosu/server/internal/middleware"
 )
 
 type Handler struct {
@@ -17,5 +18,6 @@ func New(dbConn *db.Conn, tf *token.Factory) *Handler {
 }
 
 func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
-	rg.POST("/create", h.create)
+	rg.POST("/authenticate", h.authenticate)
+	rg.POST("/reauthenticate", middleware.AuthRequired(h.tf), h.reauthenticate)
 }
