@@ -41,8 +41,15 @@ func NewFactory(signatureKey []byte, duration time.Duration) *Factory {
 }
 
 func (f *Factory) New() *Token {
-	expires := time.Now().Add(f.duration).UTC()
-	return &Token{Expires: expires}
+	return &Token{Expires: f.getExpirationTime()}
+}
+
+func (f *Factory) Extend(t *Token) {
+	t.Expires = f.getExpirationTime()
+}
+
+func (f *Factory) getExpirationTime() time.Time {
+	return time.Now().Add(f.duration).UTC()
 }
 
 func (f *Factory) Encrypt(t *Token) (string, error) {

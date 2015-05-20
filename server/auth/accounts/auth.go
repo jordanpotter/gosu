@@ -2,12 +2,13 @@ package accounts
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jordanpotter/gosu/server/internal/auth/password"
+	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
+	"github.com/jordanpotter/gosu/server/internal/middleware"
 )
 
 type AuthenticationRequest struct {
@@ -67,6 +68,19 @@ func hasValidDeviceCredentials(deviceName, devicePassword string, devices []db.D
 }
 
 func (h *Handler) reauthenticate(c *gin.Context) {
-	fmt.Println("TODO: reauthenticate user")
-	c.String(200, "ok")
+	t, err := c.Get(middleware.TokenKey)
+	if err != nil {
+		c.Fail(500, err)
+		return
+	}
+	authToken := t.(*token.Token)
+
+	h.tf.Extend(authToken)
+	authTokenEncrypted, err := h.tf.Encrypt(authToken)
+	if err != nil {
+		c.Fail(500, err)
+		return
+	}
+
+	c.JSON(200, ReauthenticationResponse{authTokenEncrypted, authToken.Expires})
 }

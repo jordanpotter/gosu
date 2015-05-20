@@ -1,7 +1,6 @@
 package rooms
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -30,8 +29,9 @@ func (h *Handler) authenticate(c *gin.Context) {
 		c.Fail(500, err)
 		return
 	}
+	authToken := t.(*token.Token)
 
-	accountID := t.(*token.Token).Account.ID
+	accountID := authToken.Account.ID
 	member, err := h.dbConn.Rooms.GetMemberByAccount(req.ID, accountID)
 	if err == db.NotFoundError {
 		c.Fail(404, err)
@@ -41,8 +41,15 @@ func (h *Handler) authenticate(c *gin.Context) {
 		return
 	}
 
-	fmt.Println("TODO: add room and admin info to auth token")
-	fmt.Println(member)
+	h.tf.Extend(authToken)
+	authToken.Room.ID = req.ID
+	authToken.Room.MemberID = member.ID
+	authToken.Room.Admin = member.Admin
+	authTokenEncrypted, err := h.tf.Encrypt(authToken)
+	if err != nil {
+		c.Fail(500, err)
+		return
+	}
 
-	c.String(200, "ok")
+	c.JSON(200, AuthenticationResponse{authTokenEncrypted, authToken.Expires})
 }
