@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
 	"github.com/jordanpotter/gosu/server/internal/middleware"
 )
@@ -24,13 +25,14 @@ func (h *Handler) authenticate(c *gin.Context) {
 		return
 	}
 
-	accountID, err := c.Get(middleware.AccountIDKey)
+	t, err := c.Get(middleware.TokenKey)
 	if err != nil {
 		c.Fail(500, err)
 		return
 	}
 
-	member, err := h.dbConn.Rooms.GetMemberByAccount(req.ID, accountID.(string))
+	accountID := t.(token.Token).Account.ID
+	member, err := h.dbConn.Rooms.GetMemberByAccount(req.ID, accountID)
 	if err == db.NotFoundError {
 		c.Fail(404, err)
 		return

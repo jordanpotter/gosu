@@ -4,18 +4,20 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/middleware"
 )
 
 func (h *Handler) leave(c *gin.Context) {
-	roomID := c.Params.ByName("roomID")
-	accountID, err := c.Get(middleware.AccountIDKey)
+	t, err := c.Get(middleware.TokenKey)
 	if err != nil {
 		c.Fail(500, err)
 		return
 	}
 
-	err = h.dbConn.Rooms.RemoveMemberByAccount(roomID, accountID.(string))
+	roomID := c.Params.ByName("roomID")
+	accountID := t.(token.Token).Account.ID
+	err = h.dbConn.Rooms.RemoveMemberByAccount(roomID, accountID)
 	if err != nil {
 		c.Fail(500, err)
 		return

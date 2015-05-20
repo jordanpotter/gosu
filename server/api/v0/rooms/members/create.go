@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jordanpotter/gosu/server/internal/auth/password"
+	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
 	"github.com/jordanpotter/gosu/server/internal/middleware"
 )
@@ -20,7 +21,7 @@ func (h *Handler) join(c *gin.Context) {
 		return
 	}
 
-	accountID, err := c.Get(middleware.AccountIDKey)
+	t, err := c.Get(middleware.TokenKey)
 	if err != nil {
 		c.Fail(500, err)
 		return
@@ -39,7 +40,8 @@ func (h *Handler) join(c *gin.Context) {
 		return
 	}
 
-	err = h.dbConn.Rooms.AddMember(roomID, accountID.(string), req.Name)
+	accountID := t.(token.Token).Account.ID
+	err = h.dbConn.Rooms.AddMember(roomID, accountID, req.Name)
 	if err == db.DuplicateError {
 		c.Fail(409, err)
 		return
