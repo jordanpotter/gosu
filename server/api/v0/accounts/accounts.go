@@ -18,6 +18,4 @@ func New(dbConn *db.Conn, tokenFactory *token.Factory) *Handler {
 
 func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
 	rg.POST("/create", h.create)
-	rg.POST("/authenticate", h.authenticate)
-	// rg.POST("/reauthenticate", middleware.AuthRequired(h.tokenFactory), h.reauthenticate)
 }

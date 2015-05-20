@@ -7,12 +7,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/jordanpotter/gosu/server/api/v0"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/config"
 	"github.com/jordanpotter/gosu/server/internal/config/etcd"
 	"github.com/jordanpotter/gosu/server/internal/db"
 	"github.com/jordanpotter/gosu/server/internal/db/mongo"
+	"github.com/jordanpotter/gosu/server/internal/middleware"
 )
 
 var (
@@ -30,13 +30,14 @@ func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	configConn := etcd.New([]string{etcdAddr})
+	defer configConn.Close()
 
 	dbConn := getDBConn(configConn)
 	defer dbConn.Close()
 
-	tokenFactory := getTokenFactory(configConn)
+	tf := getTokenFactory(configConn)
 
-	startServer(dbConn, tokenFactory)
+	startServer(dbConn, tf)
 }
 
 func getDBConn(configConn config.Conn) *db.Conn {
@@ -60,14 +61,14 @@ func getTokenFactory(configConn config.Conn) *token.Factory {
 	return token.NewFactory(authTokenConfig.Key, authTokenConfig.Duration)
 }
 
-func startServer(dbConn *db.Conn, tokenFactory *token.Factory) {
+func startServer(dbConn *db.Conn, tf *token.Factory) {
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong")
 	})
 
-	v0Handler := v0.New(dbConn, tokenFactory)
-	v0Handler.AddRoutes(r.Group("/v0"))
+	r.POST("/accounts/authenticate", createAccountAuthHandler(dbConn, tf))
+	r.POST("/rooms/authenticate", middleware.AuthRequired(tf), createRoomAuthHandler(dbConn, tf))
 
 	r.Run(fmt.Sprintf(":%d", port))
 }

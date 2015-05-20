@@ -17,3 +17,7 @@ func New(addrs []string) config.Conn {
 	client.SetConsistency("STRONG_CONSISTENCY")
 	return &conn{client}
 }
+
+func (c *conn) Close() {
+	c.Close()
+}

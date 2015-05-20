@@ -5,6 +5,7 @@ import "time"
 type Conn interface {
 	GetAuthToken() (*AuthToken, error)
 	GetMongo() (*Mongo, error)
+	Close()
 }
 
 type AuthToken struct {

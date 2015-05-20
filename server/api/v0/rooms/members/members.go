@@ -17,7 +17,6 @@ func New(dbConn *db.Conn) *Handler {
 func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
 	rg.GET("/", h.getAll)
 	rg.POST("/join", h.join)
-	rg.POST("/authenticate", h.authenticate)
 	rg.DELETE("/leave", h.leave)
 
 	rg.PUT("/id/:memberID/admin", h.setAdmin)

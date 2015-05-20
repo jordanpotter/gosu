@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jordanpotter/gosu/server/api/middleware"
+	"github.com/jordanpotter/gosu/server/internal/middleware"
 )
 
 func (h *Handler) leave(c *gin.Context) {
