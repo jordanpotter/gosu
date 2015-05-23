@@ -41,12 +41,17 @@ func main() {
 }
 
 func getDBConn(configConn config.Conn) *db.Conn {
+	mongoAddrs, err := configConn.GetMongoAddrs()
+	if err != nil {
+		panic(err)
+	}
+
 	mongoConfig, err := configConn.GetMongo()
 	if err != nil {
 		panic(err)
 	}
 
-	dbConn, err := mongo.New(mongoConfig)
+	dbConn, err := mongo.New(mongoAddrs, mongoConfig)
 	if err != nil {
 		panic(err)
 	}

@@ -5,6 +5,13 @@ import "time"
 type Conn interface {
 	GetAuthToken() (*AuthToken, error)
 	GetMongo() (*Mongo, error)
+
+	GetAuthAddrs() ([]string, error)
+	GetAPIAddrs() ([]string, error)
+	GetEventsAddrs() ([]string, error)
+	GetRelayAddrs() ([]string, error)
+	GetMongoAddrs() ([]string, error)
+
 	Close()
 }
 

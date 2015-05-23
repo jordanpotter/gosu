@@ -6,7 +6,7 @@ import (
 	"github.com/jordanpotter/gosu/server/internal/config"
 )
 
-const authTokenKey = "/auth/token"
+const authTokenKey = "/conf/auth/token"
 
 func (c *conn) GetAuthToken() (*config.AuthToken, error) {
 	resp, err := c.client.Get(authTokenKey, false, false)

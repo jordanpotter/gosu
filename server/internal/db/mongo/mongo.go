@@ -11,8 +11,8 @@ import (
 	"github.com/jordanpotter/gosu/server/internal/db/mongo/rooms"
 )
 
-func New(config *config.Mongo) (*db.Conn, error) {
-	session, err := createSession(config)
+func New(addrs []string, config *config.Mongo) (*db.Conn, error) {
+	session, err := createSession(addrs, config)
 	if err != nil {
 		return nil, err
 	}
@@ -35,9 +35,9 @@ func New(config *config.Mongo) (*db.Conn, error) {
 	return conn, nil
 }
 
-func createSession(config *config.Mongo) (*mgo.Session, error) {
+func createSession(addrs []string, config *config.Mongo) (*mgo.Session, error) {
 	dialInfo := mgo.DialInfo{
-		Addrs:     []string{"localhost:27017"},
+		Addrs:     addrs,
 		Database:  config.Name,
 		Username:  config.Username,
 		Password:  config.Password,

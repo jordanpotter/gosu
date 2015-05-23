@@ -6,10 +6,10 @@ import (
 	"github.com/jordanpotter/gosu/server/internal/config"
 )
 
-const mongoKey = "/mongo"
+const mongoConfKey = "/conf/mongo"
 
 func (c *conn) GetMongo() (*config.Mongo, error) {
-	resp, err := c.client.Get(mongoKey, false, false)
+	resp, err := c.client.Get(mongoConfKey, false, false)
 	if err != nil {
 		return nil, err
 	}

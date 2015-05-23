@@ -1,23 +1,37 @@
 # Gosu
 Gosu is a massively distributed voice communication platform that focuses on performance, simplicity, and high availability.
 
-## Setup
+# Setup
 
-### Etcd
-All configuration for the cluster is managed by [etcd](github.com/coreos/etcd). During development, make sure to have at least one instance running for the servers to communicate with.
+## Etcd
+All discovery and configuration for the cluster is managed by [etcd](github.com/coreos/etcd). During development, make sure to have at least one instance running for the servers to communicate with.
 
 For simplicity, etcd can be run locally via [Docker](docker.com)
 
     docker run --name etcd -d -p 4001:4001 -p 7001:7001 microbox/etcd:0.4.9 -name gosu
 
-For simplicity, the `conf` directory includes some cluster-wide configuration files to insert into our etcd service
+### Discovery
 
-    curl -L http://127.0.0.1:4001/v2/keys/mongo -XPUT --data-urlencode value@conf/mongo.json
-    curl -L http://127.0.0.1:4001/v2/keys/auth/token -XPUT --data-urlencode value@conf/authToken.json
+We use etcd to keep track of where our servers are located. Run these to set the development defaults
+
+    curl http://127.0.0.1:4001/v2/keys/addrs/auth   -XPOST -d value=127.0.0.1:8080
+    curl http://127.0.0.1:4001/v2/keys/addrs/api    -XPOST -d value=127.0.0.1:8081
+    curl http://127.0.0.1:4001/v2/keys/addrs/events -XPOST -d value=127.0.0.1:8082
+    curl http://127.0.0.1:4001/v2/keys/addrs/relay  -XPOST -d value=127.0.0.1:8083
+    curl http://127.0.0.1:4001/v2/keys/addrs/mongo  -XPOST -d value=127.0.0.1:27017
+
+ If you decide to run a server on a different ip address or port, be sure to remove the old entry and add the new one for that server. Thorough instructions can be found [here](https://github.com/coreos/etcd/blob/master/Documentation/api.md).
+
+### Config
+
+The `conf` directory includes some cluster-wide configuration files to insert into our etcd service
+
+    curl -L http://127.0.0.1:4001/v2/keys/conf/mongo -XPUT --data-urlencode value@conf/mongo.json
+    curl -L http://127.0.0.1:4001/v2/keys/conf/auth/token -XPUT --data-urlencode value@conf/authToken.json
 
 If you wish to modify some configuration parameters in the `conf` directory, be sure to update etcd by running the above commands again.
 
-### Mongo
+## Mongo
 Currently Gosu uses [MongoDB](mongodb.org) as its backing data store. MongoDB's data model and availability guarantees resonate well with what Gosu is trying to achieve, although this decision is by no means permanent.
 
 MongoDB can be run locally via [Docker](docker.com)
