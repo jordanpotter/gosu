@@ -39,9 +39,19 @@ func main() {
 	sub := getSubscriber(configConn)
 	defer sub.Close()
 
+	err := sub.SetAddrs([]string{"127.0.0.1:9001", "127.0.0.1:9003"})
+	if err != nil {
+		panic(err)
+	}
+
+	listenChan := make(chan *events.Message)
+	err = sub.Listen(listenChan)
+	if err != nil {
+		panic(err)
+	}
+
 	go func() {
-		recv := sub.Listen()
-		for m := range recv {
+		for m := range listenChan {
 			fmt.Println(m)
 		}
 	}()
@@ -78,7 +88,7 @@ func getTokenFactory(configConn config.Conn) *token.Factory {
 }
 
 func getSubscriber(configConn config.Conn) events.Subscriber {
-	sub, err := nanomsg.NewSubscriber("127.0.0.1:9001")
+	sub, err := nanomsg.NewSubscriber()
 	if err != nil {
 		panic(err)
 	}

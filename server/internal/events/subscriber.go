@@ -1,6 +1,7 @@
 package events
 
 type Subscriber interface {
-	Listen() <-chan Message
+	Listen(listener chan<- *Message) error
+	SetAddrs(addrs []string) error
 	Close() error
 }

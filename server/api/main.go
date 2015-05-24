@@ -41,11 +41,13 @@ func main() {
 	pub := getPublisher(configConn)
 	defer pub.Close()
 
+	ticker := time.NewTicker(50 * time.Millisecond)
 	go func() {
-		time.Sleep(5 * time.Second)
-		err := pub.Send([]byte("hello"))
-		if err != nil {
-			panic(err)
+		for range ticker.C {
+			err := pub.Send([]byte("hello"))
+			if err != nil {
+				panic(err)
+			}
 		}
 	}()
 
