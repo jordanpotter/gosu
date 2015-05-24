@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"runtime"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -13,6 +14,8 @@ import (
 	"github.com/jordanpotter/gosu/server/internal/config/etcd"
 	"github.com/jordanpotter/gosu/server/internal/db"
 	"github.com/jordanpotter/gosu/server/internal/db/mongo"
+	"github.com/jordanpotter/gosu/server/internal/events"
+	"github.com/jordanpotter/gosu/server/internal/events/nanomsg"
 )
 
 var (
@@ -34,6 +37,17 @@ func main() {
 
 	dbConn := getDBConn(configConn)
 	defer dbConn.Close()
+
+	pub := getPublisher(configConn)
+	defer pub.Close()
+
+	go func() {
+		time.Sleep(5 * time.Second)
+		err := pub.Send([]byte("hello"))
+		if err != nil {
+			panic(err)
+		}
+	}()
 
 	tf := getTokenFactory(configConn)
 
@@ -64,6 +78,14 @@ func getTokenFactory(configConn config.Conn) *token.Factory {
 		panic(err)
 	}
 	return token.NewFactory(authTokenConfig.Key, authTokenConfig.Duration)
+}
+
+func getPublisher(configConn config.Conn) events.Publisher {
+	pub, err := nanomsg.NewPublisher("127.0.0.1:9001")
+	if err != nil {
+		panic(err)
+	}
+	return pub
 }
 
 func startServer(dbConn *db.Conn, tf *token.Factory) {

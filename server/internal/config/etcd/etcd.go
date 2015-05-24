@@ -19,5 +19,5 @@ func New(addrs []string) config.Conn {
 }
 
 func (c *conn) Close() {
-	c.Close()
+	c.client.Close()
 }

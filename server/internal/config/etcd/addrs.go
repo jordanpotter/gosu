@@ -41,18 +41,3 @@ func (c *conn) getAddrs(key string) ([]string, error) {
 	}
 	return addrs, nil
 }
-
-// func (c *conn) watchAddrs() {
-// 	recv := make(chan *etcd.Response)
-//
-// 	go func() {
-// 		for resp := range recv {
-// 			fmt.Println(resp.Node.Value)
-// 		}
-// 	}()
-//
-// 	_, err := c.client.Watch(addrsKey, 0, true, recv, nil)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// }

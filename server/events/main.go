@@ -12,6 +12,8 @@ import (
 	"github.com/jordanpotter/gosu/server/internal/config/etcd"
 	"github.com/jordanpotter/gosu/server/internal/db"
 	"github.com/jordanpotter/gosu/server/internal/db/mongo"
+	"github.com/jordanpotter/gosu/server/internal/events"
+	"github.com/jordanpotter/gosu/server/internal/events/nanomsg"
 )
 
 var (
@@ -33,6 +35,16 @@ func main() {
 
 	dbConn := getDBConn(configConn)
 	defer dbConn.Close()
+
+	sub := getSubscriber(configConn)
+	defer sub.Close()
+
+	go func() {
+		recv := sub.Listen()
+		for m := range recv {
+			fmt.Println(m)
+		}
+	}()
 
 	tf := getTokenFactory(configConn)
 
@@ -63,6 +75,14 @@ func getTokenFactory(configConn config.Conn) *token.Factory {
 		panic(err)
 	}
 	return token.NewFactory(authTokenConfig.Key, authTokenConfig.Duration)
+}
+
+func getSubscriber(configConn config.Conn) events.Subscriber {
+	sub, err := nanomsg.NewSubscriber("127.0.0.1:9001")
+	if err != nil {
+		panic(err)
+	}
+	return sub
 }
 
 func startServer(dbConn *db.Conn, tf *token.Factory) {
