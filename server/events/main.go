@@ -39,10 +39,19 @@ func main() {
 	sub := getSubscriber(configConn)
 	defer sub.Close()
 
-	err := sub.SetAddrs([]string{"127.0.0.1:9001", "127.0.0.1:9003"})
+	err := sub.SetAddrs([]string{"127.0.0.1:9001"})
 	if err != nil {
 		panic(err)
 	}
+
+	// go func() {
+	// 	time.Sleep(2 * time.Second)
+	// 	fmt.Println("ADDING")
+	// 	err := sub.SetAddrs([]string{"127.0.0.1:9001", "127.0.0.1:9003"})
+	// 	if err != nil {
+	// 		panic(err)
+	// 	}
+	// }()
 
 	listenChan := make(chan *events.Message)
 	err = sub.Listen(listenChan)
@@ -52,7 +61,7 @@ func main() {
 
 	go func() {
 		for m := range listenChan {
-			fmt.Println(m)
+			fmt.Println(m.Event)
 		}
 	}()
 

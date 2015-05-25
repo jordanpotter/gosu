@@ -1,6 +1,6 @@
 package events
 
 type Publisher interface {
-	Send(message []byte) error
+	Send(event interface{}) error
 	Close() error
 }

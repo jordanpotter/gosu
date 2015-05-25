@@ -6,6 +6,8 @@ import (
 	"github.com/gdamore/mangos"
 	"github.com/gdamore/mangos/protocol/pub"
 	"github.com/gdamore/mangos/transport/tcp"
+	"gopkg.in/vmihailenco/msgpack.v2"
+
 	"github.com/jordanpotter/gosu/server/internal/events"
 )
 
@@ -28,9 +30,21 @@ func NewPublisher(addr string) (events.Publisher, error) {
 	return &publisher{sock}, nil
 }
 
-func (p *publisher) Send(message []byte) error {
-	fmt.Println("Sending", string(message))
-	return p.sock.Send(message)
+func (p *publisher) Send(event interface{}) error {
+	fmt.Println("Sending", event)
+	fmt.Println("TODO: send timestamp in event")
+
+	m, err := newMessage(event)
+	if err != nil {
+		return err
+	}
+
+	b, err := msgpack.Marshal(&m)
+	if err != nil {
+		return err
+	}
+
+	return p.sock.Send(b)
 }
 
 func (p *publisher) Close() error {

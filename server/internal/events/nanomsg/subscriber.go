@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 
+	"gopkg.in/vmihailenco/msgpack.v2"
+
 	"github.com/gdamore/mangos"
 	"github.com/gdamore/mangos/protocol/sub"
 	"github.com/gdamore/mangos/transport/tcp"
@@ -100,6 +102,8 @@ func (s *subscriber) connect(addr string) error {
 }
 
 func (s *subscriber) disconnect(addr string) error {
+	fmt.Println("disconnecting", addr)
+
 	dialer, exists := s.dialers[addr]
 	if !exists {
 		return fmt.Errorf("not connected to %s", addr)
@@ -124,11 +128,27 @@ func (s *subscriber) Listen(listener chan<- *events.Message) error {
 	s.listenChan = listener
 	go func() {
 		for {
-			data, err := s.sock.Recv()
-			s.listenChan <- &events.Message{Data: data, Err: err}
+			event, err := s.getNextEvent()
+			s.listenChan <- &events.Message{Event: event, Err: err}
 		}
 	}()
+
 	return nil
+}
+
+func (s *subscriber) getNextEvent() (interface{}, error) {
+	b, err := s.sock.Recv()
+	if err != nil {
+		return nil, err
+	}
+
+	var m Message
+	err = msgpack.Unmarshal(b, &m)
+	if err != nil {
+		return nil, err
+	}
+
+	return m.getEvent()
 }
 
 func (s *subscriber) Close() error {

@@ -80,13 +80,6 @@ func (c *conn) RemoveMember(id, memberID string) error {
 	return col.UpdateId(bson.ObjectIdHex(id), data)
 }
 
-func (c *conn) RemoveMemberByAccount(id, accountID string) error {
-	member := bson.M{"accountID": bson.ObjectIdHex(accountID)}
-	data := bson.M{"$pull": bson.M{"members": member}}
-	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
-	return col.UpdateId(bson.ObjectIdHex(id), data)
-}
-
 func (c *conn) doesMemberExist(id, accountID, memberName string) (bool, error) {
 	accountOrName := []bson.M{
 		bson.M{"members.accountID": bson.ObjectIdHex(accountID)},

@@ -20,7 +20,6 @@ type RoomsConn interface {
 	SetMemberAdmin(id, memberID string, admin bool) error
 	SetMemberBanned(id, memberID string, banned bool) error
 	RemoveMember(id, memberID string) error
-	RemoveMemberByAccount(id, accountID string) error
 }
 
 type Room struct {
