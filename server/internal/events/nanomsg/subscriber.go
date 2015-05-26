@@ -126,14 +126,15 @@ func (s *subscriber) Listen(listener chan<- *events.Message) error {
 	}
 
 	s.listenChan = listener
-	go func() {
-		for {
-			event, err := s.getNextEvent()
-			s.listenChan <- &events.Message{Event: event, Err: err}
-		}
-	}()
-
+	go s.handleEvents()
 	return nil
+}
+
+func (s *subscriber) handleEvents() {
+	for {
+		event, err := s.getNextEvent()
+		s.listenChan <- &events.Message{Event: event, Err: err}
+	}
 }
 
 func (s *subscriber) getNextEvent() (interface{}, error) {
@@ -142,7 +143,7 @@ func (s *subscriber) getNextEvent() (interface{}, error) {
 		return nil, err
 	}
 
-	var m Message
+	var m message
 	err = msgpack.Unmarshal(b, &m)
 	if err != nil {
 		return nil, err

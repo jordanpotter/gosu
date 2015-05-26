@@ -17,22 +17,22 @@ const (
 	roomMemberBannedUpdated = "room.member.banned.updated"
 )
 
-type Message struct {
+type message struct {
 	Type       string `msgpack:"type"`
 	EventBytes []byte `msgpack:eventBytes`
 }
 
-func newMessage(event interface{}) (*Message, error) {
+func newMessage(event interface{}) (*message, error) {
 	t, err := getEventType(event)
 	if err != nil {
 		return nil, err
 	}
 
 	b, err := msgpack.Marshal(event)
-	return &Message{Type: t, EventBytes: b}, err
+	return &message{Type: t, EventBytes: b}, err
 }
 
-func (m *Message) getEvent() (interface{}, error) {
+func (m *message) getEvent() (interface{}, error) {
 	var out interface{}
 	switch m.Type {
 	case roomChannelCreated:
