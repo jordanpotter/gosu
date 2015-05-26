@@ -53,5 +53,5 @@ func (h *Handler) join(c *gin.Context) {
 	}
 	fmt.Println(member)
 
-	c.String(200, "ok")
+	c.JSON(200, member)
 }

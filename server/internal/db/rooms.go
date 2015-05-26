@@ -25,7 +25,7 @@ type RoomsConn interface {
 type Room struct {
 	ID           string    `json:"id"`
 	Name         string    `json:"name"`
-	PasswordHash []byte    `json:"-"`
+	PasswordHash []byte    `json:"-"` // For security, don't make public
 	Channels     []Channel `json:"channels"`
 	Members      []Member  `json:"members"`
 	Created      time.Time `json:"created"`
@@ -39,7 +39,7 @@ type Channel struct {
 
 type Member struct {
 	ID          string    `json:"id"`
-	AccountID   string    `json:"accountID"`
+	AccountID   string    `json:"-"` // For security, don't make public
 	Name        string    `json:"name"`
 	ChannelName string    `json:"channelName"`
 	Admin       bool      `json:"admin"`

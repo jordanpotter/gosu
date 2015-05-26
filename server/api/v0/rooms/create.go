@@ -40,5 +40,5 @@ func (h *Handler) create(c *gin.Context) {
 	}
 	fmt.Println(room)
 
-	c.String(200, "ok")
+	c.JSON(200, room)
 }

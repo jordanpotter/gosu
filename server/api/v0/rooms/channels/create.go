@@ -38,5 +38,5 @@ func (h *Handler) create(c *gin.Context) {
 	// 	fmt.Println("Failed to send event: %v", err)
 	// }
 
-	c.String(200, "ok")
+	c.JSON(200, channel)
 }
