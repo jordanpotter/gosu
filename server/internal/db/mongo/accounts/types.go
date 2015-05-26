@@ -23,7 +23,7 @@ type storedDevice struct {
 }
 
 func (sa *storedAccount) toAccount() *db.Account {
-	devices := make([]db.Device, len(sa.Devices))
+	devices := make([]db.Device, 0, len(sa.Devices))
 	for _, sDevice := range sa.Devices {
 		devices = append(devices, *sDevice.toDevice())
 	}

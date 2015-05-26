@@ -34,12 +34,12 @@ type storedMember struct {
 }
 
 func (sr *storedRoom) toRoom() *db.Room {
-	channels := make([]db.Channel, len(sr.Channels))
+	channels := make([]db.Channel, 0, len(sr.Channels))
 	for _, sChannel := range sr.Channels {
 		channels = append(channels, *sChannel.toChannel())
 	}
 
-	members := make([]db.Member, len(sr.Members))
+	members := make([]db.Member, 0, len(sr.Members))
 	for _, sMember := range sr.Members {
 		members = append(members, *sMember.toMember())
 	}
