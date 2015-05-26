@@ -41,3 +41,16 @@ MongoDB can be run locally via [Docker](docker.com)
 Likewise, we can use [Docker](docker.com) to enter the mongo shell
 
     docker run -it --rm --link mongo:mongo mongo:3.0.2 sh -c 'exec mongo "$MONGO_PORT_27017_TCP_ADDR:$MONGO_PORT_27017_TCP_PORT/gosu"'
+
+# TODO
+
+## Postgres
+Currently Gosu uses [Postgres](postgresql.org) as its backing data store.
+
+Postgres can be run locally via [Docker](docker.com)
+
+    docker run --name postgres -d -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=password postgres:9.4.1
+
+Likewise, we can use [Docker](docker.com) to enter psql
+
+    docker run -it --rm --link postgres:postgres postgres:9.4.1 sh -c 'exec psql -h "$POSTGRES_PORT_5432_TCP_ADDR" -p "$POSTGRES_PORT_5432_TCP_PORT" -U postgres'
