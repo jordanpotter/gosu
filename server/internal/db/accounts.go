@@ -5,7 +5,7 @@ import (
 )
 
 type AccountsConn interface {
-	Create(email, deviceName, devicePassword string) error
+	Create(email, deviceName, devicePassword string) (*Account, error)
 	Get(id string) (*Account, error)
 	GetByEmail(email string) (*Account, error)
 	Delete(id string) error

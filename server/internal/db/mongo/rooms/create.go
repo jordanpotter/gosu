@@ -12,10 +12,10 @@ import (
 
 const defaultChannelName = "Lobby"
 
-func (c *conn) Create(name, passwd, adminAccountID, adminName string) error {
+func (c *conn) Create(name, passwd, adminAccountID, adminName string) (*db.Room, error) {
 	pHash, err := password.ComputeHash(passwd)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	sChannel := storedChannel{
@@ -33,6 +33,7 @@ func (c *conn) Create(name, passwd, adminAccountID, adminName string) error {
 	}
 
 	sRoom := storedRoom{
+		ID:           bson.NewObjectId(),
 		Name:         name,
 		PasswordHash: pHash,
 		Channels:     []storedChannel{sChannel},
@@ -43,7 +44,7 @@ func (c *conn) Create(name, passwd, adminAccountID, adminName string) error {
 	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
 	err = col.Insert(&sRoom)
 	if mgo.IsDup(err) {
-		return db.DuplicateError
+		return nil, db.DuplicateError
 	}
-	return err
+	return sRoom.toRoom(), err
 }

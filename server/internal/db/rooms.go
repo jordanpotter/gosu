@@ -5,16 +5,16 @@ import (
 )
 
 type RoomsConn interface {
-	Create(name, password, adminAccountID, adminName string) error
+	Create(name, password, adminAccountID, adminName string) (*Room, error)
 	Get(id string) (*Room, error)
 	GetByName(name string) (*Room, error)
 	Delete(id string) error
 
-	AddChannel(id, channelName string) error
+	AddChannel(id, channelName string) (*Channel, error)
 	GetChannel(id, channelID string) (*Channel, error)
 	RemoveChannel(id, channelID string) error
 
-	AddMember(id, accountID, memberName string) error
+	AddMember(id, accountID, memberName string) (*Member, error)
 	GetMember(id, memberID string) (*Member, error)
 	GetMemberByAccount(id, accountID string) (*Member, error)
 	SetMemberAdmin(id, memberID string, admin bool) error

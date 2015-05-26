@@ -3,27 +3,35 @@ package rooms
 import (
 	"time"
 
+	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
-func (c *conn) AddChannel(id, channelName string) error {
+func (c *conn) AddChannel(id, channelName string) (*db.Channel, error) {
 	exists, err := c.doesChannelExist(id, channelName)
 	if err != nil {
-		return err
+		return nil, err
 	} else if exists {
-		return db.DuplicateError
+		return nil, db.DuplicateError
 	}
 
-	channel := bson.M{
-		"id":      bson.NewObjectId(),
-		"name":    channelName,
-		"created": time.Now(),
+	sChannel := &storedChannel{
+		ID:      bson.NewObjectId(),
+		Name:    channelName,
+		Created: time.Now(),
 	}
-	data := bson.M{"$push": bson.M{"channels": channel}}
+
+	data := bson.M{"$push": bson.M{"channels": sChannel}}
 	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
-	return col.UpdateId(bson.ObjectIdHex(id), data)
+	err = col.UpdateId(bson.ObjectIdHex(id), data)
+	if err == mgo.ErrNotFound {
+		return nil, db.NotFoundError
+	} else if err != nil {
+		return nil, err
+	}
+	return sChannel.toChannel(), nil
 }
 
 func (c *conn) RemoveChannel(id, channelID string) error {
@@ -40,23 +48,30 @@ func (c *conn) doesChannelExist(id, channelName string) (bool, error) {
 	return num > 0, err
 }
 
-func (c *conn) AddMember(id, accountID, memberName string) error {
+func (c *conn) AddMember(id, accountID, memberName string) (*db.Member, error) {
 	exists, err := c.doesMemberExist(id, accountID, memberName)
 	if err != nil {
-		return err
+		return nil, err
 	} else if exists {
-		return db.DuplicateError
+		return nil, db.DuplicateError
 	}
 
-	member := bson.M{
-		"id":        bson.NewObjectId(),
-		"accountID": bson.ObjectIdHex(accountID),
-		"name":      memberName,
-		"created":   time.Now(),
+	sMember := &storedMember{
+		ID:        bson.NewObjectId(),
+		AccountID: bson.ObjectIdHex(accountID),
+		Name:      memberName,
+		Created:   time.Now(),
 	}
-	data := bson.M{"$push": bson.M{"members": member}}
+
+	data := bson.M{"$push": bson.M{"members": sMember}}
 	col := c.session.DB(c.config.Name).C(c.config.Collections.Rooms)
-	return col.UpdateId(bson.ObjectIdHex(id), data)
+	err = col.UpdateId(bson.ObjectIdHex(id), data)
+	if err == mgo.ErrNotFound {
+		return nil, db.NotFoundError
+	} else if err != nil {
+		return nil, err
+	}
+	return sMember.toMember(), nil
 }
 
 func (c *conn) SetMemberAdmin(id, memberID string, admin bool) error {
