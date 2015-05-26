@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"runtime"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -41,20 +40,9 @@ func main() {
 	pub := getPublisher(configConn)
 	defer pub.Close()
 
-	ticker := time.NewTicker(2 * time.Second)
-	go func() {
-		for range ticker.C {
-			event := events.RoomMemberAdminUpdated{"room-id", "member-id", false}
-			err := pub.Send(event)
-			if err != nil {
-				panic(err)
-			}
-		}
-	}()
-
 	tf := getTokenFactory(configConn)
 
-	startServer(dbConn, tf)
+	startServer(dbConn, tf, pub)
 }
 
 func getDBConn(configConn config.Conn) *db.Conn {
@@ -91,13 +79,13 @@ func getPublisher(configConn config.Conn) events.Publisher {
 	return pub
 }
 
-func startServer(dbConn *db.Conn, tf *token.Factory) {
+func startServer(dbConn *db.Conn, tf *token.Factory, pub events.Publisher) {
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong")
 	})
 
-	v0Handler := v0.New(dbConn, tf)
+	v0Handler := v0.New(dbConn, tf, pub)
 	v0Handler.AddRoutes(r.Group("/v0"))
 
 	r.Run(fmt.Sprintf(":%d", port))

@@ -7,22 +7,25 @@ import (
 	"github.com/jordanpotter/gosu/server/api/v0/rooms/members"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
+	"github.com/jordanpotter/gosu/server/internal/events"
 	"github.com/jordanpotter/gosu/server/internal/middleware"
 )
 
 type Handler struct {
 	dbConn          *db.Conn
 	tf              *token.Factory
+	pub             events.Publisher
 	membersHandler  *members.Handler
 	channelsHandler *channels.Handler
 }
 
-func New(dbConn *db.Conn, tf *token.Factory) *Handler {
+func New(dbConn *db.Conn, tf *token.Factory, pub events.Publisher) *Handler {
 	return &Handler{
 		dbConn:          dbConn,
 		tf:              tf,
-		membersHandler:  members.New(dbConn),
-		channelsHandler: channels.New(dbConn),
+		pub:             pub,
+		membersHandler:  members.New(dbConn, pub),
+		channelsHandler: channels.New(dbConn, pub),
 	}
 }
 

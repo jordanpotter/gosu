@@ -7,6 +7,7 @@ import (
 	"github.com/jordanpotter/gosu/server/api/v0/rooms"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
+	"github.com/jordanpotter/gosu/server/internal/events"
 )
 
 type Handler struct {
@@ -14,10 +15,10 @@ type Handler struct {
 	roomsHandler    *rooms.Handler
 }
 
-func New(dbConn *db.Conn, tf *token.Factory) *Handler {
+func New(dbConn *db.Conn, tf *token.Factory, pub events.Publisher) *Handler {
 	return &Handler{
-		accountsHandler: accounts.New(dbConn, tf),
-		roomsHandler:    rooms.New(dbConn, tf),
+		accountsHandler: accounts.New(dbConn, tf, pub),
+		roomsHandler:    rooms.New(dbConn, tf, pub),
 	}
 }
 

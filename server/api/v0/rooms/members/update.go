@@ -25,7 +25,6 @@ func (h *Handler) setAdmin(c *gin.Context) {
 		return
 	}
 
-	fmt.Println("TODO: check account is admin for room")
 	fmt.Println("TODO: check not revoking admin for self")
 
 	roomID := c.Params.ByName("roomID")
@@ -48,7 +47,6 @@ func (h *Handler) setBanned(c *gin.Context) {
 		return
 	}
 
-	fmt.Println("TODO: check account is admin for room")
 	fmt.Println("TODO: check not trying to ban self")
 
 	roomID := c.Params.ByName("roomID")

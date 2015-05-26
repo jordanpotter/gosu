@@ -17,10 +17,8 @@ func (h *Handler) create(c *gin.Context) {
 		return
 	}
 
-	fmt.Println("TODO: make sure admin for room")
-
 	roomID := c.Params.ByName("roomID")
-	err := h.dbConn.Rooms.AddChannel(roomID, req.Name)
+	channel, err := h.dbConn.Rooms.AddChannel(roomID, req.Name)
 	if err == db.DuplicateError {
 		c.Fail(409, err)
 		return
@@ -28,6 +26,17 @@ func (h *Handler) create(c *gin.Context) {
 		c.Fail(500, err)
 		return
 	}
+	fmt.Println(channel)
+
+	// e := events.RoomChannelCreated{
+	// 	RoomID: roomID,
+	// 	ChannelID: "channel-id"
+	// 	ChannelName: "channel-name"
+	// }
+	// err := h.pub.Send(e)
+	// if err != nil {
+	// 	fmt.Println("Failed to send event: %v", err)
+	// }
 
 	c.String(200, "ok")
 }

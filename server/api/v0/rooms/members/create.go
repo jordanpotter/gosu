@@ -2,6 +2,7 @@ package members
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jordanpotter/gosu/server/internal/auth/password"
@@ -42,7 +43,7 @@ func (h *Handler) join(c *gin.Context) {
 	}
 
 	accountID := authToken.Account.ID
-	err = h.dbConn.Rooms.AddMember(roomID, accountID, req.Name)
+	member, err := h.dbConn.Rooms.AddMember(roomID, accountID, req.Name)
 	if err == db.DuplicateError {
 		c.Fail(409, err)
 		return
@@ -50,6 +51,7 @@ func (h *Handler) join(c *gin.Context) {
 		c.Fail(500, err)
 		return
 	}
+	fmt.Println(member)
 
 	c.String(200, "ok")
 }

@@ -1,6 +1,8 @@
 package rooms
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
@@ -28,7 +30,7 @@ func (h *Handler) create(c *gin.Context) {
 	authToken := t.(*token.Token)
 
 	accountID := authToken.Account.ID
-	err = h.dbConn.Rooms.Create(req.Name, req.Password, accountID, req.MemberName)
+	room, err := h.dbConn.Rooms.Create(req.Name, req.Password, accountID, req.MemberName)
 	if err == db.DuplicateError {
 		c.Fail(409, err)
 		return
@@ -36,6 +38,7 @@ func (h *Handler) create(c *gin.Context) {
 		c.Fail(500, err)
 		return
 	}
+	fmt.Println(room)
 
 	c.String(200, "ok")
 }

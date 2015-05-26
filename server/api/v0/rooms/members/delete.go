@@ -34,7 +34,6 @@ func (h *Handler) leave(c *gin.Context) {
 }
 
 func (h *Handler) delete(c *gin.Context) {
-	fmt.Println("TODO: check account is admin for room")
 	fmt.Println("TODO: check not revoking admin for self")
 
 	roomID := c.Params.ByName("roomID")
