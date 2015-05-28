@@ -1,10 +1,6 @@
 package accounts
 
-import (
-	"fmt"
-
-	"github.com/gin-gonic/gin"
-)
+import "github.com/gin-gonic/gin"
 
 type CreateRequest struct {
 	Email          string `json:"email" form:"email" binding:"required"`
@@ -18,12 +14,11 @@ func (h *Handler) create(c *gin.Context) {
 		return
 	}
 
-	account, err := h.dbConn.Accounts.Create(req.Email, req.DeviceName, req.DevicePassword)
+	_, err := h.dbConn.Accounts.Create(req.Email, req.DeviceName, req.DevicePassword)
 	if err != nil {
 		c.Fail(500, err)
 		return
 	}
-	fmt.Println(account)
 
 	c.String(200, "ok")
 }

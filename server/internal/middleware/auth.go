@@ -64,8 +64,6 @@ func IsRoomAdmin() gin.HandlerFunc {
 			return
 		}
 
-		fmt.Println(t.(*token.Token).Room)
-
 		admin := t.(*token.Token).Room.Admin
 		if !admin {
 			c.Fail(403, errors.New("must be admin for room"))

@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jordanpotter/gosu/server/internal/db"
+	"github.com/jordanpotter/gosu/server/internal/events"
 )
 
 type SetAdminRequest struct {
@@ -38,6 +39,16 @@ func (h *Handler) setAdmin(c *gin.Context) {
 		return
 	}
 
+	e := events.RoomMemberAdminUpdated{
+		RoomID:   roomID,
+		MemberID: memberID,
+		Admin:    req.Admin,
+	}
+	err = h.pub.Send(e)
+	if err != nil {
+		fmt.Println("Failed to send event: %v", err)
+	}
+
 	c.String(200, "ok")
 }
 
@@ -58,6 +69,16 @@ func (h *Handler) setBanned(c *gin.Context) {
 	} else if err != nil {
 		c.Fail(500, err)
 		return
+	}
+
+	e := events.RoomMemberBannedUpdated{
+		RoomID:   roomID,
+		MemberID: memberID,
+		Banned:   req.Banned,
+	}
+	err = h.pub.Send(e)
+	if err != nil {
+		fmt.Println("Failed to send event: %v", err)
 	}
 
 	c.String(200, "ok")

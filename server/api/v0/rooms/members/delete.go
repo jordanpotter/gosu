@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
+	"github.com/jordanpotter/gosu/server/internal/events"
 	"github.com/jordanpotter/gosu/server/internal/middleware"
 )
 
@@ -24,10 +25,19 @@ func (h *Handler) leave(c *gin.Context) {
 		return
 	}
 
-	err = h.dbConn.Rooms.RemoveMember(roomID, member.AccountID)
+	err = h.dbConn.Rooms.RemoveMember(roomID, member.ID)
 	if err != nil {
 		c.Fail(500, err)
 		return
+	}
+
+	e := events.RoomMemberDeleted{
+		RoomID:   roomID,
+		MemberID: member.ID,
+	}
+	err = h.pub.Send(e)
+	if err != nil {
+		fmt.Println("Failed to send event: %v", err)
 	}
 
 	c.String(200, "ok")
@@ -42,6 +52,15 @@ func (h *Handler) delete(c *gin.Context) {
 	if err != nil {
 		c.Fail(500, err)
 		return
+	}
+
+	e := events.RoomMemberDeleted{
+		RoomID:   roomID,
+		MemberID: memberID,
+	}
+	err = h.pub.Send(e)
+	if err != nil {
+		fmt.Println("Failed to send event: %v", err)
 	}
 
 	c.String(200, "ok")

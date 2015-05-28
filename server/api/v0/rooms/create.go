@@ -1,8 +1,6 @@
 package rooms
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
@@ -38,7 +36,6 @@ func (h *Handler) create(c *gin.Context) {
 		c.Fail(500, err)
 		return
 	}
-	fmt.Println(room)
 
 	c.JSON(200, room)
 }

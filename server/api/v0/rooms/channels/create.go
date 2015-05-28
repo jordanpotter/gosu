@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jordanpotter/gosu/server/internal/db"
+	"github.com/jordanpotter/gosu/server/internal/events"
 )
 
 type CreateRequest struct {
@@ -26,17 +27,17 @@ func (h *Handler) create(c *gin.Context) {
 		c.Fail(500, err)
 		return
 	}
-	fmt.Println(channel)
 
-	// e := events.RoomChannelCreated{
-	// 	RoomID: roomID,
-	// 	ChannelID: "channel-id"
-	// 	ChannelName: "channel-name"
-	// }
-	// err := h.pub.Send(e)
-	// if err != nil {
-	// 	fmt.Println("Failed to send event: %v", err)
-	// }
+	e := events.RoomChannelCreated{
+		RoomID:      roomID,
+		ChannelID:   channel.ID,
+		ChannelName: channel.Name,
+		Created:     channel.Created,
+	}
+	err = h.pub.Send(e)
+	if err != nil {
+		fmt.Println("Failed to send event: %v", err)
+	}
 
 	c.JSON(200, channel)
 }

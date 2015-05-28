@@ -36,7 +36,7 @@ func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
 
 	rgWithID := rg.Group("/id/:roomID")
 	rgWithID.Use(middleware.AuthMatchesRoom("roomID"))
-	rgWithID.GET("/id/:roomID", h.get)
+	rgWithID.GET("/", h.get)
 	h.membersHandler.AddRoutes(rgWithID.Group("/members"))
 	h.channelsHandler.AddRoutes(rgWithID.Group("/channels"))
 }
