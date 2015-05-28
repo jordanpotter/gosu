@@ -78,7 +78,7 @@ func (f *Factory) Decrypt(str string) (*Token, error) {
 	room := Room{}
 	room.ID, _ = t.Claims[roomIDKey].(string)
 	room.MemberID, _ = t.Claims[roomMemberIDKey].(string)
-	room.Admin, _ = t.Claims[roomMemberIDKey].(bool)
+	room.Admin, _ = t.Claims[roomAdminKey].(bool)
 
 	expiresUnix := int64(t.Claims[expiresKey].(float64))
 	expires := time.Unix(expiresUnix, 0).UTC()
