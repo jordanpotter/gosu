@@ -1,7 +1,6 @@
 package rooms
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -42,13 +41,10 @@ func (h *Handler) authenticate(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(member)
-
 	h.tf.Extend(authToken)
 	authToken.Room.ID = req.ID
 	authToken.Room.MemberID = member.ID
 	authToken.Room.Admin = member.Admin
-	fmt.Println(authToken.Room)
 	authTokenEncrypted, err := h.tf.Encrypt(authToken)
 	if err != nil {
 		c.Fail(500, err)

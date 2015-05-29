@@ -22,8 +22,8 @@ func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
 	rg.DELETE("/leave", h.leave)
 
 	rgWithID := rg.Group("/id/:memberID")
-	rgWithID.Use(middleware.IsRoomAdmin())
-	rgWithID.PUT("/id/:memberID/admin", h.setAdmin)
-	rgWithID.PUT("/id/:memberID/banned", h.setBanned)
-	rgWithID.DELETE("/id/:memberID", h.delete)
+	rgWithID.Use(middleware.IsRoomAdmin(), middleware.IsNotSameMember("memberID"))
+	rgWithID.PUT("/admin", h.setAdmin)
+	rgWithID.PUT("/banned", h.setBanned)
+	rgWithID.DELETE("/", h.delete)
 }
