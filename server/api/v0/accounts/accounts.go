@@ -5,16 +5,16 @@ import (
 
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
-	"github.com/jordanpotter/gosu/server/internal/events"
+	"github.com/jordanpotter/gosu/server/internal/pubsub"
 )
 
 type Handler struct {
 	dbConn *db.Conn
 	tf     *token.Factory
-	pub    events.Publisher
+	pub    pubsub.Publisher
 }
 
-func New(dbConn *db.Conn, tf *token.Factory, pub events.Publisher) *Handler {
+func New(dbConn *db.Conn, tf *token.Factory, pub pubsub.Publisher) *Handler {
 	return &Handler{dbConn, tf, pub}
 }
 

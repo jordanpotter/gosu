@@ -1,21 +1,20 @@
 package nanomsg
 
 import (
-	"fmt"
-
 	"github.com/gdamore/mangos"
 	"github.com/gdamore/mangos/protocol/pub"
 	"github.com/gdamore/mangos/transport/tcp"
 	"gopkg.in/vmihailenco/msgpack.v2"
 
-	"github.com/jordanpotter/gosu/server/internal/events"
+	"github.com/jordanpotter/gosu/server/events/types"
+	"github.com/jordanpotter/gosu/server/internal/pubsub"
 )
 
 type publisher struct {
 	sock mangos.Socket
 }
 
-func NewPublisher(addr string) (events.Publisher, error) {
+func NewPublisher(addr string) (pubsub.Publisher, error) {
 	sock, err := pub.NewSocket()
 	if err != nil {
 		return nil, err
@@ -30,10 +29,7 @@ func NewPublisher(addr string) (events.Publisher, error) {
 	return &publisher{sock}, nil
 }
 
-func (p *publisher) Send(event interface{}) error {
-	fmt.Println("Sending", event)
-	fmt.Println("TODO: send timestamp in event")
-
+func (p *publisher) Send(event types.Event) error {
 	m, err := newMessage(event)
 	if err != nil {
 		return err

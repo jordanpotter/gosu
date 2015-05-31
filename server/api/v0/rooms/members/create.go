@@ -5,10 +5,10 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jordanpotter/gosu/server/events/types"
 	"github.com/jordanpotter/gosu/server/internal/auth/password"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
-	"github.com/jordanpotter/gosu/server/internal/events"
 	"github.com/jordanpotter/gosu/server/internal/middleware"
 )
 
@@ -53,7 +53,7 @@ func (h *Handler) join(c *gin.Context) {
 		return
 	}
 
-	e := events.RoomMemberCreated{
+	e := &types.RoomMemberCreated{
 		RoomID:     roomID,
 		MemberID:   member.ID,
 		MemberName: member.Name,
@@ -63,7 +63,7 @@ func (h *Handler) join(c *gin.Context) {
 	}
 	err = h.pub.Send(e)
 	if err != nil {
-		fmt.Println("Failed to send event: %v", err)
+		fmt.Printf("Failed to send event: %v", err)
 	}
 
 	c.JSON(200, member)

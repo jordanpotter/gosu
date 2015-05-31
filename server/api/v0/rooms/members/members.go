@@ -4,16 +4,16 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/jordanpotter/gosu/server/internal/db"
-	"github.com/jordanpotter/gosu/server/internal/events"
 	"github.com/jordanpotter/gosu/server/internal/middleware"
+	"github.com/jordanpotter/gosu/server/internal/pubsub"
 )
 
 type Handler struct {
 	dbConn *db.Conn
-	pub    events.Publisher
+	pub    pubsub.Publisher
 }
 
-func New(dbConn *db.Conn, pub events.Publisher) *Handler {
+func New(dbConn *db.Conn, pub pubsub.Publisher) *Handler {
 	return &Handler{dbConn, pub}
 }
 

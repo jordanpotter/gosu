@@ -12,8 +12,8 @@ import (
 	"github.com/jordanpotter/gosu/server/internal/config/etcd"
 	"github.com/jordanpotter/gosu/server/internal/db"
 	"github.com/jordanpotter/gosu/server/internal/db/mongo"
-	"github.com/jordanpotter/gosu/server/internal/events"
-	"github.com/jordanpotter/gosu/server/internal/events/nanomsg"
+	"github.com/jordanpotter/gosu/server/internal/pubsub"
+	"github.com/jordanpotter/gosu/server/internal/pubsub/nanomsg"
 )
 
 var (
@@ -41,7 +41,7 @@ func main() {
 	sub := getSubscriber(configConn)
 	defer sub.Close()
 
-	listenChan := make(chan *events.Message, 100)
+	listenChan := make(chan *pubsub.SubMessage, 100)
 	err := sub.Listen(listenChan)
 	if err != nil {
 		panic(err)
@@ -84,7 +84,7 @@ func getTokenFactory(configConn config.Conn) *token.Factory {
 	return token.NewFactory(authTokenConfig.Key, authTokenConfig.Duration)
 }
 
-func getSubscriber(configConn config.Conn) events.Subscriber {
+func getSubscriber(configConn config.Conn) pubsub.Subscriber {
 	apiAddrs, err := configConn.GetAPIAddrs()
 	if err != nil {
 		panic(err)

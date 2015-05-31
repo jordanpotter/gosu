@@ -3,6 +3,7 @@ package nanomsg
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"gopkg.in/vmihailenco/msgpack.v2"
 
@@ -10,16 +11,17 @@ import (
 	"github.com/gdamore/mangos/protocol/sub"
 	"github.com/gdamore/mangos/transport/tcp"
 
-	"github.com/jordanpotter/gosu/server/internal/events"
+	"github.com/jordanpotter/gosu/server/events/types"
+	"github.com/jordanpotter/gosu/server/internal/pubsub"
 )
 
 type subscriber struct {
 	sock       mangos.Socket
 	dialers    map[string]mangos.Dialer
-	listenChan chan<- *events.Message
+	listenChan chan<- *pubsub.SubMessage
 }
 
-func NewSubscriber() (events.Subscriber, error) {
+func NewSubscriber() (pubsub.Subscriber, error) {
 	sock, err := sub.NewSocket()
 	if err != nil {
 		return nil, err
@@ -118,7 +120,7 @@ func (s *subscriber) disconnect(addr string) error {
 	return nil
 }
 
-func (s *subscriber) Listen(listener chan<- *events.Message) error {
+func (s *subscriber) Listen(listener chan<- *pubsub.SubMessage) error {
 	if s.listenChan != nil {
 		return errors.New("listener already set")
 	} else if listener == nil {
@@ -132,24 +134,28 @@ func (s *subscriber) Listen(listener chan<- *events.Message) error {
 
 func (s *subscriber) handleEvents() {
 	for {
-		event, err := s.getNextEvent()
-		s.listenChan <- &events.Message{Event: event, Err: err}
+		event, timestamp, err := s.getNextEvent()
+		s.listenChan <- &pubsub.SubMessage{Event: event, Timestamp: timestamp, Err: err}
 	}
 }
 
-func (s *subscriber) getNextEvent() (interface{}, error) {
+func (s *subscriber) getNextEvent() (types.Event, time.Time, error) {
 	b, err := s.sock.Recv()
 	if err != nil {
-		return nil, err
+		return nil, time.Time{}, err
 	}
 
 	var m message
 	err = msgpack.Unmarshal(b, &m)
 	if err != nil {
-		return nil, err
+		return nil, time.Time{}, err
 	}
 
-	return m.getEvent()
+	event, err := types.UnmarshalMsgpack(m.Type, m.EventBytes)
+	if err != nil {
+		return nil, time.Time{}, err
+	}
+	return event, m.Timestamp, nil
 }
 
 func (s *subscriber) Close() error {

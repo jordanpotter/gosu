@@ -13,8 +13,8 @@ import (
 	"github.com/jordanpotter/gosu/server/internal/config/etcd"
 	"github.com/jordanpotter/gosu/server/internal/db"
 	"github.com/jordanpotter/gosu/server/internal/db/mongo"
-	"github.com/jordanpotter/gosu/server/internal/events"
-	"github.com/jordanpotter/gosu/server/internal/events/nanomsg"
+	"github.com/jordanpotter/gosu/server/internal/pubsub"
+	"github.com/jordanpotter/gosu/server/internal/pubsub/nanomsg"
 )
 
 var (
@@ -73,7 +73,7 @@ func getTokenFactory(configConn config.Conn) *token.Factory {
 	return token.NewFactory(authTokenConfig.Key, authTokenConfig.Duration)
 }
 
-func getPublisher(configConn config.Conn) events.Publisher {
+func getPublisher(configConn config.Conn) pubsub.Publisher {
 	pub, err := nanomsg.NewPublisher(fmt.Sprintf(":%d", pubPort))
 	if err != nil {
 		panic(err)
@@ -81,7 +81,7 @@ func getPublisher(configConn config.Conn) events.Publisher {
 	return pub
 }
 
-func startServer(dbConn *db.Conn, tf *token.Factory, pub events.Publisher) {
+func startServer(dbConn *db.Conn, tf *token.Factory, pub pubsub.Publisher) {
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong")
