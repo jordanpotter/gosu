@@ -19,7 +19,7 @@ const (
 
 type message struct {
 	Type       string `msgpack:"type"`
-	EventBytes []byte `msgpack:eventBytes`
+	EventBytes []byte `msgpack:"eventBytes"`
 }
 
 func newMessage(event interface{}) (*message, error) {
@@ -29,7 +29,7 @@ func newMessage(event interface{}) (*message, error) {
 	}
 
 	b, err := msgpack.Marshal(event)
-	return &message{Type: t, EventBytes: b}, err
+	return &message{t, b}, err
 }
 
 func (m *message) getEvent() (interface{}, error) {

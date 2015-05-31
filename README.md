@@ -14,11 +14,11 @@ For simplicity, etcd can be run locally via [Docker](docker.com)
 
 We use etcd to keep track of where our servers are located. Run these to set the development defaults
 
-    curl http://127.0.0.1:4001/v2/keys/addrs/auth   -XPOST -d value=127.0.0.1:8080
-    curl http://127.0.0.1:4001/v2/keys/addrs/api    -XPOST -d value=127.0.0.1:8081
-    curl http://127.0.0.1:4001/v2/keys/addrs/events -XPOST -d value=127.0.0.1:8082
-    curl http://127.0.0.1:4001/v2/keys/addrs/relay  -XPOST -d value=127.0.0.1:8083
-    curl http://127.0.0.1:4001/v2/keys/addrs/mongo  -XPOST -d value=127.0.0.1:27017
+    curl http://127.0.0.1:4001/v2/keys/addrs/auth   -XPOST -d value='{"ip": "127.0.0.1", "httpPort": 8080}'
+    curl http://127.0.0.1:4001/v2/keys/addrs/api    -XPOST -d value='{"ip": "127.0.0.1", "httpPort": 8081, "pubPort": 9001}'
+    curl http://127.0.0.1:4001/v2/keys/addrs/events -XPOST -d value='{"ip": "127.0.0.1", "httpPort": 8082, "subPort": 9002}'
+    curl http://127.0.0.1:4001/v2/keys/addrs/relay  -XPOST -d value='{"ip": "127.0.0.1", "httpPort": 8083, "commsPort": 1337}'
+    curl http://127.0.0.1:4001/v2/keys/addrs/mongo  -XPOST -d value='{"ip": "127.0.0.1", "dbPort": 27017}'
 
  If you decide to run a server on a different ip address or port, be sure to remove the old entry and add the new one for that server. Thorough instructions can be found [here](https://github.com/coreos/etcd/blob/master/Documentation/api.md).
 

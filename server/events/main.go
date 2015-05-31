@@ -18,11 +18,13 @@ import (
 
 var (
 	port     int
+	subPort  int
 	etcdAddr string
 )
 
 func init() {
 	flag.IntVar(&port, "port", 8082, "the port to use")
+	flag.IntVar(&subPort, "subscriber port", 9002, "the port to subscribe to events from")
 	flag.StringVar(&etcdAddr, "etcd", "http://localhost:4001", "the etcd server addresses")
 	flag.Parse()
 }
@@ -39,22 +41,8 @@ func main() {
 	sub := getSubscriber(configConn)
 	defer sub.Close()
 
-	err := sub.SetAddrs([]string{"127.0.0.1:9001"})
-	if err != nil {
-		panic(err)
-	}
-
-	// go func() {
-	// 	time.Sleep(2 * time.Second)
-	// 	fmt.Println("ADDING")
-	// 	err := sub.SetAddrs([]string{"127.0.0.1:9001", "127.0.0.1:9003"})
-	// 	if err != nil {
-	// 		panic(err)
-	// 	}
-	// }()
-
-	listenChan := make(chan *events.Message)
-	err = sub.Listen(listenChan)
+	listenChan := make(chan *events.Message, 100)
+	err := sub.Listen(listenChan)
 	if err != nil {
 		panic(err)
 	}
@@ -97,10 +85,27 @@ func getTokenFactory(configConn config.Conn) *token.Factory {
 }
 
 func getSubscriber(configConn config.Conn) events.Subscriber {
+	apiAddrs, err := configConn.GetAPIAddrs()
+	if err != nil {
+		panic(err)
+	}
+
 	sub, err := nanomsg.NewSubscriber()
 	if err != nil {
 		panic(err)
 	}
+
+	subAddrs := make([]string, 0, len(apiAddrs))
+	for _, apiAddr := range apiAddrs {
+		addr := fmt.Sprintf("%s:%d", apiAddr.IP.String(), apiAddr.PubPort)
+		subAddrs = append(subAddrs, addr)
+	}
+	err = sub.SetAddrs(subAddrs)
+	if err != nil {
+		sub.Close()
+		panic(err)
+	}
+
 	return sub
 }
 

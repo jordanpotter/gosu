@@ -1,6 +1,7 @@
 package mongo
 
 import (
+	"fmt"
 	"time"
 
 	mgo "gopkg.in/mgo.v2"
@@ -11,7 +12,7 @@ import (
 	"github.com/jordanpotter/gosu/server/internal/db/mongo/rooms"
 )
 
-func New(addrs []string, config *config.Mongo) (*db.Conn, error) {
+func New(addrs []config.MongoNode, config *config.Mongo) (*db.Conn, error) {
 	session, err := createSession(addrs, config)
 	if err != nil {
 		return nil, err
@@ -35,9 +36,9 @@ func New(addrs []string, config *config.Mongo) (*db.Conn, error) {
 	return conn, nil
 }
 
-func createSession(addrs []string, config *config.Mongo) (*mgo.Session, error) {
+func createSession(addrs []config.MongoNode, config *config.Mongo) (*mgo.Session, error) {
 	dialInfo := mgo.DialInfo{
-		Addrs:     addrs,
+		Addrs:     getAddrsAsStrings(addrs),
 		Database:  config.Name,
 		Username:  config.Username,
 		Password:  config.Password,
@@ -57,4 +58,13 @@ func createSession(addrs []string, config *config.Mongo) (*mgo.Session, error) {
 		WTimeout: int(config.WriteParams.Timeout.Seconds()),
 		J:        config.WriteParams.Journaling})
 	return session, nil
+}
+
+func getAddrsAsStrings(addrs []config.MongoNode) []string {
+	addrsStr := make([]string, 0, len(addrs))
+	for _, addr := range addrs {
+		addr := fmt.Sprintf("%s:%d", addr.IP.String(), addr.DBPort)
+		addrsStr = append(addrsStr, addr)
+	}
+	return addrsStr
 }

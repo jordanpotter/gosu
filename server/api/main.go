@@ -19,11 +19,13 @@ import (
 
 var (
 	port     int
+	pubPort  int
 	etcdAddr string
 )
 
 func init() {
 	flag.IntVar(&port, "port", 8081, "the port to use")
+	flag.IntVar(&pubPort, "publisher port", 9001, "the port to publish events on")
 	flag.StringVar(&etcdAddr, "etcd", "http://localhost:4001", "the etcd server addresses")
 	flag.Parse()
 }
@@ -72,7 +74,7 @@ func getTokenFactory(configConn config.Conn) *token.Factory {
 }
 
 func getPublisher(configConn config.Conn) events.Publisher {
-	pub, err := nanomsg.NewPublisher("127.0.0.1:9001")
+	pub, err := nanomsg.NewPublisher(fmt.Sprintf(":%d", pubPort))
 	if err != nil {
 		panic(err)
 	}

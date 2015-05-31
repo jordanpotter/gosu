@@ -23,7 +23,7 @@ func AuthRequired(tf *token.Factory) gin.HandlerFunc {
 			c.Fail(500, err)
 			return
 		} else if t.Expires.Before(time.Now()) {
-			c.Fail(403, errors.New("token expired"))
+			c.Fail(401, errors.New("token expired"))
 			return
 		}
 
