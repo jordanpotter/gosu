@@ -1,6 +1,8 @@
 package rooms
 
 import (
+	"errors"
+
 	"github.com/gin-gonic/gin"
 
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
@@ -16,13 +18,15 @@ type CreateRequest struct {
 
 func (h *Handler) create(c *gin.Context) {
 	var req CreateRequest
-	if !c.Bind(&req) {
+	err := c.Bind(&req)
+	if err != nil {
+		c.AbortWithError(422, err)
 		return
 	}
 
-	t, err := c.Get(middleware.TokenKey)
-	if err != nil {
-		c.Fail(500, err)
+	t, ok := c.Get(middleware.TokenKey)
+	if !ok {
+		c.AbortWithError(500, errors.New("missing auth token"))
 		return
 	}
 	authToken := t.(*token.Token)
@@ -30,10 +34,10 @@ func (h *Handler) create(c *gin.Context) {
 	accountID := authToken.Account.ID
 	room, err := h.dbConn.Rooms.Create(req.Name, req.Password, accountID, req.MemberName)
 	if err == db.DuplicateError {
-		c.Fail(409, err)
+		c.AbortWithError(409, err)
 		return
 	} else if err != nil {
-		c.Fail(500, err)
+		c.AbortWithError(500, err)
 		return
 	}
 

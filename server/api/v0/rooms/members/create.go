@@ -19,13 +19,15 @@ type JoinRequest struct {
 
 func (h *Handler) join(c *gin.Context) {
 	var req JoinRequest
-	if !c.Bind(&req) {
+	err := c.Bind(&req)
+	if err != nil {
+		c.AbortWithError(422, err)
 		return
 	}
 
-	t, err := c.Get(middleware.TokenKey)
-	if err != nil {
-		c.Fail(500, err)
+	t, ok := c.Get(middleware.TokenKey)
+	if !ok {
+		c.AbortWithError(500, errors.New("missing auth token"))
 		return
 	}
 	authToken := t.(*token.Token)
@@ -33,23 +35,23 @@ func (h *Handler) join(c *gin.Context) {
 	roomID := c.Params.ByName("roomID")
 	room, err := h.dbConn.Rooms.Get(roomID)
 	if err != nil {
-		c.Fail(500, err)
+		c.AbortWithError(500, err)
 		return
 	}
 
 	passwordMatches := password.MatchesHash(req.Password, room.PasswordHash)
 	if !passwordMatches {
-		c.Fail(403, errors.New("invalid password"))
+		c.AbortWithError(403, errors.New("invalid password"))
 		return
 	}
 
 	accountID := authToken.Account.ID
 	member, err := h.dbConn.Rooms.AddMember(roomID, accountID, req.Name)
 	if err == db.DuplicateError {
-		c.Fail(409, err)
+		c.AbortWithError(409, err)
 		return
 	} else if err != nil {
-		c.Fail(500, err)
+		c.AbortWithError(500, err)
 		return
 	}
 

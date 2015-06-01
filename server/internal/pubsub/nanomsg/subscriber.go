@@ -27,7 +27,6 @@ func NewSubscriber() (pubsub.Subscriber, error) {
 		return nil, err
 	}
 
-	fmt.Println("TODO: use TLSTCP instead")
 	sock.AddTransport(tcp.NewTransport())
 	return &subscriber{
 		sock:    sock,

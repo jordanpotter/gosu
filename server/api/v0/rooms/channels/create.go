@@ -14,17 +14,19 @@ type CreateRequest struct {
 
 func (h *Handler) create(c *gin.Context) {
 	var req CreateRequest
-	if !c.Bind(&req) {
+	err := c.Bind(&req)
+	if err != nil {
+		c.AbortWithError(422, err)
 		return
 	}
 
 	roomID := c.Params.ByName("roomID")
 	channel, err := h.dbConn.Rooms.AddChannel(roomID, req.Name)
 	if err == db.DuplicateError {
-		c.Fail(409, err)
+		c.AbortWithError(409, err)
 		return
 	} else if err != nil {
-		c.Fail(500, err)
+		c.AbortWithError(500, err)
 		return
 	}
 

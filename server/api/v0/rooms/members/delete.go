@@ -1,6 +1,7 @@
 package members
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -10,9 +11,9 @@ import (
 )
 
 func (h *Handler) leave(c *gin.Context) {
-	t, err := c.Get(middleware.TokenKey)
-	if err != nil {
-		c.Fail(500, err)
+	t, ok := c.Get(middleware.TokenKey)
+	if !ok {
+		c.AbortWithError(500, errors.New("missing auth token"))
 		return
 	}
 	authToken := t.(*token.Token)
@@ -21,13 +22,13 @@ func (h *Handler) leave(c *gin.Context) {
 	accountID := authToken.Account.ID
 	member, err := h.dbConn.Rooms.GetMemberByAccount(roomID, accountID)
 	if err != nil {
-		c.Fail(500, err)
+		c.AbortWithError(500, err)
 		return
 	}
 
 	err = h.dbConn.Rooms.RemoveMember(roomID, member.ID)
 	if err != nil {
-		c.Fail(500, err)
+		c.AbortWithError(500, err)
 		return
 	}
 
@@ -50,7 +51,7 @@ func (h *Handler) delete(c *gin.Context) {
 	memberID := c.Params.ByName("memberID")
 	err := h.dbConn.Rooms.RemoveMember(roomID, memberID)
 	if err != nil {
-		c.Fail(500, err)
+		c.AbortWithError(500, err)
 		return
 	}
 

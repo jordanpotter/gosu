@@ -15,10 +15,10 @@ func (h *Handler) get(c *gin.Context) {
 	roomID := c.Params.ByName("roomID")
 	room, err := h.dbConn.Rooms.Get(roomID)
 	if err == db.NotFoundError {
-		c.Fail(404, err)
+		c.AbortWithError(404, err)
 		return
 	} else if err != nil {
-		c.Fail(500, err)
+		c.AbortWithError(500, err)
 		return
 	}
 
@@ -28,17 +28,17 @@ func (h *Handler) get(c *gin.Context) {
 func (h *Handler) getID(c *gin.Context) {
 	q := c.Request.URL.Query()
 	if q[roomNameQueryParam] == nil {
-		c.Fail(400, errors.New("missing room name"))
+		c.AbortWithError(400, errors.New("missing room name"))
 		return
 	}
 
 	name := q[roomNameQueryParam][0]
 	room, err := h.dbConn.Rooms.GetByName(name)
 	if err == db.NotFoundError {
-		c.Fail(404, err)
+		c.AbortWithError(404, err)
 		return
 	} else if err != nil {
-		c.Fail(500, err)
+		c.AbortWithError(500, err)
 		return
 	}
 

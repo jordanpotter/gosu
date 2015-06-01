@@ -22,18 +22,20 @@ type SetBannedRequest struct {
 
 func (h *Handler) setAdmin(c *gin.Context) {
 	var req SetAdminRequest
-	if !c.Bind(&req) {
+	err := c.Bind(&req)
+	if err != nil {
+		c.AbortWithError(422, err)
 		return
 	}
 
 	roomID := c.Params.ByName("roomID")
 	memberID := c.Params.ByName("memberID")
-	err := h.dbConn.Rooms.SetMemberAdmin(roomID, memberID, req.Admin)
+	err = h.dbConn.Rooms.SetMemberAdmin(roomID, memberID, req.Admin)
 	if err == db.NotFoundError {
-		c.Fail(404, err)
+		c.AbortWithError(404, err)
 		return
 	} else if err != nil {
-		c.Fail(500, err)
+		c.AbortWithError(500, err)
 		return
 	}
 
@@ -52,18 +54,20 @@ func (h *Handler) setAdmin(c *gin.Context) {
 
 func (h *Handler) setBanned(c *gin.Context) {
 	var req SetBannedRequest
-	if !c.Bind(&req) {
+	err := c.Bind(&req)
+	if err != nil {
+		c.AbortWithError(422, err)
 		return
 	}
 
 	roomID := c.Params.ByName("roomID")
 	memberID := c.Params.ByName("memberID")
-	err := h.dbConn.Rooms.SetMemberBanned(roomID, memberID, req.Banned)
+	err = h.dbConn.Rooms.SetMemberBanned(roomID, memberID, req.Banned)
 	if err == db.NotFoundError {
-		c.Fail(404, err)
+		c.AbortWithError(404, err)
 		return
 	} else if err != nil {
-		c.Fail(500, err)
+		c.AbortWithError(500, err)
 		return
 	}
 

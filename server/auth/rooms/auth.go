@@ -1,6 +1,7 @@
 package rooms
 
 import (
+	"errors"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -20,13 +21,15 @@ type AuthenticationResponse struct {
 
 func (h *Handler) authenticate(c *gin.Context) {
 	var req AuthenticationRequest
-	if !c.Bind(&req) {
+	err := c.Bind(&req)
+	if err != nil {
+		c.AbortWithError(422, err)
 		return
 	}
 
-	t, err := c.Get(middleware.TokenKey)
-	if err != nil {
-		c.Fail(500, err)
+	t, ok := c.Get(middleware.TokenKey)
+	if !ok {
+		c.AbortWithError(500, errors.New("missing auth token"))
 		return
 	}
 	authToken := t.(*token.Token)
@@ -34,10 +37,10 @@ func (h *Handler) authenticate(c *gin.Context) {
 	accountID := authToken.Account.ID
 	member, err := h.dbConn.Rooms.GetMemberByAccount(req.ID, accountID)
 	if err == db.NotFoundError {
-		c.Fail(404, err)
+		c.AbortWithError(404, err)
 		return
 	} else if err != nil {
-		c.Fail(500, err)
+		c.AbortWithError(500, err)
 		return
 	}
 
@@ -47,7 +50,7 @@ func (h *Handler) authenticate(c *gin.Context) {
 	authToken.Room.Admin = member.Admin
 	authTokenEncrypted, err := h.tf.Encrypt(authToken)
 	if err != nil {
-		c.Fail(500, err)
+		c.AbortWithError(500, err)
 		return
 	}
 

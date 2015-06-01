@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/jordanpotter/gosu/server/events/hub"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/config"
 	"github.com/jordanpotter/gosu/server/internal/config/etcd"
@@ -41,21 +42,9 @@ func main() {
 	sub := getSubscriber(configConn)
 	defer sub.Close()
 
-	listenChan := make(chan *pubsub.SubMessage, 100)
-	err := sub.Listen(listenChan)
-	if err != nil {
-		panic(err)
-	}
-
-	go func() {
-		for m := range listenChan {
-			fmt.Println(m.Event)
-		}
-	}()
-
 	tf := getTokenFactory(configConn)
 
-	startServer(dbConn, tf)
+	startServer(dbConn, tf, sub)
 }
 
 func getDBConn(configConn config.Conn) *db.Conn {
@@ -109,11 +98,17 @@ func getSubscriber(configConn config.Conn) pubsub.Subscriber {
 	return sub
 }
 
-func startServer(dbConn *db.Conn, tf *token.Factory) {
+func startServer(dbConn *db.Conn, tf *token.Factory, sub pubsub.Subscriber) {
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong")
 	})
+
+	hub, err := hub.New(tf, sub)
+	if err != nil {
+		panic(err)
+	}
+	hub.AddRoutes(r.Group("/events"))
 
 	r.Run(fmt.Sprintf(":%d", port))
 }

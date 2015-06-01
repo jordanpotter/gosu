@@ -29,21 +29,23 @@ type ReauthenticationResponse struct {
 
 func (h *Handler) authenticate(c *gin.Context) {
 	var req AuthenticationRequest
-	if !c.Bind(&req) {
+	err := c.Bind(&req)
+	if err != nil {
+		c.AbortWithError(422, err)
 		return
 	}
 
 	account, err := h.dbConn.Accounts.GetByEmail(req.Email)
 	if err == db.NotFoundError {
-		c.Fail(403, err)
+		c.AbortWithError(403, err)
 		return
 	} else if err != nil {
-		c.Fail(500, err)
+		c.AbortWithError(500, err)
 		return
 	}
 
 	if !hasValidDeviceCredentials(req.DeviceName, req.DevicePassword, account.Devices) {
-		c.Fail(403, errors.New("no matching device name and password"))
+		c.AbortWithError(403, errors.New("no matching device name and password"))
 		return
 	}
 
@@ -51,7 +53,7 @@ func (h *Handler) authenticate(c *gin.Context) {
 	authToken.Account.ID = account.ID
 	authTokenEncrypted, err := h.tf.Encrypt(authToken)
 	if err != nil {
-		c.Fail(500, err)
+		c.AbortWithError(500, err)
 		return
 	}
 
@@ -68,9 +70,9 @@ func hasValidDeviceCredentials(deviceName, devicePassword string, devices []db.D
 }
 
 func (h *Handler) reauthenticate(c *gin.Context) {
-	t, err := c.Get(middleware.TokenKey)
-	if err != nil {
-		c.Fail(500, err)
+	t, ok := c.Get(middleware.TokenKey)
+	if !ok {
+		c.AbortWithError(500, errors.New("missing auth token"))
 		return
 	}
 	authToken := t.(*token.Token)
@@ -78,7 +80,7 @@ func (h *Handler) reauthenticate(c *gin.Context) {
 	h.tf.Extend(authToken)
 	authTokenEncrypted, err := h.tf.Encrypt(authToken)
 	if err != nil {
-		c.Fail(500, err)
+		c.AbortWithError(500, err)
 		return
 	}
 
