@@ -27,6 +27,7 @@ We use etcd to keep track of where our servers are located. Run these to set the
 The `conf` directory includes some cluster-wide configuration files to insert into our etcd service
 
     curl -L http://127.0.0.1:4001/v2/keys/conf/auth/token -XPUT --data-urlencode value@conf/authToken.json
+    curl -L http://127.0.0.1:4001/v2/keys/conf/postgres -XPUT --data-urlencode value@conf/postgres.json
 
 If you wish to modify some configuration parameters in the `conf` directory, be sure to update etcd by running the above commands again.
 

@@ -1,0 +1,12 @@
+{
+	"username": "postgres",
+	"password": "password",
+	"name": "gosu",
+	"tables": {
+		"accounts": "accounts",
+		"devices": "devices",
+		"rooms": "rooms",
+		"channels": "channels",
+		"members": "members"
+  }
+}

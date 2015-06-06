@@ -7,13 +7,13 @@ import (
 
 type Conn interface {
 	GetAuthToken() (*AuthToken, error)
-	GetMongo() (*Mongo, error)
+	GetPostgres() (*Postgres, error)
 
 	GetAuthAddrs() ([]AuthNode, error)
 	GetAPIAddrs() ([]APINode, error)
 	GetEventsAddrs() ([]EventsNode, error)
 	GetRelayAddrs() ([]RelayNode, error)
-	GetMongoAddrs() ([]MongoNode, error)
+	GetPostgresAddrs() ([]PostgresNode, error)
 
 	Close()
 }
@@ -23,23 +23,19 @@ type AuthToken struct {
 	Duration time.Duration `json:"durationNs"`
 }
 
-type Mongo struct {
-	Username    string           `json:"username"`
-	Password    string           `json:"password"`
-	Name        string           `json:"name"`
-	Collections MongoCollections `json:"collections"`
-	WriteParams MongoWriteParams `json:"writeParams"`
+type Postgres struct {
+	Username string         `json:"username"`
+	Password string         `json:"password"`
+	Name     string         `json:"name"`
+	Tables   PostgresTables `json:"tables"`
 }
 
-type MongoCollections struct {
+type PostgresTables struct {
 	Accounts string `json:"accounts"`
+	Devices  string `json:"devices"`
 	Rooms    string `json:"rooms"`
-}
-
-type MongoWriteParams struct {
-	Mode       string        `json:"mode"`
-	Journaling bool          `json:"journaling"`
-	Timeout    time.Duration `json:"timeoutNs"`
+	Channels string `json:"channels"`
+	Members  string `json:"members"`
 }
 
 type AuthNode struct {
@@ -65,7 +61,7 @@ type RelayNode struct {
 	CommsPort int    `json:"commsPort"`
 }
 
-type MongoNode struct {
+type PostgresNode struct {
 	IP     net.IP `json:"ip"`
 	DBPort int    `json:"dbPort"`
 }
