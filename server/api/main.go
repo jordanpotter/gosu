@@ -7,12 +7,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/jordanpotter/gosu/server/api/v0"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/config"
 	"github.com/jordanpotter/gosu/server/internal/config/etcd"
 	"github.com/jordanpotter/gosu/server/internal/db"
-	"github.com/jordanpotter/gosu/server/internal/db/mongo"
+	"github.com/jordanpotter/gosu/server/internal/db/postgres"
 	"github.com/jordanpotter/gosu/server/internal/pubsub"
 	"github.com/jordanpotter/gosu/server/internal/pubsub/nanomsg"
 )
@@ -48,17 +47,17 @@ func main() {
 }
 
 func getDBConn(configConn config.Conn) *db.Conn {
-	mongoAddrs, err := configConn.GetMongoAddrs()
+	postgresAddrs, err := configConn.GetPostgresAddrs()
 	if err != nil {
 		panic(err)
 	}
 
-	mongoConfig, err := configConn.GetMongo()
+	postgresConfig, err := configConn.GetPostgres()
 	if err != nil {
 		panic(err)
 	}
 
-	dbConn, err := mongo.New(mongoAddrs, mongoConfig)
+	dbConn, err := postgres.New(postgresAddrs, postgresConfig)
 	if err != nil {
 		panic(err)
 	}
@@ -87,8 +86,8 @@ func startServer(dbConn *db.Conn, tf *token.Factory, pub pubsub.Publisher) {
 		c.String(200, "pong")
 	})
 
-	v0Handler := v0.New(dbConn, tf, pub)
-	v0Handler.AddRoutes(r.Group("/v0"))
+	// v0Handler := v0.New(dbConn, tf, pub)
+	// v0Handler.AddRoutes(r.Group("/v0"))
 
 	r.Run(fmt.Sprintf(":%d", port))
 }

@@ -7,12 +7,12 @@ import (
 )
 
 const (
-	addrsKey       = "/addrs"
-	addrsAuthKey   = "/addrs/auth"
-	addrsAPIKey    = "/addrs/api"
-	addrsEventsKey = "/addrs/events"
-	addrsRelayKey  = "/addrs/relay"
-	addrsMongoKey  = "/addrs/mongo"
+	addrsKey         = "/addrs"
+	addrsAuthKey     = "/addrs/auth"
+	addrsAPIKey      = "/addrs/api"
+	addrsEventsKey   = "/addrs/events"
+	addrsRelayKey    = "/addrs/relay"
+	addrsPostgresKey = "/addrs/postgres"
 )
 
 func (c *conn) GetAuthAddrs() ([]config.AuthNode, error) {
@@ -87,20 +87,20 @@ func (c *conn) GetRelayAddrs() ([]config.RelayNode, error) {
 	return addrs, nil
 }
 
-func (c *conn) GetMongoAddrs() ([]config.MongoNode, error) {
-	resp, err := c.client.Get(addrsMongoKey, true, false)
+func (c *conn) GetPostgresAddrs() ([]config.PostgresNode, error) {
+	resp, err := c.client.Get(addrsPostgresKey, true, false)
 	if err != nil {
 		return nil, err
 	}
 
-	addrs := make([]config.MongoNode, 0, len(resp.Node.Nodes))
+	addrs := make([]config.PostgresNode, 0, len(resp.Node.Nodes))
 	for _, node := range resp.Node.Nodes {
-		mongoNode := config.MongoNode{}
-		err = json.Unmarshal([]byte(node.Value), &mongoNode)
+		postgresNode := config.PostgresNode{}
+		err = json.Unmarshal([]byte(node.Value), &postgresNode)
 		if err != nil {
 			return nil, err
 		}
-		addrs = append(addrs, mongoNode)
+		addrs = append(addrs, postgresNode)
 	}
 	return addrs, nil
 }

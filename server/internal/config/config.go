@@ -28,6 +28,7 @@ type Postgres struct {
 	Password string         `json:"password"`
 	Name     string         `json:"name"`
 	Tables   PostgresTables `json:"tables"`
+	SSLMode  string         `json:"sslMode"`
 }
 
 type PostgresTables struct {

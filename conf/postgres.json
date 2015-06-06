@@ -8,5 +8,6 @@
 		"rooms": "rooms",
 		"channels": "channels",
 		"members": "members"
-  }
+	},
+	"sslMode": "disable"
 }
