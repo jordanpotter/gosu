@@ -18,7 +18,7 @@ We use etcd to keep track of where our servers are located. Run these to set the
     curl http://127.0.0.1:4001/v2/keys/addrs/api    -XPOST -d value='{"ip": "127.0.0.1", "httpPort": 8081, "pubPort": 9001}'
     curl http://127.0.0.1:4001/v2/keys/addrs/events -XPOST -d value='{"ip": "127.0.0.1", "httpPort": 8082, "subPort": 9002}'
     curl http://127.0.0.1:4001/v2/keys/addrs/relay  -XPOST -d value='{"ip": "127.0.0.1", "httpPort": 8083, "commsPort": 1337}'
-    curl http://127.0.0.1:4001/v2/keys/addrs/mongo  -XPOST -d value='{"ip": "127.0.0.1", "dbPort": 27017}'
+    curl http://127.0.0.1:4001/v2/keys/addrs/postgres  -XPOST -d value='{"ip": "127.0.0.1", "dbPort": 5432}'
 
  If you decide to run a server on a different ip address or port, be sure to remove the old entry and add the new one for that server. Thorough instructions can be found [here](https://github.com/coreos/etcd/blob/master/Documentation/api.md).
 
@@ -26,26 +26,12 @@ We use etcd to keep track of where our servers are located. Run these to set the
 
 The `conf` directory includes some cluster-wide configuration files to insert into our etcd service
 
-    curl -L http://127.0.0.1:4001/v2/keys/conf/mongo -XPUT --data-urlencode value@conf/mongo.json
     curl -L http://127.0.0.1:4001/v2/keys/conf/auth/token -XPUT --data-urlencode value@conf/authToken.json
 
 If you wish to modify some configuration parameters in the `conf` directory, be sure to update etcd by running the above commands again.
 
-## Mongo
-Currently Gosu uses [MongoDB](mongodb.org) as its backing data store. MongoDB's data model and availability guarantees resonate well with what Gosu is trying to achieve, although this decision is by no means permanent.
-
-MongoDB can be run locally via [Docker](docker.com)
-
-    docker run --name mongo -d -p 27017:27017 mongo:3.0.2
-
-Likewise, we can use [Docker](docker.com) to enter the mongo shell
-
-    docker run -it --rm --link mongo:mongo mongo:3.0.2 sh -c 'exec mongo "$MONGO_PORT_27017_TCP_ADDR:$MONGO_PORT_27017_TCP_PORT/gosu"'
-
-# TODO
-
 ## Postgres
-Currently Gosu uses [Postgres](postgresql.org) as its backing data store.
+Currently Gosu uses [Postgres](postgresql.org) as its backing data store. Postgres provides data guarantees that resonate well with the high reliability mission Gosu is trying to achieve.
 
 Postgres can be run locally via [Docker](docker.com)
 
