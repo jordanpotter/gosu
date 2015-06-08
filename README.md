@@ -1,7 +1,7 @@
 # Gosu
 Gosu is a massively distributed voice communication platform that focuses on performance, simplicity, and high availability.
 
-# Setup
+# Development Setup
 
 ## Etcd
 All discovery and configuration for the cluster is managed by [etcd](github.com/coreos/etcd). During development, make sure to have at least one instance running for the servers to communicate with.
