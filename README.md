@@ -40,4 +40,4 @@ Postgres can be run locally via [Docker](docker.com)
 
 Likewise, we can use [Docker](docker.com) to enter psql
 
-    docker run -it --rm --link postgres:postgres postgres:9.4.1 sh -c 'exec psql -h "$POSTGRES_PORT_5432_TCP_ADDR" -p "$POSTGRES_PORT_5432_TCP_PORT" -U postgres'
+    docker run -it --rm --link postgres:postgres postgres:9.4.1 sh -c 'exec psql gosu -h "$POSTGRES_PORT_5432_TCP_ADDR" -p "$POSTGRES_PORT_5432_TCP_PORT" -U postgres'
