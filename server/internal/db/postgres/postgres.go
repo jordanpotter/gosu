@@ -11,8 +11,7 @@ import (
 )
 
 func New(addrs []config.PostgresNode, config *config.Postgres) (*db.Conn, error) {
-	connStr := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=%s", config.Username, config.Password, config.Name, config.SSLMode)
-	postgresConn, err := sqlx.Connect("postgres", connStr)
+	postgresConn, err := getConnWithAddr(addrs[0], config)
 	if err != nil {
 		return nil, err
 	}
@@ -22,11 +21,6 @@ func New(addrs []config.PostgresNode, config *config.Postgres) (*db.Conn, error)
 	}
 	return conn, nil
 
-	// session, err := createSession(addrs, config)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	//
 	// accountsConn, err := accounts.New(session, config)
 	// if err != nil {
 	// 	return nil, err
@@ -45,36 +39,8 @@ func New(addrs []config.PostgresNode, config *config.Postgres) (*db.Conn, error)
 	// return conn, nil
 }
 
-//
-// func createSession(addrs []config.MongoNode, config *config.Mongo) (*mgo.Session, error) {
-// 	dialInfo := mgo.DialInfo{
-// 		Addrs:     getAddrsAsStrings(addrs),
-// 		Database:  config.Name,
-// 		Username:  config.Username,
-// 		Password:  config.Password,
-// 		Mechanism: "SCRAM-SHA-1",
-// 		Direct:    false,
-// 		Timeout:   10 * time.Second,
-// 	}
-//
-// 	session, err := mgo.DialWithInfo(&dialInfo)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-//
-// 	session.SetMode(mgo.Strong, false)
-// 	session.SetSafe(&mgo.Safe{
-// 		WMode:    config.WriteParams.Mode,
-// 		WTimeout: int(config.WriteParams.Timeout.Seconds()),
-// 		J:        config.WriteParams.Journaling})
-// 	return session, nil
-// }
-//
-// func getAddrsAsStrings(addrs []config.MongoNode) []string {
-// 	addrsStr := make([]string, 0, len(addrs))
-// 	for _, addr := range addrs {
-// 		addr := fmt.Sprintf("%s:%d", addr.IP.String(), addr.DBPort)
-// 		addrsStr = append(addrsStr, addr)
-// 	}
-// 	return addrsStr
-// }
+func getConnWithAddr(addr config.PostgresNode, config *config.Postgres) (*sqlx.DB, error) {
+	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
+		addr.IP.String(), addr.DBPort, config.Username, config.Password, config.Name, config.SSLMode)
+	return sqlx.Connect("postgres", connStr)
+}
