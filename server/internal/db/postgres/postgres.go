@@ -11,6 +11,7 @@ import (
 )
 
 func New(addrs []config.PostgresNode, config *config.Postgres) (*db.Conn, error) {
+	fmt.Println("TODO: support multiple postgres endpoints")
 	postgresConn, err := getConnWithAddr(addrs[0], config)
 	if err != nil {
 		return nil, err
