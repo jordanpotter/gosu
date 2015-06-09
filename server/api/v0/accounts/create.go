@@ -16,7 +16,7 @@ func (h *Handler) create(c *gin.Context) {
 		return
 	}
 
-	_, err = h.dbConn.Accounts.Create(req.Email, req.DeviceName, req.DevicePassword)
+	_, err = h.dbConn.CreateAccount(req.Email, req.DeviceName, req.DevicePassword)
 	if err != nil {
 		c.AbortWithError(500, err)
 		return

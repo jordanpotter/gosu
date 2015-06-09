@@ -1,5 +1,5 @@
 CREATE TABLE accounts (
-    id              integer PRIMARY KEY,
+    id              serial PRIMARY KEY,
     email           varchar(256) UNIQUE NOT NULL,
     created         timestamp without time zone NOT NULL
 );
@@ -8,7 +8,7 @@ CREATE INDEX idx_account_email ON accounts ((lower(email)));
 
 
 CREATE TABLE devices (
-    id              integer PRIMARY KEY,
+    id              serial PRIMARY KEY,
     account_id      integer REFERENCES accounts(id) NOT NULL,
     name            varchar(100) NOT NULL,
     password_hash   bytea NOT NULL,
@@ -20,7 +20,7 @@ CREATE INDEX idx_device_account_id ON devices (account_id);
 
 
 CREATE TABLE rooms (
-    id              integer PRIMARY KEY,
+    id              serial PRIMARY KEY,
     name            varchar(25) UNIQUE NOT NULL,
     password_hash   bytea NOT NULL,
     created         timestamp without time zone NOT NULL
@@ -30,7 +30,7 @@ CREATE INDEX idx_room_name ON rooms (name);
 
 
 CREATE TABLE channels (
-    id              integer PRIMARY KEY,
+    id              serial PRIMARY KEY,
     room_id         integer REFERENCES rooms(id) NOT NULL,
     name            varchar(25) NOT NULL,
     created         timestamp without time zone NOT NULL,
@@ -41,7 +41,7 @@ CREATE INDEX idx_channel_room_id ON channels (room_id);
 
 
 CREATE TABLE members (
-    id              integer PRIMARY KEY,
+    id              serial PRIMARY KEY,
     room_id         integer REFERENCES rooms(id) NOT NULL,
     account_id      integer REFERENCES accounts(id) NOT NULL,
     channel_id      integer REFERENCES channels(id),

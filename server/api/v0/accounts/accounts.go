@@ -9,12 +9,12 @@ import (
 )
 
 type Handler struct {
-	dbConn *db.Conn
+	dbConn db.Conn
 	tf     *token.Factory
 	pub    pubsub.Publisher
 }
 
-func New(dbConn *db.Conn, tf *token.Factory, pub pubsub.Publisher) *Handler {
+func New(dbConn db.Conn, tf *token.Factory, pub pubsub.Publisher) *Handler {
 	return &Handler{dbConn, tf, pub}
 }
 

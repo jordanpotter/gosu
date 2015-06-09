@@ -11,7 +11,11 @@ import (
 	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
-func New(addrs []config.PostgresNode, config *config.Postgres) (*db.Conn, error) {
+type conn struct {
+	*sqlx.DB
+}
+
+func New(addrs []config.PostgresNode, config *config.Postgres) (db.Conn, error) {
 	fmt.Println("TODO: support multiple postgres endpoints")
 	postgres, err := getDBWithAddr(addrs[0], config)
 	if err != nil {
@@ -23,27 +27,7 @@ func New(addrs []config.PostgresNode, config *config.Postgres) (*db.Conn, error)
 		return nil, err
 	}
 
-	conn := &db.Conn{
-		Closer: postgres,
-	}
-	return conn, nil
-
-	// accountsConn, err := accounts.New(session, config)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	//
-	// roomsConn, err := rooms.New(session, config)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	//
-	// conn := &db.Conn{
-	// 	Accounts: accountsConn,
-	// 	Rooms:    roomsConn,
-	// 	Closer:   session,
-	// }
-	// return conn, nil
+	return &conn{postgres}, nil
 }
 
 func getDBWithAddr(addr config.PostgresNode, config *config.Postgres) (*sqlx.DB, error) {

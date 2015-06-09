@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/jordanpotter/gosu/server/api/v0"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/config"
 	"github.com/jordanpotter/gosu/server/internal/config/etcd"
@@ -46,7 +47,7 @@ func main() {
 	startServer(dbConn, tf, pub)
 }
 
-func getDBConn(configConn config.Conn) *db.Conn {
+func getDBConn(configConn config.Conn) db.Conn {
 	postgresAddrs, err := configConn.GetPostgresAddrs()
 	if err != nil {
 		panic(err)
@@ -80,14 +81,14 @@ func getPublisher(configConn config.Conn) pubsub.Publisher {
 	return pub
 }
 
-func startServer(dbConn *db.Conn, tf *token.Factory, pub pubsub.Publisher) {
+func startServer(dbConn db.Conn, tf *token.Factory, pub pubsub.Publisher) {
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong")
 	})
 
-	// v0Handler := v0.New(dbConn, tf, pub)
-	// v0Handler.AddRoutes(r.Group("/v0"))
+	v0Handler := v0.New(dbConn, tf, pub)
+	v0Handler.AddRoutes(r.Group("/v0"))
 
 	r.Run(fmt.Sprintf(":%d", port))
 }

@@ -1,11 +1,19 @@
 package db
 
-type Conn struct {
-	// Accounts AccountsConn
-	// Rooms    RoomsConn
-	Closer
+import "io"
+
+type Conn interface {
+	AccountsConn
+	// DevicesConn
+	io.Closer
 }
 
-type Closer interface {
-	Close() error
+type AccountsConn interface {
+	CreateAccount(email, deviceName, devicePassword string) (*Account, error)
+	GetAccount(id int) (*Account, error)
+	GetAccountByEmail(email string) (*Account, error)
 }
+
+// type DevicesConn interface {
+// 	GetDevices(accountID int) ([]Device, error)
+// }
