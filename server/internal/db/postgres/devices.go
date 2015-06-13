@@ -3,6 +3,7 @@ package postgres
 import (
 	"time"
 
+	"github.com/jordanpotter/gosu/server/internal/auth/password"
 	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
@@ -33,9 +34,21 @@ func toDevices(sds []storedDevice) []db.Device {
 	return devices
 }
 
+func (c *conn) CreateDevice(accountID int, deviceName string, devicePassword string) (*db.Device, error) {
+	devicePasswordHash, err := password.ComputeHash(devicePassword)
+	if err != nil {
+		return nil, err
+	}
+
+	sd := new(storedDevice)
+	insertDevice := "INSERT INTO devices (account_id, name, password_hash, created) VALUES ($1, $2, $3, $4) RETURNING *"
+	err = c.Get(sd, insertDevice, accountID, deviceName, devicePasswordHash, time.Now())
+	return sd.toDevice(), err
+}
+
 func (c *conn) GetDevices(accountID int) ([]db.Device, error) {
 	sds := []storedDevice{}
-	query := "SELECT * FROM devices WHERE account_id = $1"
-	err := c.Select(&sds, query, accountID)
+	selectDevice := "SELECT * FROM devices WHERE account_id = $1"
+	err := c.Select(&sds, selectDevice, accountID)
 	return toDevices(sds), err
 }

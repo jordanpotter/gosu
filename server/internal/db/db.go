@@ -9,11 +9,12 @@ type Conn interface {
 }
 
 type AccountsConn interface {
-	CreateAccount(email, deviceName, devicePassword string) (*Account, error)
+	CreateAccount(email string) (*Account, error)
 	GetAccount(id int) (*Account, error)
 	GetAccountByEmail(email string) (*Account, error)
 }
 
 type DevicesConn interface {
+	CreateDevice(accountID int, deviceName, devicePassword string) (*Device, error)
 	GetDevices(accountID int) ([]Device, error)
 }
