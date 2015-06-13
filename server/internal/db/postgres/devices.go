@@ -46,7 +46,7 @@ func (c *conn) CreateDevice(accountID int, deviceName string, devicePassword str
 	return sd.toDevice(), err
 }
 
-func (c *conn) GetDevices(accountID int) ([]db.Device, error) {
+func (c *conn) GetDevicesByAccount(accountID int) ([]db.Device, error) {
 	sds := []storedDevice{}
 	selectDevice := "SELECT * FROM devices WHERE account_id = $1"
 	err := c.Select(&sds, selectDevice, accountID)

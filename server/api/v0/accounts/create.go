@@ -3,9 +3,7 @@ package accounts
 import "github.com/gin-gonic/gin"
 
 type CreateRequest struct {
-	Email          string `json:"email" form:"email" binding:"required"`
-	DeviceName     string `json:"deviceName" form:"deviceName" binding:"required"`
-	DevicePassword string `json:"devicePassword" form:"devicePassword" binding:"required"`
+	Email string `json:"email" form:"email" binding:"required"`
 }
 
 func (h *Handler) create(c *gin.Context) {
@@ -16,7 +14,7 @@ func (h *Handler) create(c *gin.Context) {
 		return
 	}
 
-	_, err = h.dbConn.CreateAccount(req.Email, req.DeviceName, req.DevicePassword)
+	_, err = h.dbConn.CreateAccount(req.Email)
 	if err != nil {
 		c.AbortWithError(500, err)
 		return
