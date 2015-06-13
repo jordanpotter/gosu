@@ -4,7 +4,7 @@ import "io"
 
 type Conn interface {
 	AccountsConn
-	// DevicesConn
+	DevicesConn
 	io.Closer
 }
 
@@ -14,6 +14,6 @@ type AccountsConn interface {
 	GetAccountByEmail(email string) (*Account, error)
 }
 
-// type DevicesConn interface {
-// 	GetDevices(accountID int) ([]Device, error)
-// }
+type DevicesConn interface {
+	GetDevices(accountID int) ([]Device, error)
+}
