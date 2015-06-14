@@ -7,7 +7,7 @@ type Conn interface {
 	DevicesConn
 	RoomsConn
 	ChannelsConn
-	// MembersConn
+	MembersConn
 	io.Closer
 }
 
@@ -18,12 +18,13 @@ type AccountsConn interface {
 }
 
 type DevicesConn interface {
-	CreateDevice(accountID int, deviceName, devicePassword string) (*Device, error)
+	CreateDevice(accountID int, deviceName string, devicePasswordHash []byte) (*Device, error)
 	GetDevicesByAccount(accountID int) ([]Device, error)
+	DeleteDevice(id int) error
 }
 
 type RoomsConn interface {
-	CreateRoom(name, password string, adminAccountID int, adminName string) (*Room, error)
+	CreateRoom(name string, passwordHash []byte, adminAccountID int, adminName string) (*Room, error)
 	GetRoom(id int) (*Room, error)
 	GetRoomByName(name string) (*Room, error)
 }
@@ -36,10 +37,10 @@ type ChannelsConn interface {
 }
 
 type MembersConn interface {
-	CreateMember(roomID, accountID int, name string) (*Member, error)
+	CreateMember(accountID, roomID int, name string) (*Member, error)
 	GetMember(id int) (*Member, error)
-	GetMembersByRoom(roomID int) ([]Member, error)
 	GetMembersByAccount(accountID int) ([]Member, error)
+	GetMembersByRoom(roomID int) ([]Member, error)
 	SetMemberAdmin(id int, admin bool) (*Member, error)
 	SetMemberBanned(id int, banned bool) (*Member, error)
 	DeleteMember(id int) error

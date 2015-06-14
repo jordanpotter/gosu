@@ -31,8 +31,8 @@ type Channel struct {
 
 type Member struct {
 	ID        int
-	RoomID    int
 	AccountID int
+	RoomID    int
 	ChannelID int
 	Name      string
 	Admin     bool

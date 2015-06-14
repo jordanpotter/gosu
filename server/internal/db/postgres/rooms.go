@@ -3,7 +3,6 @@ package postgres
 import (
 	"time"
 
-	"github.com/jordanpotter/gosu/server/internal/auth/password"
 	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
@@ -23,12 +22,7 @@ func (sr *storedRoom) toRoom() *db.Room {
 	}
 }
 
-func (c *conn) CreateRoom(name, pwd string, adminAccountID int, adminName string) (*db.Room, error) {
-	pwdHash, err := password.ComputeHash(pwd)
-	if err != nil {
-		return nil, err
-	}
-
+func (c *conn) CreateRoom(name string, passwordHash []byte, adminAccountID int, adminName string) (*db.Room, error) {
 	tx, err := c.Beginx()
 	if err != nil {
 		return nil, err
@@ -36,7 +30,7 @@ func (c *conn) CreateRoom(name, pwd string, adminAccountID int, adminName string
 
 	sr := new(storedRoom)
 	insertRoom := "INSERT INTO rooms (name, password_hash, created) VALUES ($1, $2, $3) RETURNING *"
-	err = tx.Get(sr, insertRoom, name, pwdHash, time.Now())
+	err = tx.Get(sr, insertRoom, name, passwordHash, time.Now())
 	if err != nil {
 		tx.Rollback()
 		return nil, err
