@@ -5,7 +5,7 @@ import "io"
 type Conn interface {
 	AccountsConn
 	DevicesConn
-	// RoomsConn
+	RoomsConn
 	// ChannelsConn
 	// MembersConn
 	io.Closer
@@ -26,7 +26,6 @@ type RoomsConn interface {
 	CreateRoom(name, password string, adminAccountID int, adminName string) (*Room, error)
 	GetRoom(id int) (*Room, error)
 	GetRoomByName(name string) (*Room, error)
-	DeleteRoom(id int) error
 }
 
 type ChannelsConn interface {
