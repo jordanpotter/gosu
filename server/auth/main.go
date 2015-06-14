@@ -3,17 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
-	"runtime"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/jordanpotter/gosu/server/auth/accounts"
-	"github.com/jordanpotter/gosu/server/auth/rooms"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/config"
 	"github.com/jordanpotter/gosu/server/internal/config/etcd"
 	"github.com/jordanpotter/gosu/server/internal/db"
-	"github.com/jordanpotter/gosu/server/internal/db/mongo"
+	"github.com/jordanpotter/gosu/server/internal/db/postgres"
 )
 
 var (
@@ -28,8 +25,6 @@ func init() {
 }
 
 func main() {
-	runtime.GOMAXPROCS(runtime.NumCPU())
-
 	configConn := etcd.New([]string{etcdAddr})
 	defer configConn.Close()
 
@@ -41,18 +36,18 @@ func main() {
 	startServer(dbConn, tf)
 }
 
-func getDBConn(configConn config.Conn) *db.Conn {
-	mongoAddrs, err := configConn.GetMongoAddrs()
+func getDBConn(configConn config.Conn) db.Conn {
+	postgresAddrs, err := configConn.GetPostgresAddrs()
 	if err != nil {
 		panic(err)
 	}
 
-	mongoConfig, err := configConn.GetMongo()
+	postgresConfig, err := configConn.GetPostgres()
 	if err != nil {
 		panic(err)
 	}
 
-	dbConn, err := mongo.New(mongoAddrs, mongoConfig)
+	dbConn, err := postgres.New(postgresAddrs, postgresConfig)
 	if err != nil {
 		panic(err)
 	}
@@ -67,17 +62,17 @@ func getTokenFactory(configConn config.Conn) *token.Factory {
 	return token.NewFactory(authTokenConfig.Key, authTokenConfig.Duration)
 }
 
-func startServer(dbConn *db.Conn, tf *token.Factory) {
+func startServer(dbConn db.Conn, tf *token.Factory) {
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong")
 	})
 
-	accountsHandler := accounts.New(dbConn, tf)
-	accountsHandler.AddRoutes(r.Group("/accounts"))
-
-	roomsHandler := rooms.New(dbConn, tf)
-	roomsHandler.AddRoutes(r.Group("/rooms"))
+	// accountsHandler := accounts.New(dbConn, tf)
+	// accountsHandler.AddRoutes(r.Group("/accounts"))
+	//
+	// roomsHandler := rooms.New(dbConn, tf)
+	// roomsHandler.AddRoutes(r.Group("/rooms"))
 
 	r.Run(fmt.Sprintf(":%d", port))
 }

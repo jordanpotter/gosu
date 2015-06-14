@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"runtime"
 
 	"github.com/gin-gonic/gin"
 
@@ -24,8 +23,6 @@ func init() {
 }
 
 func main() {
-	runtime.GOMAXPROCS(runtime.NumCPU())
-
 	configConn := etcd.New([]string{etcdAddr})
 	defer configConn.Close()
 
