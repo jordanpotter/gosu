@@ -6,7 +6,7 @@ type Conn interface {
 	AccountsConn
 	DevicesConn
 	RoomsConn
-	// ChannelsConn
+	ChannelsConn
 	// MembersConn
 	io.Closer
 }

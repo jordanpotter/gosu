@@ -22,7 +22,6 @@ func (sa *storedAccount) toAccount() *db.Account {
 
 func (c *conn) CreateAccount(email string) (*db.Account, error) {
 	sa := new(storedAccount)
-	// TODO: use ON CONFLICT in Postgres 9.5 to do nothing if account already exists
 	insertAccount := "INSERT INTO accounts (email, created) VALUES ($1, $2) RETURNING *"
 	err := c.Get(sa, insertAccount, email, time.Now())
 	return sa.toAccount(), err

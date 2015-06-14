@@ -26,7 +26,7 @@ type Room struct {
 type Channel struct {
 	ID      int
 	Name    string
-	Cretaed time.Time
+	Created time.Time
 }
 
 type Member struct {
