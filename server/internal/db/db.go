@@ -20,7 +20,7 @@ type AccountsConn interface {
 type DevicesConn interface {
 	CreateDevice(accountID int, deviceName string, devicePasswordHash []byte) (*Device, error)
 	GetDevicesByAccount(accountID int) ([]Device, error)
-	DeleteDevice(id int) error
+	DeleteDeviceForAccount(id, accountID int) error
 }
 
 type RoomsConn interface {
@@ -31,17 +31,16 @@ type RoomsConn interface {
 
 type ChannelsConn interface {
 	CreateChannel(roomID int, name string) (*Channel, error)
-	GetChannel(id int) (*Channel, error)
 	GetChannelsByRoom(roomID int) ([]Channel, error)
-	DeleteChannel(id int) error
+	DeleteChannelForRoom(id, roomID int) error
 }
 
 type MembersConn interface {
 	CreateMember(accountID, roomID int, name string) (*Member, error)
-	GetMember(id int) (*Member, error)
 	GetMembersByAccount(accountID int) ([]Member, error)
 	GetMembersByRoom(roomID int) ([]Member, error)
-	SetMemberAdmin(id int, admin bool) (*Member, error)
-	SetMemberBanned(id int, banned bool) (*Member, error)
-	DeleteMember(id int) error
+	SetMemberAdminForRoom(id, roomID int, admin bool) (*Member, error)
+	SetMemberBannedForRoom(id, roomID int, banned bool) (*Member, error)
+	DeleteMemberForAccount(id, accountID int) error
+	DeleteMemberForRoom(id, roomID int) error
 }

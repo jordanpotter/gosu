@@ -44,46 +44,45 @@ func (c *conn) CreateMember(accountID, roomID int, name string) (*db.Member, err
 	sm := new(storedMember)
 	insertMember := "INSERT INTO members (account_id, room_id, name, admin, banned, created) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *"
 	err := c.Get(sm, insertMember, accountID, roomID, name, false, false, time.Now())
-	return sm.toMember(), err
-}
-
-func (c *conn) GetMember(id int) (*db.Member, error) {
-	sm := new(storedMember)
-	selectMember := "SELECT * FROM members WHERE id=$1 LIMIT 1"
-	err := c.Get(sm, selectMember, id)
-	return sm.toMember(), err
+	return sm.toMember(), convertError(err)
 }
 
 func (c *conn) GetMembersByAccount(accountID int) ([]db.Member, error) {
 	sms := []storedMember{}
 	selectMembers := "SELECT * FROM members WHERE account_id=$1"
 	err := c.Select(&sms, selectMembers, accountID)
-	return toMembers(sms), err
+	return toMembers(sms), convertError(err)
 }
 
 func (c *conn) GetMembersByRoom(roomID int) ([]db.Member, error) {
 	sms := []storedMember{}
 	selectMembers := "SELECT * FROM members WHERE room_id=$1"
 	err := c.Select(&sms, selectMembers, roomID)
-	return toMembers(sms), err
+	return toMembers(sms), convertError(err)
 }
 
-func (c *conn) SetMemberAdmin(id int, admin bool) (*db.Member, error) {
+func (c *conn) SetMemberAdminForRoom(id, roomID int, admin bool) (*db.Member, error) {
 	sm := new(storedMember)
-	updateMember := "UPDATE members SET admin=$1 WHERE id=$2"
-	err := c.Get(sm, updateMember, admin, id)
-	return sm.toMember(), err
+	updateMember := "UPDATE members SET admin=$1 WHERE id=$2 AND room_id=$3"
+	err := c.Get(sm, updateMember, admin, id, roomID)
+	return sm.toMember(), convertError(err)
 }
 
-func (c *conn) SetMemberBanned(id int, banned bool) (*db.Member, error) {
+func (c *conn) SetMemberBannedForRoom(id, roomID int, banned bool) (*db.Member, error) {
 	sm := new(storedMember)
-	updateMember := "UPDATE members SET banned=$1 WHERE id=$2"
-	err := c.Get(sm, updateMember, banned, id)
-	return sm.toMember(), err
+	updateMember := "UPDATE members SET banned=$1 WHERE id=$2 AND room_id=$3"
+	err := c.Get(sm, updateMember, banned, id, roomID)
+	return sm.toMember(), convertError(err)
 }
 
-func (c *conn) DeleteMember(id int) error {
-	deleteMember := "DELETE FROM members WHERE id=$1"
-	_, err := c.Exec(deleteMember, id)
-	return err
+func (c *conn) DeleteMemberForAccount(id, accountID int) error {
+	deleteMember := "DELETE FROM members WHERE id=$1 AND account_id=$2"
+	_, err := c.Exec(deleteMember, id, accountID)
+	return convertError(err)
+}
+
+func (c *conn) DeleteMemberForRoom(id, roomID int) error {
+	deleteMember := "DELETE FROM members WHERE id=$1 AND room_id=$2"
+	_, err := c.Exec(deleteMember, id, roomID)
+	return convertError(err)
 }

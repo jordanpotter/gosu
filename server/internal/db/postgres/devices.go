@@ -37,18 +37,18 @@ func (c *conn) CreateDevice(accountID int, deviceName string, devicePasswordHash
 	sd := new(storedDevice)
 	insertDevice := "INSERT INTO devices (account_id, name, password_hash, created) VALUES ($1, $2, $3, $4) RETURNING *"
 	err := c.Get(sd, insertDevice, accountID, deviceName, devicePasswordHash, time.Now())
-	return sd.toDevice(), err
+	return sd.toDevice(), convertError(err)
 }
 
 func (c *conn) GetDevicesByAccount(accountID int) ([]db.Device, error) {
 	sds := []storedDevice{}
 	selectDevices := "SELECT * FROM devices WHERE account_id=$1"
 	err := c.Select(&sds, selectDevices, accountID)
-	return toDevices(sds), err
+	return toDevices(sds), convertError(err)
 }
 
-func (c *conn) DeleteDevice(id int) error {
-	deleteDevice := "DELETE FROM devices WHERE id=$1"
-	_, err := c.Exec(deleteDevice, id)
-	return err
+func (c *conn) DeleteDeviceForAccount(id, accountID int) error {
+	deleteDevice := "DELETE FROM devices WHERE id=$1 AND account_id=$2"
+	_, err := c.Exec(deleteDevice, id, accountID)
+	return convertError(err)
 }
