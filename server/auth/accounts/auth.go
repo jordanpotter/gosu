@@ -1,9 +1,11 @@
 package accounts
 
 import (
+	"errors"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jordanpotter/gosu/server/internal/auth/password"
 	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
@@ -40,10 +42,16 @@ func (h *Handler) authenticate(c *gin.Context) {
 		return
 	}
 
-	// if !hasValidDeviceCredentials(req.DeviceName, req.DevicePassword, account.Devices) {
-	// 	c.AbortWithError(403, errors.New("no matching device name and password"))
-	// 	return
-	// }
+	devices, err := h.dbConn.GetDevicesByAccount(account.ID)
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+
+	if !hasValidDeviceCredentials(devices, req.DeviceName, req.DevicePassword) {
+		c.AbortWithError(403, errors.New("no matching device name and password"))
+		return
+	}
 
 	authToken := h.tf.New()
 	authToken.Account.ID = account.ID
@@ -56,14 +64,14 @@ func (h *Handler) authenticate(c *gin.Context) {
 	c.JSON(200, AuthenticationResponse{authTokenEncrypted, authToken.Expires})
 }
 
-// func hasValidDeviceCredentials(deviceName, devicePassword string, devices []db.Device) bool {
-// 	for _, device := range devices {
-// 		if deviceName == device.Name && password.MatchesHash(devicePassword, device.PasswordHash) {
-// 			return true
-// 		}
-// 	}
-// 	return false
-// }
+func hasValidDeviceCredentials(devices []db.Device, deviceName, devicePassword string) bool {
+	for _, device := range devices {
+		if deviceName == device.Name && password.MatchesHash(devicePassword, device.PasswordHash) {
+			return true
+		}
+	}
+	return false
+}
 
 // func (h *Handler) reauthenticate(c *gin.Context) {
 // 	t, ok := c.Get(middleware.TokenKey)
