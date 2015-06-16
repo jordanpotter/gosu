@@ -6,7 +6,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jordanpotter/gosu/server/internal/auth/password"
+	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
+	"github.com/jordanpotter/gosu/server/internal/middleware"
 )
 
 type AuthenticationRequest struct {
@@ -73,20 +75,20 @@ func hasValidDeviceCredentials(devices []db.Device, deviceName, devicePassword s
 	return false
 }
 
-// func (h *Handler) reauthenticate(c *gin.Context) {
-// 	t, ok := c.Get(middleware.TokenKey)
-// 	if !ok {
-// 		c.AbortWithError(500, errors.New("missing auth token"))
-// 		return
-// 	}
-// 	authToken := t.(*token.Token)
-//
-// 	h.tf.Extend(authToken)
-// 	authTokenEncrypted, err := h.tf.Encrypt(authToken)
-// 	if err != nil {
-// 		c.AbortWithError(500, err)
-// 		return
-// 	}
-//
-// 	c.JSON(200, ReauthenticationResponse{authTokenEncrypted, authToken.Expires})
-// }
+func (h *Handler) reauthenticate(c *gin.Context) {
+	t, ok := c.Get(middleware.TokenKey)
+	if !ok {
+		c.AbortWithError(500, errors.New("missing auth token"))
+		return
+	}
+	authToken := t.(*token.Token)
+
+	h.tf.Extend(authToken)
+	authTokenEncrypted, err := h.tf.Encrypt(authToken)
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+
+	c.JSON(200, ReauthenticationResponse{authTokenEncrypted, authToken.Expires})
+}

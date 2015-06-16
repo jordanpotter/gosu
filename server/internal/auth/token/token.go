@@ -72,15 +72,33 @@ func (f *Factory) Decrypt(str string) (*Token, error) {
 		return nil, errors.New("invalid token")
 	}
 
-	account := Account{}
-	account.ID = t.Claims[accountIDKey].(int)
+	return &Token{
+		Account: getAccountFromClaims(t.Claims),
+		Room:    getRoomFromClaims(t.Claims),
+		Expires: getExpiresFromClaims(t.Claims),
+	}, nil
+}
 
-	room := Room{}
-	room.ID, _ = t.Claims[roomIDKey].(int)
-	room.MemberID, _ = t.Claims[roomMemberIDKey].(int)
-	room.Admin, _ = t.Claims[roomAdminKey].(bool)
+func getAccountFromClaims(claims map[string]interface{}) Account {
+	accountIDFloat := claims[accountIDKey].(float64)
+	return Account{
+		ID: int(accountIDFloat),
+	}
+}
 
-	expiresUnix := int64(t.Claims[expiresKey].(float64))
-	expires := time.Unix(expiresUnix, 0).UTC()
-	return &Token{account, room, expires}, nil
+func getRoomFromClaims(claims map[string]interface{}) Room {
+	roomIDFloat, _ := claims[roomIDKey].(float64)
+	roomMemberIDFloat, _ := claims[roomMemberIDKey].(float64)
+	roomAdmin, _ := claims[roomAdminKey].(bool)
+	return Room{
+		ID:       int(roomIDFloat),
+		MemberID: int(roomMemberIDFloat),
+		Admin:    roomAdmin,
+	}
+}
+
+func getExpiresFromClaims(claims map[string]interface{}) time.Time {
+	expiresUnixFloat := claims[expiresKey].(float64)
+	expiresUnix := int64(expiresUnixFloat)
+	return time.Unix(expiresUnix, 0).UTC()
 }
