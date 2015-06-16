@@ -24,8 +24,8 @@ func New(dbConn *db.Conn, tf *token.Factory, pub pubsub.Publisher) *Handler {
 		dbConn:          dbConn,
 		tf:              tf,
 		pub:             pub,
-		membersHandler:  members.New(dbConn, pub),
-		channelsHandler: channels.New(dbConn, pub),
+		membersHandler:  members.New(dbConn, tf, pub),
+		channelsHandler: channels.New(dbConn, tf, pub),
 	}
 }
 

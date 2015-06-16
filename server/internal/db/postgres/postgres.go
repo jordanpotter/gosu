@@ -57,6 +57,11 @@ func convertError(err error) error {
 		return err
 	}
 
+	switch pgErr.Code {
+	case "23505":
+		return db.DuplicateError
+	}
+
 	fmt.Println("TODO: special case pq error:", pgErr.Code)
 	return err
 }

@@ -27,12 +27,12 @@ type Token struct {
 }
 
 type Account struct {
-	ID string
+	ID int
 }
 
 type Room struct {
-	ID       string
-	MemberID string
+	ID       int
+	MemberID int
 	Admin    bool
 }
 
@@ -73,11 +73,11 @@ func (f *Factory) Decrypt(str string) (*Token, error) {
 	}
 
 	account := Account{}
-	account.ID = t.Claims[accountIDKey].(string)
+	account.ID = t.Claims[accountIDKey].(int)
 
 	room := Room{}
-	room.ID, _ = t.Claims[roomIDKey].(string)
-	room.MemberID, _ = t.Claims[roomMemberIDKey].(string)
+	room.ID, _ = t.Claims[roomIDKey].(int)
+	room.MemberID, _ = t.Claims[roomMemberIDKey].(int)
 	room.Admin, _ = t.Claims[roomAdminKey].(bool)
 
 	expiresUnix := int64(t.Claims[expiresKey].(float64))

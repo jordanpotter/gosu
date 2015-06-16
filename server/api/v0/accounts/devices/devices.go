@@ -1,4 +1,4 @@
-package members
+package devices
 
 import (
 	"github.com/gin-gonic/gin"
@@ -20,12 +20,7 @@ func New(dbConn db.Conn, tf *token.Factory, pub pubsub.Publisher) *Handler {
 }
 
 func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
-	rg.POST("/join", h.join)
-	rg.DELETE("/leave", h.leave)
-
-	rgWithID := rg.Group("/id/:memberID")
-	rgWithID.Use(middleware.IsRoomAdmin(), middleware.IsNotSameMember("memberID"))
-	rgWithID.PUT("/admin", h.setAdmin)
-	rgWithID.PUT("/banned", h.setBanned)
-	rgWithID.DELETE("/", h.delete)
+	rg.Use(middleware.AuthRequired(h.tf))
+	rg.GET("/", h.getAll)
+	rg.DELETE("/id/:deviceID", h.delete)
 }

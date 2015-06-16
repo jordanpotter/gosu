@@ -7,19 +7,19 @@ import (
 )
 
 type storedMember struct {
-	ID        int       `db:"id"`
-	AccountID int       `db:"account_id"`
-	RoomID    int       `db:"room_id"`
-	ChannelID int       `db:"channel_id"`
-	Name      string    `db:"name"`
-	Admin     bool      `db:"admin"`
-	Banned    bool      `db:"banned"`
-	Created   time.Time `db:"created"`
-	LastLogin time.Time `db:"last_login"`
+	ID        int        `db:"id"`
+	AccountID int        `db:"account_id"`
+	RoomID    int        `db:"room_id"`
+	ChannelID int        `db:"channel_id"`
+	Name      string     `db:"name"`
+	Admin     bool       `db:"admin"`
+	Banned    bool       `db:"banned"`
+	Created   time.Time  `db:"created"`
+	LastLogin *time.Time `db:"last_login"`
 }
 
 func (sm *storedMember) toMember() *db.Member {
-	return &db.Member{
+	member := &db.Member{
 		ID:        sm.ID,
 		AccountID: sm.AccountID,
 		RoomID:    sm.RoomID,
@@ -28,8 +28,11 @@ func (sm *storedMember) toMember() *db.Member {
 		Admin:     sm.Admin,
 		Banned:    sm.Banned,
 		Created:   sm.Created,
-		LastLogin: sm.LastLogin,
 	}
+	if sm.LastLogin != nil {
+		member.LastLogin = *sm.LastLogin
+	}
+	return member
 }
 
 func toMembers(sms []storedMember) []db.Member {
