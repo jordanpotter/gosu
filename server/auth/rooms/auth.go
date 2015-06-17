@@ -11,7 +11,7 @@ import (
 )
 
 type AuthenticationRequest struct {
-	ID string `json:"id" form:"id" binding:"required"`
+	ID int `json:"id" form:"id" binding:"required"`
 }
 
 type AuthenticationResponse struct {
@@ -34,13 +34,15 @@ func (h *Handler) authenticate(c *gin.Context) {
 	}
 	authToken := t.(*token.Token)
 
-	accountID := authToken.Account.ID
-	member, err := h.dbConn.Rooms.GetMemberByAccount(req.ID, accountID)
+	member, err := h.dbConn.GetMemberByAccountAndRoom(authToken.Account.ID, req.ID)
 	if err == db.NotFoundError {
 		c.AbortWithError(404, err)
 		return
 	} else if err != nil {
 		c.AbortWithError(500, err)
+		return
+	} else if member.Banned {
+		c.AbortWithError(403, errors.New("banned"))
 		return
 	}
 
