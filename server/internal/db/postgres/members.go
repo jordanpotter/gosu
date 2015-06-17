@@ -1,21 +1,22 @@
 package postgres
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
 type storedMember struct {
-	ID        int        `db:"id"`
-	AccountID int        `db:"account_id"`
-	RoomID    int        `db:"room_id"`
-	ChannelID int        `db:"channel_id"`
-	Name      string     `db:"name"`
-	Admin     bool       `db:"admin"`
-	Banned    bool       `db:"banned"`
-	Created   time.Time  `db:"created"`
-	LastLogin *time.Time `db:"last_login"`
+	ID        int           `db:"id"`
+	AccountID int           `db:"account_id"`
+	RoomID    int           `db:"room_id"`
+	ChannelID sql.NullInt64 `db:"channel_id"`
+	Name      string        `db:"name"`
+	Admin     bool          `db:"admin"`
+	Banned    bool          `db:"banned"`
+	Created   time.Time     `db:"created"`
+	LastLogin *time.Time    `db:"last_login"`
 }
 
 func (sm *storedMember) toMember() *db.Member {
@@ -23,11 +24,13 @@ func (sm *storedMember) toMember() *db.Member {
 		ID:        sm.ID,
 		AccountID: sm.AccountID,
 		RoomID:    sm.RoomID,
-		ChannelID: sm.ChannelID,
 		Name:      sm.Name,
 		Admin:     sm.Admin,
 		Banned:    sm.Banned,
 		Created:   sm.Created,
+	}
+	if sm.ChannelID.Valid {
+		member.ChannelID = int(sm.ChannelID.Int64)
 	}
 	if sm.LastLogin != nil {
 		member.LastLogin = *sm.LastLogin
@@ -47,6 +50,13 @@ func (c *conn) CreateMember(accountID, roomID int, name string) (*db.Member, err
 	sm := new(storedMember)
 	insertMember := "INSERT INTO members (account_id, room_id, name, admin, banned, created) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *"
 	err := c.Get(sm, insertMember, accountID, roomID, name, false, false, time.Now())
+	return sm.toMember(), convertError(err)
+}
+
+func (c *conn) GetMemberByAccountAndRoom(accountID, roomID int) (*db.Member, error) {
+	sm := new(storedMember)
+	selectMember := "SELECT * FROM members WHERE account_id=$1 AND room_id=$2 LIMIT 1"
+	err := c.Get(sm, selectMember, accountID, roomID)
 	return sm.toMember(), convertError(err)
 }
 

@@ -39,6 +39,7 @@ type MembersConn interface {
 	CreateMember(accountID, roomID int, name string) (*Member, error)
 	GetMembersByAccount(accountID int) ([]Member, error)
 	GetMembersByRoom(roomID int) ([]Member, error)
+	GetMemberByAccountAndRoom(accountID, roomID int) (*Member, error)
 	SetMemberAdminForRoom(id, roomID int, admin bool) (*Member, error)
 	SetMemberBannedForRoom(id, roomID int, banned bool) (*Member, error)
 	DeleteMemberForAccount(id, accountID int) error
