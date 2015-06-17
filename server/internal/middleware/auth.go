@@ -2,6 +2,8 @@ package middleware
 
 import (
 	"errors"
+	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -25,36 +27,35 @@ func AuthRequired(tf *token.Factory) gin.HandlerFunc {
 			c.AbortWithError(401, errors.New("token expired"))
 			return
 		}
-
 		c.Set(TokenKey, t)
 		c.Next()
 	}
 }
 
-// func AuthMatchesRoom(roomIDParam string) gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		t, ok := c.Get(TokenKey)
-// 		if !ok {
-// 			c.AbortWithError(500, errors.New("missing auth token"))
-// 			return
-// 		}
-//
-// 		roomID := c.Params.ByName(roomIDParam)
-// 		if roomID == "" {
-// 			c.AbortWithError(403, errors.New("invalid room id"))
-// 			return
-// 		}
-//
-// 		authRoomID := t.(*token.Token).Room.ID
-// 		if roomID != authRoomID {
-// 			c.AbortWithError(403, fmt.Errorf("room id %s does not match auth token's room %s", roomID, authRoomID))
-// 			return
-// 		}
-//
-// 		c.Next()
-// 	}
-// }
-//
+func AuthMatchesRoom(roomIDParam string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		t, ok := c.Get(TokenKey)
+		if !ok {
+			c.AbortWithError(500, errors.New("missing auth token"))
+			return
+		}
+
+		roomIDString := c.Params.ByName(roomIDParam)
+		roomID, err := strconv.Atoi(roomIDString)
+		if err != nil {
+			c.AbortWithError(500, err)
+			return
+		}
+
+		authRoomID := t.(*token.Token).Room.ID
+		if roomID != authRoomID {
+			c.AbortWithError(403, fmt.Errorf("room id %d does not match auth token's room %d", roomID, authRoomID))
+			return
+		}
+		c.Next()
+	}
+}
+
 // func IsRoomAdmin() gin.HandlerFunc {
 // 	return func(c *gin.Context) {
 // 		t, ok := c.Get(TokenKey)
