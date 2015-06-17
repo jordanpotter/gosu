@@ -30,6 +30,7 @@ func (h *Handler) create(c *gin.Context) {
 		c.AbortWithError(500, err)
 		return
 	}
+
 	_, err = h.dbConn.CreateDevice(account.ID, req.DeviceName, devicePasswordHash)
 	if err != nil {
 		c.AbortWithError(500, err)

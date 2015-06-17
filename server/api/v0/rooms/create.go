@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/jordanpotter/gosu/server/internal/auth/password"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
 	"github.com/jordanpotter/gosu/server/internal/middleware"
@@ -31,8 +32,13 @@ func (h *Handler) create(c *gin.Context) {
 	}
 	authToken := t.(*token.Token)
 
-	accountID := authToken.Account.ID
-	room, err := h.dbConn.Rooms.Create(req.Name, req.Password, accountID, req.MemberName)
+	passwordHash, err := password.ComputeHash(req.Password)
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+
+	room, err := h.dbConn.CreateRoom(req.Name, passwordHash, authToken.Account.ID, req.MemberName)
 	if err == db.DuplicateError {
 		c.AbortWithError(409, err)
 		return

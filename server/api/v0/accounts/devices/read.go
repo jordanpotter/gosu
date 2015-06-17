@@ -19,8 +19,7 @@ func (h *Handler) getAll(c *gin.Context) {
 	}
 	authToken := t.(*token.Token)
 
-	accountID := authToken.Account.ID
-	devices, err := h.dbConn.GetDevicesByAccount(accountID)
+	devices, err := h.dbConn.GetDevicesByAccount(authToken.Account.ID)
 	if err == db.NotFoundError {
 		c.AbortWithError(404, err)
 		return
