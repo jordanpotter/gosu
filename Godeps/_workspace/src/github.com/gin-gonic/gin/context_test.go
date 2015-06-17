@@ -220,6 +220,18 @@ func TestContextRenderJSON(t *testing.T) {
 }
 
 // Tests that the response is serialized as JSON
+// we change the content-type before
+func TestContextRenderAPIJSON(t *testing.T) {
+	c, w, _ := createTestContext()
+	c.Header("Content-Type", "application/vnd.api+json")
+	c.JSON(201, H{"foo": "bar"})
+
+	assert.Equal(t, w.Code, 201)
+	assert.Equal(t, w.Body.String(), "{\"foo\":\"bar\"}\n")
+	assert.Equal(t, w.HeaderMap.Get("Content-Type"), "application/vnd.api+json")
+}
+
+// Tests that the response is serialized as JSON
 // and Content-Type is set to application/json
 func TestContextRenderIndentedJSON(t *testing.T) {
 	c, w, _ := createTestContext()
@@ -454,7 +466,7 @@ func TestContextClientIP(t *testing.T) {
 	c.Request, _ = http.NewRequest("POST", "/", nil)
 
 	c.Request.Header.Set("X-Real-IP", " 10.10.10.10  ")
-	c.Request.Header.Set("X-Forwarded-For", "  20.20.20.20 , 30.30.30.30")
+	c.Request.Header.Set("X-Forwarded-For", "  20.20.20.20, 30.30.30.30")
 	c.Request.RemoteAddr = "  40.40.40.40 "
 
 	assert.Equal(t, c.ClientIP(), "10.10.10.10")
@@ -462,7 +474,7 @@ func TestContextClientIP(t *testing.T) {
 	c.Request.Header.Del("X-Real-IP")
 	assert.Equal(t, c.ClientIP(), "20.20.20.20")
 
-	c.Request.Header.Set("X-Forwarded-For", "30.30.30.30")
+	c.Request.Header.Set("X-Forwarded-For", "30.30.30.30  ")
 	assert.Equal(t, c.ClientIP(), "30.30.30.30")
 
 	c.Request.Header.Del("X-Forwarded-For")

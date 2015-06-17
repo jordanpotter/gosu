@@ -251,20 +251,32 @@ func (c *Context) BindWith(obj interface{}, b binding.Binding) error {
 // Best effort algoritm to return the real client IP, it parses
 // X-Real-IP and X-Forwarded-For in order to work properly with reverse-proxies such us: nginx or haproxy.
 func (c *Context) ClientIP() string {
-	clientIP := strings.TrimSpace(c.Request.Header.Get("X-Real-IP"))
-	if len(clientIP) > 0 {
-		return clientIP
-	}
-	clientIP = c.Request.Header.Get("X-Forwarded-For")
-	clientIP = strings.TrimSpace(strings.Split(clientIP, ",")[0])
-	if len(clientIP) > 0 {
-		return clientIP
+	if c.engine.ForwardedByClientIP {
+		clientIP := strings.TrimSpace(c.requestHeader("X-Real-Ip"))
+		if len(clientIP) > 0 {
+			return clientIP
+		}
+		clientIP = c.requestHeader("X-Forwarded-For")
+		if index := strings.IndexByte(clientIP, ','); index >= 0 {
+			clientIP = clientIP[0:index]
+		}
+		clientIP = strings.TrimSpace(clientIP)
+		if len(clientIP) > 0 {
+			return clientIP
+		}
 	}
 	return strings.TrimSpace(c.Request.RemoteAddr)
 }
 
 func (c *Context) ContentType() string {
-	return filterFlags(c.Request.Header.Get("Content-Type"))
+	return filterFlags(c.requestHeader("Content-Type"))
+}
+
+func (c *Context) requestHeader(key string) string {
+	if values, _ := c.Request.Header[key]; len(values) > 0 {
+		return values[0]
+	}
+	return ""
 }
 
 /************************************/
@@ -284,10 +296,14 @@ func (c *Context) Header(key, value string) {
 
 func (c *Context) Render(code int, r render.Render) {
 	c.writermem.WriteHeader(code)
-	if err := r.Write(c.Writer); err != nil {
-		debugPrintError(err)
-		c.AbortWithError(500, err).SetType(ErrorTypeRender)
+	if err := r.Render(c.Writer); err != nil {
+		c.renderError(err)
 	}
+}
+
+func (c *Context) renderError(err error) {
+	debugPrintError(err)
+	c.AbortWithError(500, err).SetType(ErrorTypeRender)
 }
 
 // Renders the HTTP template specified by its file name.
@@ -309,7 +325,10 @@ func (c *Context) IndentedJSON(code int, obj interface{}) {
 // Serializes the given struct as JSON into the response body.
 // It also sets the Content-Type as "application/json".
 func (c *Context) JSON(code int, obj interface{}) {
-	c.Render(code, render.JSON{Data: obj})
+	c.writermem.WriteHeader(code)
+	if err := render.WriteJSON(c.Writer, obj); err != nil {
+		c.renderError(err)
+	}
 }
 
 // Serializes the given struct as XML into the response body.
@@ -320,10 +339,8 @@ func (c *Context) XML(code int, obj interface{}) {
 
 // Writes the given string into the response body.
 func (c *Context) String(code int, format string, values ...interface{}) {
-	c.Render(code, render.String{
-		Format: format,
-		Data:   values},
-	)
+	c.writermem.WriteHeader(code)
+	render.WriteString(c.Writer, format, values)
 }
 
 // Returns a HTTP redirect to the specific location.
@@ -409,7 +426,7 @@ func (c *Context) NegotiateFormat(offered ...string) string {
 		panic("you must provide at least one offer")
 	}
 	if c.Accepted == nil {
-		c.Accepted = parseAccept(c.Request.Header.Get("Accept"))
+		c.Accepted = parseAccept(c.requestHeader("Accept"))
 	}
 	if len(c.Accepted) == 0 {
 		return offered[0]

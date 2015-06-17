@@ -25,36 +25,41 @@ func main() {
 
 ## Benchmarks
 
+Gin uses a custom version of [HttpRouter](https://github.com/julienschmidt/httprouter)  
+
+[See all benchmarks](/BENCHMARKS.md)
+
+
 ```
-BenchmarkAce_Param5  2000000           579 ns/op         160 B/op          1 allocs/op
-BenchmarkBear_Param5     1000000          1599 ns/op         469 B/op          5 allocs/op
-BenchmarkBeego_Param5    1000000          3472 ns/op         992 B/op         13 allocs/op
-BenchmarkBone_Param5     1000000          1558 ns/op         432 B/op          3 allocs/op
-BenchmarkDenco_Param5    3000000           554 ns/op         160 B/op          1 allocs/op
-BenchmarkGin_Param5 10000000           215 ns/op           0 B/op          0 allocs/op
-BenchmarkGocraftWeb_Param5   1000000          2689 ns/op         928 B/op         12 allocs/op
-BenchmarkGoji_Param5     1000000          1194 ns/op         336 B/op          2 allocs/op
-BenchmarkGoJsonRest_Param5    500000          3765 ns/op        1105 B/op         17 allocs/op
-BenchmarkGoRestful_Param5     200000         11263 ns/op        2672 B/op         31 allocs/op
-BenchmarkGorillaMux_Param5    300000          6050 ns/op         912 B/op          9 allocs/op
-BenchmarkHttpRouter_Param5   5000000           397 ns/op         160 B/op          1 allocs/op
-BenchmarkHttpTreeMux_Param5  1000000          1088 ns/op         336 B/op          2 allocs/op
-BenchmarkKocha_Param5    1000000          1608 ns/op         440 B/op         10 allocs/op
-BenchmarkMacaron_Param5   300000          4506 ns/op        1376 B/op         14 allocs/op
-BenchmarkMartini_Param5   100000         15237 ns/op        1280 B/op         12 allocs/op
-BenchmarkPat_Param5   300000          4988 ns/op        1008 B/op         42 allocs/op
-BenchmarkPossum_Param5   1000000          2012 ns/op         624 B/op          7 allocs/op
-BenchmarkR2router_Param5     1000000          1531 ns/op         432 B/op          6 allocs/op
-BenchmarkRevel_Param5     200000          7964 ns/op        2024 B/op         35 allocs/op
-BenchmarkRivet_Param5    1000000          1895 ns/op         528 B/op          9 allocs/op
-BenchmarkTango_Param5    1000000          3093 ns/op         944 B/op         18 allocs/op
-BenchmarkTigerTonic_Param5    200000         11992 ns/op        2519 B/op         53 allocs/op
-BenchmarkTraffic_Param5   200000          8537 ns/op        2280 B/op         31 allocs/op
-BenchmarkVulcan_Param5   1000000          1290 ns/op          98 B/op          3 allocs/op
-BenchmarkZeus_Param5     1000000          1537 ns/op         416 B/op          3 allocs/op
+BenchmarkAce_GithubAll     10000        109482 ns/op       13792 B/op        167 allocs/op
+BenchmarkBear_GithubAll    10000        287490 ns/op       79952 B/op        943 allocs/op
+BenchmarkBeego_GithubAll        3000        562184 ns/op      146272 B/op       2092 allocs/op
+BenchmarkBone_GithubAll      500       2578716 ns/op      648016 B/op       8119 allocs/op
+BenchmarkDenco_GithubAll       20000         94955 ns/op       20224 B/op        167 allocs/op
+BenchmarkEcho_GithubAll    30000         58705 ns/op           0 B/op          0 allocs/op
+BenchmarkGin_GithubAll     30000         50991 ns/op           0 B/op          0 allocs/op
+BenchmarkGocraftWeb_GithubAll       5000        449648 ns/op      133280 B/op       1889 allocs/op
+BenchmarkGoji_GithubAll     2000        689748 ns/op       56113 B/op        334 allocs/op
+BenchmarkGoJsonRest_GithubAll       5000        537769 ns/op      135995 B/op       2940 allocs/op
+BenchmarkGoRestful_GithubAll         100      18410628 ns/op      797236 B/op       7725 allocs/op
+BenchmarkGorillaMux_GithubAll        200       8036360 ns/op      153137 B/op       1791 allocs/op
+BenchmarkHttpRouter_GithubAll      20000         63506 ns/op       13792 B/op        167 allocs/op
+BenchmarkHttpTreeMux_GithubAll     10000        165927 ns/op       56112 B/op        334 allocs/op
+BenchmarkKocha_GithubAll       10000        171362 ns/op       23304 B/op        843 allocs/op
+BenchmarkMacaron_GithubAll      2000        817008 ns/op      224960 B/op       2315 allocs/op
+BenchmarkMartini_GithubAll       100      12609209 ns/op      237952 B/op       2686 allocs/op
+BenchmarkPat_GithubAll       300       4830398 ns/op     1504101 B/op      32222 allocs/op
+BenchmarkPossum_GithubAll      10000        301716 ns/op       97440 B/op        812 allocs/op
+BenchmarkR2router_GithubAll    10000        270691 ns/op       77328 B/op       1182 allocs/op
+BenchmarkRevel_GithubAll        1000       1491919 ns/op      345553 B/op       5918 allocs/op
+BenchmarkRivet_GithubAll       10000        283860 ns/op       84272 B/op       1079 allocs/op
+BenchmarkTango_GithubAll        5000        473821 ns/op       87078 B/op       2470 allocs/op
+BenchmarkTigerTonic_GithubAll       2000       1120131 ns/op      241088 B/op       6052 allocs/op
+BenchmarkTraffic_GithubAll       200       8708979 ns/op     2664762 B/op      22390 allocs/op
+BenchmarkVulcan_GithubAll       5000        353392 ns/op       19894 B/op        609 allocs/op
+BenchmarkZeus_GithubAll     2000        944234 ns/op      300688 B/op       2648 allocs/op
 ```
 
-[https://github.com/gin-gonic/go-http-routing-benchmark/blob/master/round2.md](https://github.com/gin-gonic/go-http-routing-benchmark/blob/master/round2.md)
 
 ##Gin v1. stable
 

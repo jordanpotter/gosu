@@ -14,7 +14,7 @@ import (
 	"github.com/gin-gonic/gin/render"
 )
 
-const Version = "v1.0rc1"
+const Version = "v1.0rc2"
 
 var default404Body = []byte("404 page not found")
 var default405Body = []byte("405 method not allowed")
@@ -59,6 +59,7 @@ type (
 		// If no other Method is allowed, the request is delegated to the NotFound
 		// handler.
 		HandleMethodNotAllowed bool
+		ForwardedByClientIP    bool
 	}
 )
 
@@ -70,11 +71,13 @@ func New() *Engine {
 		RouterGroup: RouterGroup{
 			Handlers: nil,
 			BasePath: "/",
+			root:     true,
 		},
 		RedirectTrailingSlash:  true,
 		RedirectFixedPath:      false,
 		HandleMethodNotAllowed: false,
-		trees: make(methodTrees, 0, 5),
+		ForwardedByClientIP:    true,
+		trees:                  make(methodTrees, 0, 9),
 	}
 	engine.RouterGroup.engine = engine
 	engine.pool.New = func() interface{} {
@@ -90,7 +93,7 @@ func Default() *Engine {
 	return engine
 }
 
-func (engine *Engine) allocateContext() (context *Context) {
+func (engine *Engine) allocateContext() *Context {
 	return &Context{engine: engine}
 }
 
@@ -113,6 +116,14 @@ func (engine *Engine) LoadHTMLFiles(files ...string) {
 }
 
 func (engine *Engine) SetHTMLTemplate(templ *template.Template) {
+	if len(engine.trees) > 0 {
+		debugPrint(`[WARNING] Since SetHTMLTemplate() is NOT thread-safe. It should only be called
+at initialization. ie. before any route is registered or the router is listening in a socket:
+
+	router := gin.Default()
+	router.SetHTMLTemplate(template) // << good place
+`)
+	}
 	engine.HTMLRender = render.HTMLProduction{Template: templ}
 }
 
@@ -131,10 +142,11 @@ func (engine *Engine) NoMethod(handlers ...HandlerFunc) {
 // Attachs a global middleware to the router. ie. the middlewares attached though Use() will be
 // included in the handlers chain for every single request. Even 404, 405, static files...
 // For example, this is the right place for a logger or error management middleware.
-func (engine *Engine) Use(middlewares ...HandlerFunc) {
+func (engine *Engine) Use(middlewares ...HandlerFunc) routesInterface {
 	engine.RouterGroup.Use(middlewares...)
 	engine.rebuild404Handlers()
 	engine.rebuild405Handlers()
+	return engine
 }
 
 func (engine *Engine) rebuild404Handlers() {
@@ -158,7 +170,7 @@ func (engine *Engine) addRoute(method, path string, handlers HandlersChain) {
 		panic("there must be at least one handler")
 	}
 
-	root := engine.trees.get("method")
+	root := engine.trees.get(method)
 	if root == nil {
 		root = new(node)
 		engine.trees = append(engine.trees, methodTree{
@@ -247,6 +259,7 @@ func (engine *Engine) handleHTTPRequest(context *Context) {
 					return
 				}
 			}
+			break
 		}
 	}
 

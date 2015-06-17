@@ -17,8 +17,8 @@
 		},
 		{
 			"ImportPath": "github.com/gin-gonic/gin",
-			"Comment": "v1.0rc1-68-gce78449",
-			"Rev": "ce784498b404909aad90c715099d38d0fabd3b1b"
+			"Comment": "v1.0rc1-99-gd6425f1",
+			"Rev": "d6425f1692d4aa170ece887b62bb75c9c4da5829"
 		},
 		{
 			"ImportPath": "github.com/julienschmidt/httprouter",

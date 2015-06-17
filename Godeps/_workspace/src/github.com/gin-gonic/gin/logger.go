@@ -28,11 +28,11 @@ func ErrorLogger() HandlerFunc {
 func ErrorLoggerT(typ ErrorType) HandlerFunc {
 	return func(c *Context) {
 		c.Next()
-
+		// avoid writting if we already wrote into the response body
 		if !c.Writer.Written() {
-			json := c.Errors.ByType(typ).JSON()
-			if json != nil {
-				c.JSON(-1, json)
+			errors := c.Errors.ByType(typ)
+			if len(errors) > 0 {
+				c.JSON(-1, errors)
 			}
 		}
 	}
@@ -64,7 +64,7 @@ func LoggerWithWriter(out io.Writer) HandlerFunc {
 		statusCode := c.Writer.Status()
 		statusColor := colorForStatus(statusCode)
 		methodColor := colorForMethod(method)
-		comment := c.Errors.String()
+		comment := c.Errors.ByType(ErrorTypePrivate).String()
 
 		fmt.Fprintf(out, "[GIN] %v |%s %3d %s| %13v | %s |%s  %s %-7s %s\n%s",
 			end.Format("2006/01/02 - 15:04:05"),
