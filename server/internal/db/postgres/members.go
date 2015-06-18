@@ -76,14 +76,14 @@ func (c *conn) GetMembersByRoom(roomID int) ([]db.Member, error) {
 
 func (c *conn) SetMemberAdminForRoom(id, roomID int, admin bool) (*db.Member, error) {
 	sm := new(storedMember)
-	updateMember := "UPDATE members SET admin=$1 WHERE id=$2 AND room_id=$3"
+	updateMember := "UPDATE members SET admin=$1 WHERE id=$2 AND room_id=$3 RETURNING *"
 	err := c.Get(sm, updateMember, admin, id, roomID)
 	return sm.toMember(), convertError(err)
 }
 
 func (c *conn) SetMemberBannedForRoom(id, roomID int, banned bool) (*db.Member, error) {
 	sm := new(storedMember)
-	updateMember := "UPDATE members SET banned=$1 WHERE id=$2 AND room_id=$3"
+	updateMember := "UPDATE members SET banned=$1 WHERE id=$2 AND room_id=$3 RETURNING *"
 	err := c.Get(sm, updateMember, banned, id, roomID)
 	return sm.toMember(), convertError(err)
 }
