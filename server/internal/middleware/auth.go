@@ -36,7 +36,7 @@ func AuthMatchesRoom(roomIDParam string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		t, ok := c.Get(TokenKey)
 		if !ok {
-			c.AbortWithError(500, errors.New("missing auth token"))
+			c.AbortWithError(403, errors.New("missing auth token"))
 			return
 		}
 
@@ -56,44 +56,43 @@ func AuthMatchesRoom(roomIDParam string) gin.HandlerFunc {
 	}
 }
 
-// func IsRoomAdmin() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		t, ok := c.Get(TokenKey)
-// 		if !ok {
-// 			c.AbortWithError(500, errors.New("missing auth token"))
-// 			return
-// 		}
-//
-// 		admin := t.(*token.Token).Room.Admin
-// 		if !admin {
-// 			c.AbortWithError(403, errors.New("must be admin for room"))
-// 			return
-// 		}
-//
-// 		c.Next()
-// 	}
-// }
-//
-// func IsNotSameMember(memberIDParam string) gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		t, ok := c.Get(TokenKey)
-// 		if !ok {
-// 			c.AbortWithError(500, errors.New("missing auth token"))
-// 			return
-// 		}
-//
-// 		memberID := c.Params.ByName(memberIDParam)
-// 		if memberID == "" {
-// 			c.AbortWithError(403, errors.New("invalid member id"))
-// 			return
-// 		}
-//
-// 		authMemberID := t.(*token.Token).Room.MemberID
-// 		if memberID == authMemberID {
-// 			c.AbortWithError(403, fmt.Errorf("member id %s cannot match auth token's member id %s", memberID, authMemberID))
-// 			return
-// 		}
-//
-// 		c.Next()
-// 	}
-// }
+func IsRoomAdmin() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		t, ok := c.Get(TokenKey)
+		if !ok {
+			c.AbortWithError(403, errors.New("missing auth token"))
+			return
+		}
+
+		admin := t.(*token.Token).Room.Admin
+		if !admin {
+			c.AbortWithError(403, errors.New("must be admin for room"))
+			return
+		}
+		c.Next()
+	}
+}
+
+func IsNotSameMember(memberIDParam string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		t, ok := c.Get(TokenKey)
+		if !ok {
+			c.AbortWithError(403, errors.New("missing auth token"))
+			return
+		}
+
+		memberIDString := c.Params.ByName(memberIDParam)
+		memberID, err := strconv.Atoi(memberIDString)
+		if err != nil {
+			c.AbortWithError(500, err)
+			return
+		}
+
+		authMemberID := t.(*token.Token).Room.MemberID
+		if memberID == authMemberID {
+			c.AbortWithError(403, fmt.Errorf("member id %d cannot match auth token's member id %d", memberID, authMemberID))
+			return
+		}
+		c.Next()
+	}
+}
