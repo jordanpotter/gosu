@@ -2,10 +2,9 @@ package members
 
 import (
 	"errors"
-	"fmt"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jordanpotter/gosu/server/events/types"
 	"github.com/jordanpotter/gosu/server/internal/auth/password"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
@@ -32,8 +31,14 @@ func (h *Handler) join(c *gin.Context) {
 	}
 	authToken := t.(*token.Token)
 
-	roomID := c.Params.ByName("roomID")
-	room, err := h.dbConn.Rooms.Get(roomID)
+	roomIDString := c.Params.ByName("roomID")
+	roomID, err := strconv.Atoi(roomIDString)
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+
+	room, err := h.dbConn.GetRoom(roomID)
 	if err != nil {
 		c.AbortWithError(500, err)
 		return
@@ -45,8 +50,7 @@ func (h *Handler) join(c *gin.Context) {
 		return
 	}
 
-	accountID := authToken.Account.ID
-	member, err := h.dbConn.Rooms.AddMember(roomID, accountID, req.Name)
+	member, err := h.dbConn.CreateMember(authToken.Account.ID, roomID, req.Name)
 	if err == db.DuplicateError {
 		c.AbortWithError(409, err)
 		return
@@ -55,18 +59,18 @@ func (h *Handler) join(c *gin.Context) {
 		return
 	}
 
-	e := &types.RoomMemberCreated{
-		RoomID:     roomID,
-		MemberID:   member.ID,
-		MemberName: member.Name,
-		Admin:      member.Admin,
-		Banned:     member.Banned,
-		Created:    member.Created,
-	}
-	err = h.pub.Send(e)
-	if err != nil {
-		fmt.Printf("Failed to send event: %v", err)
-	}
+	// e := &types.RoomMemberCreated{
+	// 	RoomID:     roomID,
+	// 	MemberID:   member.ID,
+	// 	MemberName: member.Name,
+	// 	Admin:      member.Admin,
+	// 	Banned:     member.Banned,
+	// 	Created:    member.Created,
+	// }
+	// err = h.pub.Send(e)
+	// if err != nil {
+	// 	fmt.Printf("Failed to send event: %v", err)
+	// }
 
 	c.JSON(200, member)
 }

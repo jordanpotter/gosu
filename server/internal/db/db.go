@@ -44,4 +44,5 @@ type MembersConn interface {
 	SetMemberBannedForRoom(id, roomID int, banned bool) (*Member, error)
 	DeleteMemberForAccount(id, accountID int) error
 	DeleteMemberForRoom(id, roomID int) error
+	DeleteMemberForAccountAndRoom(accountID, roomID int) error
 }

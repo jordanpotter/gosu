@@ -5,7 +5,6 @@ import (
 
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
-	"github.com/jordanpotter/gosu/server/internal/middleware"
 	"github.com/jordanpotter/gosu/server/internal/pubsub"
 )
 
@@ -23,9 +22,9 @@ func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
 	rg.POST("/join", h.join)
 	rg.DELETE("/leave", h.leave)
 
-	rgWithID := rg.Group("/id/:memberID")
-	rgWithID.Use(middleware.IsRoomAdmin(), middleware.IsNotSameMember("memberID"))
-	rgWithID.PUT("/admin", h.setAdmin)
-	rgWithID.PUT("/banned", h.setBanned)
-	rgWithID.DELETE("/", h.delete)
+	// rgWithID := rg.Group("/id/:memberID")
+	// rgWithID.Use(middleware.IsRoomAdmin(), middleware.IsNotSameMember("memberID"))
+	// rgWithID.PUT("/admin", h.setAdmin)
+	// rgWithID.PUT("/banned", h.setBanned)
+	// rgWithID.DELETE("/", h.delete)
 }

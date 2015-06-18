@@ -99,3 +99,9 @@ func (c *conn) DeleteMemberForRoom(id, roomID int) error {
 	_, err := c.Exec(deleteMember, id, roomID)
 	return convertError(err)
 }
+
+func (c *conn) DeleteMemberForAccountAndRoom(accountID, roomID int) error {
+	deleteMember := "DELETE FROM members WHERE account_id=$1 AND room_id=$2"
+	_, err := c.Exec(deleteMember, accountID, roomID)
+	return convertError(err)
+}
