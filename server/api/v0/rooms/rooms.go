@@ -30,11 +30,11 @@ func New(dbConn db.Conn, tf *token.Factory, pub pubsub.Publisher) *Handler {
 func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
 	rg.Use(middleware.AuthRequired(h.tf))
 	rg.POST("/", h.create)
-	// rg.GET("/id", h.getID)
+	rg.GET("/id", h.getID)
 
-	// rgWithID := rg.Group("/id/:roomID")
-	// rgWithID.Use(middleware.AuthMatchesRoom("roomID"))
-	// rgWithID.GET("/", h.get)
+	rgWithID := rg.Group("/id/:roomID")
+	rgWithID.Use(middleware.AuthMatchesRoom("roomID"))
+	rgWithID.GET("", h.get)
 	// h.membersHandler.AddRoutes(rgWithID.Group("/members"))
 	// h.channelsHandler.AddRoutes(rgWithID.Group("/channels"))
 }
