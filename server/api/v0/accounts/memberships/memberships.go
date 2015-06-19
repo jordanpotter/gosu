@@ -1,4 +1,4 @@
-package devices
+package memberships
 
 import (
 	"github.com/gin-gonic/gin"
@@ -22,5 +22,5 @@ func New(dbConn db.Conn, tf *token.Factory, pub pubsub.Publisher) *Handler {
 func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
 	rg.Use(middleware.AuthRequired(h.tf))
 	rg.GET("", h.getAll)
-	rg.DELETE("/id/:deviceID", h.delete)
+	rg.DELETE("/id/:memberID", h.delete)
 }

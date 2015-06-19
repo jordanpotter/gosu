@@ -1,10 +1,9 @@
-package devices
+package memberships
 
 import (
 	"errors"
 
 	"github.com/gin-gonic/gin"
-
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
 	"github.com/jordanpotter/gosu/server/internal/middleware"
@@ -18,7 +17,7 @@ func (h *Handler) getAll(c *gin.Context) {
 	}
 	authToken := t.(*token.Token)
 
-	devices, err := h.dbConn.GetDevicesByAccount(authToken.Account.ID)
+	members, err := h.dbConn.GetMembersByAccount(authToken.Account.ID)
 	if err == db.NotFoundError {
 		c.AbortWithError(404, err)
 		return
@@ -27,5 +26,5 @@ func (h *Handler) getAll(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, devices)
+	c.JSON(200, members)
 }
