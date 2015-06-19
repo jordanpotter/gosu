@@ -12,8 +12,7 @@ CREATE TABLE devices (
     account_id      integer REFERENCES accounts(id) NOT NULL,
     name            varchar(100) NOT NULL,
     password_hash   bytea NOT NULL, -- use bcrypt
-    created         timestamp without time zone NOT NULL,
-    last_login      timestamp without time zone
+    created         timestamp without time zone NOT NULL
 );
 
 CREATE INDEX idx_device_account_id ON devices (account_id);
@@ -49,7 +48,6 @@ CREATE TABLE members (
     admin           boolean NOT NULL,
     banned          boolean NOT NULL,
     created         timestamp without time zone NOT NULL,
-    last_login      timestamp without time zone,
     UNIQUE (room_id, account_id),
     UNIQUE (room_id, name)
 );

@@ -7,12 +7,11 @@ import (
 )
 
 type storedDevice struct {
-	ID           int        `db:"id"`
-	AccountID    int        `db:"account_id"`
-	Name         string     `db:"name"`
-	PasswordHash []byte     `db:"password_hash"`
-	Created      time.Time  `db:"created"`
-	LastLogin    *time.Time `db:"last_login"`
+	ID           int       `db:"id"`
+	AccountID    int       `db:"account_id"`
+	Name         string    `db:"name"`
+	PasswordHash []byte    `db:"password_hash"`
+	Created      time.Time `db:"created"`
 }
 
 func (sd *storedDevice) toDevice() *db.Device {
@@ -21,7 +20,6 @@ func (sd *storedDevice) toDevice() *db.Device {
 		Name:         sd.Name,
 		PasswordHash: sd.PasswordHash,
 		Created:      sd.Created,
-		LastLogin:    sd.LastLogin,
 	}
 	return device
 }

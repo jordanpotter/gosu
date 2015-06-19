@@ -16,7 +16,6 @@ type storedMember struct {
 	Admin     bool          `db:"admin"`
 	Banned    bool          `db:"banned"`
 	Created   time.Time     `db:"created"`
-	LastLogin *time.Time    `db:"last_login"`
 }
 
 func (sm *storedMember) toMember() *db.Member {
@@ -28,7 +27,6 @@ func (sm *storedMember) toMember() *db.Member {
 		Admin:     sm.Admin,
 		Banned:    sm.Banned,
 		Created:   sm.Created,
-		LastLogin: sm.LastLogin,
 	}
 	if sm.ChannelID.Valid {
 		member.ChannelID = int(sm.ChannelID.Int64)
