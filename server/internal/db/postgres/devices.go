@@ -21,9 +21,7 @@ func (sd *storedDevice) toDevice() *db.Device {
 		Name:         sd.Name,
 		PasswordHash: sd.PasswordHash,
 		Created:      sd.Created,
-	}
-	if sd.LastLogin != nil {
-		device.LastLogin = *sd.LastLogin
+		LastLogin:    sd.LastLogin,
 	}
 	return device
 }

@@ -28,12 +28,10 @@ func (sm *storedMember) toMember() *db.Member {
 		Admin:     sm.Admin,
 		Banned:    sm.Banned,
 		Created:   sm.Created,
+		LastLogin: sm.LastLogin,
 	}
 	if sm.ChannelID.Valid {
 		member.ChannelID = int(sm.ChannelID.Int64)
-	}
-	if sm.LastLogin != nil {
-		member.LastLogin = *sm.LastLogin
 	}
 	return member
 }
