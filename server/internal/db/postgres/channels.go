@@ -8,6 +8,7 @@ import (
 
 type storedChannel struct {
 	ID      int       `db:"id"`
+	RoomID  int       `db:"room_id"`
 	Name    string    `db:"name"`
 	Created time.Time `db:"created"`
 }
