@@ -7,6 +7,7 @@ import (
 	"github.com/jordanpotter/gosu/server/api/v0/accounts/memberships"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
+	"github.com/jordanpotter/gosu/server/internal/middleware"
 	"github.com/jordanpotter/gosu/server/internal/pubsub"
 )
 
@@ -30,6 +31,7 @@ func New(dbConn db.Conn, tf *token.Factory, pub pubsub.Publisher) *Handler {
 
 func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
 	rg.POST("/create", h.create)
+	rg.GET("", middleware.AuthRequired(h.tf), h.get)
 
 	h.devicesHandler.AddRoutes(rg.Group("/devices"))
 	h.membershipsHandler.AddRoutes(rg.Group("/memberships"))
