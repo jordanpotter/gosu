@@ -16,7 +16,7 @@ type Member struct {
 	Created   time.Time `json:"created"`
 }
 
-func SanitizeMember(dbMember *db.Member) *Member {
+func ToMember(dbMember *db.Member) *Member {
 	return &Member{
 		ID:        dbMember.ID,
 		RoomID:    dbMember.RoomID,
@@ -28,10 +28,10 @@ func SanitizeMember(dbMember *db.Member) *Member {
 	}
 }
 
-func SanitizeMembers(dbMembers []db.Member) []Member {
+func ToMembers(dbMembers []db.Member) []Member {
 	members := make([]Member, 0, len(dbMembers))
 	for _, dbMember := range dbMembers {
-		members = append(members, *SanitizeMember(&dbMember))
+		members = append(members, *ToMember(&dbMember))
 	}
 	return members
 }

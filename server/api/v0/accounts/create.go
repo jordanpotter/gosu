@@ -2,6 +2,7 @@ package accounts
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/jordanpotter/gosu/server/api/v0/sanitization"
 	"github.com/jordanpotter/gosu/server/internal/auth/password"
 )
 
@@ -37,5 +38,5 @@ func (h *Handler) create(c *gin.Context) {
 		return
 	}
 
-	c.String(200, "ok")
+	c.JSON(200, sanitization.ToAccount(account))
 }

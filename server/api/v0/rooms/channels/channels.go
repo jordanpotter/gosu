@@ -20,7 +20,7 @@ func New(dbConn db.Conn, tf *token.Factory, pub pubsub.Publisher) *Handler {
 }
 
 func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
-	rg.Use(middleware.IsRoomAdmin())
-	rg.POST("/", h.create)
-	rg.DELETE("/id/:channelID", h.delete)
+	rg.POST("/", middleware.IsRoomAdmin(), h.create)
+	rg.GET("", h.getAll)
+	rg.DELETE("/id/:channelID", middleware.IsRoomAdmin(), h.delete)
 }

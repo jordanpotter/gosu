@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jordanpotter/gosu/server/api/v0/sanitization"
 	"github.com/jordanpotter/gosu/server/internal/auth/password"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
@@ -72,5 +73,5 @@ func (h *Handler) join(c *gin.Context) {
 	// 	fmt.Printf("Failed to send event: %v", err)
 	// }
 
-	c.JSON(200, member)
+	c.JSON(200, sanitization.ToMember(member))
 }

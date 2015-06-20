@@ -1,24 +1,22 @@
-package memberships
+package members
 
 import (
-	"errors"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jordanpotter/gosu/server/api/v0/sanitization"
-	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
-	"github.com/jordanpotter/gosu/server/internal/middleware"
 )
 
 func (h *Handler) getAll(c *gin.Context) {
-	t, ok := c.Get(middleware.TokenKey)
-	if !ok {
-		c.AbortWithError(500, errors.New("missing auth token"))
+	roomIDString := c.Params.ByName("roomID")
+	roomID, err := strconv.Atoi(roomIDString)
+	if err != nil {
+		c.AbortWithError(500, err)
 		return
 	}
-	authToken := t.(*token.Token)
 
-	members, err := h.dbConn.GetMembersByAccount(authToken.Account.ID)
+	members, err := h.dbConn.GetMembersByRoom(roomID)
 	if err == db.NotFoundError {
 		c.AbortWithError(404, err)
 		return

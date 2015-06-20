@@ -12,7 +12,7 @@ type Channel struct {
 	Created time.Time `json:"created"`
 }
 
-func SanitizeChannel(dbChannel *db.Channel) *Channel {
+func ToChannel(dbChannel *db.Channel) *Channel {
 	return &Channel{
 		ID:      dbChannel.ID,
 		Name:    dbChannel.Name,
@@ -20,10 +20,10 @@ func SanitizeChannel(dbChannel *db.Channel) *Channel {
 	}
 }
 
-func SanitizeChannels(dbChannels []db.Channel) []Channel {
+func ToChannels(dbChannels []db.Channel) []Channel {
 	channels := make([]Channel, 0, len(dbChannels))
 	for _, dbChannel := range dbChannels {
-		channels = append(channels, *SanitizeChannel(&dbChannel))
+		channels = append(channels, *ToChannel(&dbChannel))
 	}
 	return channels
 }

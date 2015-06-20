@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jordanpotter/gosu/server/api/v0/sanitization"
 	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
@@ -46,5 +47,5 @@ func (h *Handler) create(c *gin.Context) {
 	// 	fmt.Printf("Failed to send event: %v", err)
 	// }
 
-	c.JSON(200, channel)
+	c.JSON(200, sanitization.ToChannel(channel))
 }

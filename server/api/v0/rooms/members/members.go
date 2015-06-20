@@ -20,6 +20,8 @@ func New(dbConn db.Conn, tf *token.Factory, pub pubsub.Publisher) *Handler {
 }
 
 func (h *Handler) AddRoutes(rg *gin.RouterGroup) {
+	rg.GET("", h.getAll)
+
 	rg.POST("/join", h.join)
 	rg.DELETE("/leave", h.leave)
 

@@ -12,7 +12,7 @@ type Device struct {
 	Created time.Time `json:"created"`
 }
 
-func SanitizeDevice(dbDevice *db.Device) *Device {
+func ToDevice(dbDevice *db.Device) *Device {
 	return &Device{
 		ID:      dbDevice.ID,
 		Name:    dbDevice.Name,
@@ -20,10 +20,10 @@ func SanitizeDevice(dbDevice *db.Device) *Device {
 	}
 }
 
-func SanitizeDevices(dbDevices []db.Device) []Device {
+func ToDevices(dbDevices []db.Device) []Device {
 	devices := make([]Device, 0, len(dbDevices))
 	for _, dbDevice := range dbDevices {
-		devices = append(devices, *SanitizeDevice(&dbDevice))
+		devices = append(devices, *ToDevice(&dbDevice))
 	}
 	return devices
 }

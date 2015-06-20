@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/jordanpotter/gosu/server/api/v0/sanitization"
 	"github.com/jordanpotter/gosu/server/internal/auth/password"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
@@ -47,5 +48,5 @@ func (h *Handler) create(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, room)
+	c.JSON(200, sanitization.ToRoom(room))
 }

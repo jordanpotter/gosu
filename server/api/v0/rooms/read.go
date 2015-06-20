@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jordanpotter/gosu/server/api/v0/sanitization"
 	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
@@ -33,7 +34,7 @@ func (h *Handler) get(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, room)
+	c.JSON(200, sanitization.ToRoom(room))
 }
 
 func (h *Handler) getID(c *gin.Context) {
