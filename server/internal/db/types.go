@@ -3,38 +3,38 @@ package db
 import "time"
 
 type Account struct {
-	ID      int       `json:"id"`
-	Email   string    `json:"email"`
-	Created time.Time `json:"created"`
+	ID      int
+	Email   string
+	Created time.Time
 }
 
 type Device struct {
-	ID           int       `json:"id"`
-	Name         string    `json:"name"`
-	PasswordHash []byte    `json:"-"`
-	Created      time.Time `json:"created"`
+	ID           int
+	Name         string
+	PasswordHash []byte
+	Created      time.Time
 }
 
 type Room struct {
-	ID           int       `json:"id"`
-	Name         string    `json:"name"`
-	PasswordHash []byte    `json:"-"`
-	Created      time.Time `json:"created"`
+	ID           int
+	Name         string
+	PasswordHash []byte
+	Created      time.Time
 }
 
 type Channel struct {
-	ID      int       `json:"id"`
-	Name    string    `json:"name"`
-	Created time.Time `json:"created"`
+	ID      int
+	Name    string
+	Created time.Time
 }
 
 type Member struct {
-	ID        int       `json:"id"`
-	AccountID int       `json:"-"`
-	RoomID    int       `json:"roomId"`
-	ChannelID int       `json:"channelId"`
-	Name      string    `json:"name"`
-	Admin     bool      `json:"admin"`
-	Banned    bool      `json:"banned"`
-	Created   time.Time `json:"created"`
+	ID        int
+	AccountID int
+	RoomID    int
+	ChannelID int
+	Name      string
+	Admin     bool
+	Banned    bool
+	Created   time.Time
 }
