@@ -1,6 +1,8 @@
 package pubsub
 
+import "github.com/jordanpotter/gosu/server/internal/events"
+
 type Publisher interface {
-	Send(name string, data []byte) error
+	Send(event events.Event) error
 	Close() error
 }

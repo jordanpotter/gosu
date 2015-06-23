@@ -8,6 +8,7 @@ import (
 	"github.com/gdamore/mangos/transport/tcp"
 	"gopkg.in/vmihailenco/msgpack.v2"
 
+	"github.com/jordanpotter/gosu/server/internal/events"
 	"github.com/jordanpotter/gosu/server/internal/events/pubsub"
 )
 
@@ -30,10 +31,15 @@ func NewPublisher(addr string) (pubsub.Publisher, error) {
 	return &publisher{sock}, nil
 }
 
-func (p *publisher) Send(name string, data []byte) error {
+func (p *publisher) Send(event events.Event) error {
+	eventData, err := msgpack.Marshal(event)
+	if err != nil {
+		return err
+	}
+
 	m := &message{
-		Name:      name,
-		Data:      data,
+		Type:      event.GetType(),
+		EventData: eventData,
 		Timestamp: time.Now(),
 	}
 

@@ -10,6 +10,7 @@ import (
 	"github.com/gdamore/mangos/protocol/sub"
 	"github.com/gdamore/mangos/transport/tcp"
 
+	"github.com/jordanpotter/gosu/server/internal/events"
 	"github.com/jordanpotter/gosu/server/internal/events/pubsub"
 )
 
@@ -147,9 +148,13 @@ func (s *subscriber) getNextMessage() *pubsub.SubMessage {
 		return &pubsub.SubMessage{Err: err}
 	}
 
+	event, err := events.UnmarshalJSON(m.Type, m.EventData)
+	if err != nil {
+		return &pubsub.SubMessage{Err: err}
+	}
+
 	return &pubsub.SubMessage{
-		Name:      m.Name,
-		Data:      m.Data,
+		Event:     event,
 		Timestamp: m.Timestamp,
 	}
 }

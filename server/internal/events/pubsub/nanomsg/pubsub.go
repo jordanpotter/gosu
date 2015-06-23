@@ -1,9 +1,13 @@
 package nanomsg
 
-import "time"
+import (
+	"time"
+
+	"github.com/jordanpotter/gosu/server/internal/events"
+)
 
 type message struct {
-	Name      string    `msgpack:"name"`
-	Data      []byte    `msgpack:"data"`
-	Timestamp time.Time `msgpack:"timestamp"`
+	Type      events.Type `msgpack:"type"`
+	EventData []byte      `msgpack:"eventData"`
+	Timestamp time.Time   `msgpack:"timestamp"`
 }
