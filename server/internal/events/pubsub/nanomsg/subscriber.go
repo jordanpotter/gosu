@@ -3,7 +3,6 @@ package nanomsg
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"gopkg.in/vmihailenco/msgpack.v2"
 
@@ -11,8 +10,7 @@ import (
 	"github.com/gdamore/mangos/protocol/sub"
 	"github.com/gdamore/mangos/transport/tcp"
 
-	"github.com/jordanpotter/gosu/server/events/types"
-	"github.com/jordanpotter/gosu/server/internal/pubsub"
+	"github.com/jordanpotter/gosu/server/internal/events/pubsub"
 )
 
 type subscriber struct {
@@ -127,34 +125,33 @@ func (s *subscriber) Listen(listener chan<- *pubsub.SubMessage) error {
 	}
 
 	s.listenChan = listener
-	go s.handleEvents()
+	go s.handleMessages()
 	return nil
 }
 
-func (s *subscriber) handleEvents() {
+func (s *subscriber) handleMessages() {
 	for {
-		event, timestamp, err := s.getNextEvent()
-		s.listenChan <- &pubsub.SubMessage{Event: event, Timestamp: timestamp, Err: err}
+		s.listenChan <- s.getNextMessage()
 	}
 }
 
-func (s *subscriber) getNextEvent() (types.Event, time.Time, error) {
+func (s *subscriber) getNextMessage() *pubsub.SubMessage {
 	b, err := s.sock.Recv()
 	if err != nil {
-		return nil, time.Time{}, err
+		return &pubsub.SubMessage{Err: err}
 	}
 
 	var m message
 	err = msgpack.Unmarshal(b, &m)
 	if err != nil {
-		return nil, time.Time{}, err
+		return &pubsub.SubMessage{Err: err}
 	}
 
-	event, err := types.UnmarshalMsgpack(m.Type, m.EventBytes)
-	if err != nil {
-		return nil, time.Time{}, err
+	return &pubsub.SubMessage{
+		Name:      m.Name,
+		Data:      m.Data,
+		Timestamp: m.Timestamp,
 	}
-	return event, m.Timestamp, nil
 }
 
 func (s *subscriber) Close() error {

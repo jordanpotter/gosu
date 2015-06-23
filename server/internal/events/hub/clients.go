@@ -2,11 +2,8 @@ package hub
 
 import (
 	"fmt"
+	"net/http"
 	"sync"
-
-	"github.com/gin-gonic/gin"
-
-	"github.com/jordanpotter/gosu/server/events/types"
 )
 
 type clientsManager struct {
@@ -17,10 +14,10 @@ type clientsManager struct {
 
 type client struct {
 	id int
-	w  gin.ResponseWriter
+	w  http.ResponseWriter
 }
 
-func (cm *clientsManager) add(w gin.ResponseWriter) int {
+func (cm *clientsManager) add(w http.ResponseWriter) int {
 	cm.lock.Lock()
 	defer cm.lock.Unlock()
 
@@ -43,12 +40,12 @@ func (cm *clientsManager) remove(id int) error {
 	return fmt.Errorf("missing client with id %d", id)
 }
 
-func (cm *clientsManager) sendEvent(event types.Event) {
+func (cm *clientsManager) send(m []byte) {
 	cm.lock.RLock()
 	defer cm.lock.RUnlock()
 
 	for _, c := range cm.clients {
-		fmt.Fprint(c.w, event)
-		c.w.Flush()
+		fmt.Fprint(c.w, m)
+		c.w.(http.Flusher).Flush()
 	}
 }

@@ -1,13 +1,14 @@
 package nanomsg
 
 import (
+	"time"
+
 	"github.com/gdamore/mangos"
 	"github.com/gdamore/mangos/protocol/pub"
 	"github.com/gdamore/mangos/transport/tcp"
 	"gopkg.in/vmihailenco/msgpack.v2"
 
-	"github.com/jordanpotter/gosu/server/events/types"
-	"github.com/jordanpotter/gosu/server/internal/pubsub"
+	"github.com/jordanpotter/gosu/server/internal/events/pubsub"
 )
 
 type publisher struct {
@@ -29,13 +30,14 @@ func NewPublisher(addr string) (pubsub.Publisher, error) {
 	return &publisher{sock}, nil
 }
 
-func (p *publisher) Send(event types.Event) error {
-	m, err := newMessage(event)
-	if err != nil {
-		return err
+func (p *publisher) Send(name string, data []byte) error {
+	m := &message{
+		Name:      name,
+		Data:      data,
+		Timestamp: time.Now(),
 	}
 
-	b, err := msgpack.Marshal(&m)
+	b, err := msgpack.Marshal(m)
 	if err != nil {
 		return err
 	}

@@ -1,10 +1,6 @@
 package pubsub
 
-import (
-	"time"
-
-	"github.com/jordanpotter/gosu/server/events/types"
-)
+import "time"
 
 type Subscriber interface {
 	Listen(listener chan<- *SubMessage) error
@@ -13,7 +9,8 @@ type Subscriber interface {
 }
 
 type SubMessage struct {
-	Event     types.Event
+	Name      string
+	Data      []byte
 	Timestamp time.Time
 	Err       error
 }

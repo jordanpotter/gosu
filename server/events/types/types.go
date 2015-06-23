@@ -7,10 +7,6 @@ import (
 	"gopkg.in/vmihailenco/msgpack.v2"
 )
 
-func init() {
-	fmt.Println("MOVE ALL OF THIS TO THE PARENT DIRECTORY (EVENTS) IF THERE ARE NO CIRCULAR DEPENDENCIES")
-}
-
 type Type string
 
 type Event interface {
