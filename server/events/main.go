@@ -6,14 +6,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/jordanpotter/gosu/server/events/hub"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/config"
 	"github.com/jordanpotter/gosu/server/internal/config/etcd"
 	"github.com/jordanpotter/gosu/server/internal/db"
-	"github.com/jordanpotter/gosu/server/internal/db/mongo"
-	"github.com/jordanpotter/gosu/server/internal/pubsub"
-	"github.com/jordanpotter/gosu/server/internal/pubsub/nanomsg"
+	"github.com/jordanpotter/gosu/server/internal/db/postgres"
+	"github.com/jordanpotter/gosu/server/internal/events/pubsub"
+	"github.com/jordanpotter/gosu/server/internal/events/pubsub/nanomsg"
 )
 
 var (
@@ -44,18 +43,18 @@ func main() {
 	startServer(dbConn, tf, sub)
 }
 
-func getDBConn(configConn config.Conn) *db.Conn {
-	mongoAddrs, err := configConn.GetMongoAddrs()
+func getDBConn(configConn config.Conn) db.Conn {
+	postgresAddrs, err := configConn.GetPostgresAddrs()
 	if err != nil {
 		panic(err)
 	}
 
-	mongoConfig, err := configConn.GetMongo()
+	postgresConfig, err := configConn.GetPostgres()
 	if err != nil {
 		panic(err)
 	}
 
-	dbConn, err := mongo.New(mongoAddrs, mongoConfig)
+	dbConn, err := postgres.New(postgresAddrs, postgresConfig)
 	if err != nil {
 		panic(err)
 	}
@@ -95,17 +94,17 @@ func getSubscriber(configConn config.Conn) pubsub.Subscriber {
 	return sub
 }
 
-func startServer(dbConn *db.Conn, tf *token.Factory, sub pubsub.Subscriber) {
+func startServer(dbConn db.Conn, tf *token.Factory, sub pubsub.Subscriber) {
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong")
 	})
 
-	hub, err := hub.New(tf, sub)
-	if err != nil {
-		panic(err)
-	}
-	hub.AddRoutes(r.Group("/events"))
+	// hub, err := hub.New(tf, sub)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// hub.AddRoutes(r.Group("/events"))
 
 	r.Run(fmt.Sprintf(":%d", port))
 }
