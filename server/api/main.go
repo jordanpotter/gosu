@@ -12,8 +12,8 @@ import (
 	"github.com/jordanpotter/gosu/server/internal/config/etcd"
 	"github.com/jordanpotter/gosu/server/internal/db"
 	"github.com/jordanpotter/gosu/server/internal/db/postgres"
-	"github.com/jordanpotter/gosu/server/internal/pubsub"
-	"github.com/jordanpotter/gosu/server/internal/pubsub/nanomsg"
+	"github.com/jordanpotter/gosu/server/internal/events/pubsub"
+	"github.com/jordanpotter/gosu/server/internal/events/pubsub/nanomsg"
 )
 
 var (
