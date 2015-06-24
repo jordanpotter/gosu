@@ -9,6 +9,9 @@ import (
 )
 
 const (
+	accountDeviceCreatedType = "account.device.created"
+	accountDeviceDeletedType = "account.device.deleted"
+
 	roomChannelCreatedType      = "room.channel.created"
 	roomChannelDeletedType      = "room.channel.deleted"
 	roomMemberCreatedType       = "room.member.created"
@@ -45,6 +48,10 @@ func UnmarshalMsgpack(t Type, b []byte) (Event, error) {
 
 func getEmptyEventForType(t Type) (Event, error) {
 	switch t {
+	case accountDeviceCreatedType:
+		return new(AccountDeviceCreated), nil
+	case accountDeviceDeletedType:
+		return new(AccountDeviceDeleted), nil
 	case roomChannelCreatedType:
 		return new(RoomChannelCreated), nil
 	case roomChannelDeletedType:
@@ -62,9 +69,29 @@ func getEmptyEventForType(t Type) (Event, error) {
 	}
 }
 
+type AccountDeviceCreated struct {
+	AccountID  int       `json:"accountId" msgpack:"accountId"`
+	DeviceID   int       `json:"deviceId" msgpack:"deviceId"`
+	DeviceName string    `json:"deviceName" msgpack:"deviceName"`
+	Created    time.Time `json:"created" msgpack:"created"`
+}
+
+func (adc *AccountDeviceCreated) GetType() Type {
+	return accountDeviceCreatedType
+}
+
+type AccountDeviceDeleted struct {
+	AccountID int `json:"accountId" msgpack:"accountId"`
+	DeviceID  int `json"deviceId" msgpack:"deviceId"`
+}
+
+func (add *AccountDeviceDeleted) GetType() Type {
+	return accountDeviceDeletedType
+}
+
 type RoomChannelCreated struct {
-	RoomID      string    `json:"roomID" msgpack:"roomID"`
-	ChannelID   string    `json:"channelID" msgpack:"channelID"`
+	RoomID      int       `json:"roomId" msgpack:"roomId"`
+	ChannelID   int       `json:"channelId" msgpack:"channelId"`
 	ChannelName string    `json:"roomName" msgpack:"roomName"`
 	Created     time.Time `json:"created" msgpack:"created"`
 }
@@ -74,8 +101,8 @@ func (rcc *RoomChannelCreated) GetType() Type {
 }
 
 type RoomChannelDeleted struct {
-	RoomID    string `json:"roomID" msgpack:"roomID"`
-	ChannelID string `json"channelID" msgpack:"channelID"`
+	RoomID    int `json:"roomId" msgpack:"roomId"`
+	ChannelID int `json:"channelId" msgpack:"channelId"`
 }
 
 func (rcd *RoomChannelDeleted) GetType() Type {
@@ -83,8 +110,8 @@ func (rcd *RoomChannelDeleted) GetType() Type {
 }
 
 type RoomMemberCreated struct {
-	RoomID     string    `json:"roomID" msgpack:"roomID"`
-	MemberID   string    `json:"memberID" msgpack:"memberID"`
+	RoomID     int       `json:"roomId" msgpack:"roomId"`
+	MemberID   int       `json:"memberId" msgpack:"memberId"`
 	MemberName string    `json:"memberName", msgpack:"memberName"`
 	Admin      bool      `json:"admin" msgpack:"admin"`
 	Banned     bool      `json:"banned" msgpack:"banned"`
@@ -96,8 +123,8 @@ func (rmc *RoomMemberCreated) GetType() Type {
 }
 
 type RoomMemberDeleted struct {
-	RoomID   string `json:"roomID" msgpack:"roomID"`
-	MemberID string `json:"memberID" msgpack:"memberID"`
+	RoomID   int `json:"roomId" msgpack:"roomId"`
+	MemberID int `json:"memberId" msgpack:"memberId"`
 }
 
 func (rmd *RoomMemberDeleted) GetType() Type {
@@ -105,9 +132,9 @@ func (rmd *RoomMemberDeleted) GetType() Type {
 }
 
 type RoomMemberAdminUpdated struct {
-	RoomID   string `json:"roomID" msgpack:"roomID"`
-	MemberID string `json:"memberID" msgpack:"memberID"`
-	Admin    bool   `json:"admin" msgpack:"admin"`
+	RoomID   int  `json:"roomId" msgpack:"roomId"`
+	MemberID int  `json:"memberId" msgpack:"memberId"`
+	Admin    bool `json:"admin" msgpack:"admin"`
 }
 
 func (rmau *RoomMemberAdminUpdated) GetType() Type {
@@ -115,9 +142,9 @@ func (rmau *RoomMemberAdminUpdated) GetType() Type {
 }
 
 type RoomMemberBannedUpdated struct {
-	RoomID   string `json:"roomID" msgpack:"roomID"`
-	MemberID string `json:"memberID" msgpack:"memberID"`
-	Banned   bool   `json:"banned" msgpack:"banned"`
+	RoomID   int  `json:"roomId" msgpack:"roomId"`
+	MemberID int  `json:"memberId" msgpack:"memberId"`
+	Banned   bool `json:"banned" msgpack:"banned"`
 }
 
 func (rmbu *RoomMemberBannedUpdated) GetType() Type {
