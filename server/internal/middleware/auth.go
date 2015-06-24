@@ -32,6 +32,30 @@ func AuthRequired(tf *token.Factory) gin.HandlerFunc {
 	}
 }
 
+func AuthMatchesAccount(accountIDParam string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		t, ok := c.Get(TokenKey)
+		if !ok {
+			c.AbortWithError(403, errors.New("missing auth token"))
+			return
+		}
+
+		accountIDString := c.Params.ByName(accountIDParam)
+		accountID, err := strconv.Atoi(accountIDString)
+		if err != nil {
+			c.AbortWithError(500, err)
+			return
+		}
+
+		authAccountID := t.(*token.Token).Account.ID
+		if accountID != authAccountID {
+			c.AbortWithError(403, fmt.Errorf("account id %d does not match auth token's account %d", accountID, authAccountID))
+			return
+		}
+		c.Next()
+	}
+}
+
 func AuthMatchesRoom(roomIDParam string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		t, ok := c.Get(TokenKey)

@@ -5,9 +5,6 @@ import (
 	"net/http"
 	"sync"
 	"time"
-
-	"github.com/jordanpotter/gosu/server/internal/auth/token"
-	"github.com/jordanpotter/gosu/server/internal/events/pubsub"
 )
 
 type Hub struct {
@@ -21,7 +18,7 @@ type sub struct {
 	created time.Time
 }
 
-func New(tf *token.Factory, sub pubsub.Subscriber) *Hub {
+func New() *Hub {
 	return &Hub{
 		clientManagers: make(map[string]*clientsManager),
 	}
