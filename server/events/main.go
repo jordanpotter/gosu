@@ -100,11 +100,5 @@ func startServer(dbConn db.Conn, tf *token.Factory, sub pubsub.Subscriber) {
 		c.String(200, "pong")
 	})
 
-	// hub, err := hub.New(tf, sub)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// hub.AddRoutes(r.Group("/events"))
-
 	r.Run(fmt.Sprintf(":%d", port))
 }

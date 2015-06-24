@@ -1,8 +1,8 @@
 package nanomsg
 
 import (
-	"errors"
 	"fmt"
+	"sync"
 
 	"gopkg.in/vmihailenco/msgpack.v2"
 
@@ -15,9 +15,11 @@ import (
 )
 
 type subscriber struct {
-	sock       mangos.Socket
-	dialers    map[string]mangos.Dialer
-	listenChan chan<- *pubsub.SubMessage
+	sock               mangos.Socket
+	dialers            map[string]mangos.Dialer
+	listeners          []chan<- *pubsub.SubMessage
+	listenersLock      sync.RWMutex
+	messageHandlerOnce sync.Once
 }
 
 func NewSubscriber() (pubsub.Subscriber, error) {
@@ -118,22 +120,23 @@ func (s *subscriber) disconnect(addr string) error {
 	return nil
 }
 
-func (s *subscriber) Listen(listener chan<- *pubsub.SubMessage) error {
-	if s.listenChan != nil {
-		return errors.New("listener already set")
-	} else if listener == nil {
-		return errors.New("must provide listener")
-	}
+func (s *subscriber) AddListener(listener chan<- *pubsub.SubMessage) {
+	s.listenersLock.Lock()
+	defer s.listenersLock.Unlock()
 
-	s.listenChan = listener
-	go s.handleMessages()
-	return nil
+	s.listeners = append(s.listeners, listener)
+	s.messageHandlerOnce.Do(s.handleMessages)
 }
 
 func (s *subscriber) handleMessages() {
-	for {
-		s.listenChan <- s.getNextMessage()
-	}
+	go func() {
+		for {
+			m := s.getNextMessage()
+			for _, listener := range s.listeners {
+				listener <- m
+			}
+		}
+	}()
 }
 
 func (s *subscriber) getNextMessage() *pubsub.SubMessage {
@@ -162,6 +165,8 @@ func (s *subscriber) getNextMessage() *pubsub.SubMessage {
 func (s *subscriber) Close() error {
 	err := s.sock.Close()
 	s.dialers = make(map[string]mangos.Dialer)
-	close(s.listenChan)
+	for _, listener := range s.listeners {
+		close(listener)
+	}
 	return err
 }

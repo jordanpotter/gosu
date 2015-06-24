@@ -7,7 +7,7 @@ import (
 )
 
 type Subscriber interface {
-	Listen(listener chan<- *SubMessage) error
+	AddListener(listener chan<- *SubMessage)
 	SetAddrs(addrs []string) error
 	Close() error
 }
