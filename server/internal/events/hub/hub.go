@@ -9,7 +9,7 @@ import (
 
 type Hub struct {
 	clientManagers     map[string]*clientsManager
-	clientManagersLock sync.Mutex
+	clientManagersLock sync.RWMutex
 }
 
 type sub struct {
@@ -25,7 +25,13 @@ func New() *Hub {
 }
 
 func (h *Hub) Send(key string, m []byte) {
-	h.clientManagers[key].send(m)
+	h.clientManagersLock.RLock()
+	defer h.clientManagersLock.RUnlock()
+
+	cm, ok := h.clientManagers[key]
+	if ok {
+		cm.send(m)
+	}
 }
 
 func (h *Hub) SubscribeAndBlock(key string, w http.ResponseWriter) error {

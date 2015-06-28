@@ -45,7 +45,9 @@ func (cm *clientsManager) send(m []byte) {
 	defer cm.lock.RUnlock()
 
 	for _, c := range cm.clients {
-		fmt.Fprint(c.w, m)
-		c.w.(http.Flusher).Flush()
+		go func(c client) {
+			fmt.Fprint(c.w, m)
+			c.w.(http.Flusher).Flush()
+		}(c)
 	}
 }

@@ -32,7 +32,7 @@ func (h *Handler) delete(c *gin.Context) {
 		return
 	}
 
-	err = h.pub.Send(&events.AccountDeviceDeleted{
+	err = h.pub.Send(events.AccountDeviceDeleted{
 		AccountID: authToken.Account.ID,
 		DeviceID:  deviceID,
 	})

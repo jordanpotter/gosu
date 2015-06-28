@@ -27,43 +27,78 @@ type Event interface {
 }
 
 func UnmarshalJSON(t Type, b []byte) (Event, error) {
-	event, err := getEmptyEventForType(t)
-	if err != nil {
-		return nil, err
+	switch t {
+	case accountDeviceCreatedType:
+		var adc AccountDeviceCreated
+		err := json.Unmarshal(b, &adc)
+		return adc, err
+	case accountDeviceDeletedType:
+		var add AccountDeviceDeleted
+		err := json.Unmarshal(b, &add)
+		return add, err
+	case roomChannelCreatedType:
+		var rcc RoomChannelCreated
+		err := json.Unmarshal(b, &rcc)
+		return rcc, err
+	case roomChannelDeletedType:
+		var rcd RoomChannelDeleted
+		err := json.Unmarshal(b, &rcd)
+		return rcd, err
+	case roomMemberCreatedType:
+		var rmc RoomMemberCreated
+		err := json.Unmarshal(b, &rmc)
+		return rmc, err
+	case roomMemberDeletedType:
+		var rmd RoomMemberDeleted
+		err := json.Unmarshal(b, &rmd)
+		return rmd, err
+	case roomMemberAdminUpdatedType:
+		var rmau RoomMemberAdminUpdated
+		err := json.Unmarshal(b, &rmau)
+		return rmau, err
+	case roomMemberBannedUpdatedType:
+		var rmbu RoomMemberBannedUpdated
+		err := json.Unmarshal(b, &rmbu)
+		return rmbu, err
+	default:
+		return nil, fmt.Errorf("unexpected type %s", t)
 	}
-
-	err = json.Unmarshal(b, event)
-	return event, err
 }
 
 func UnmarshalMsgpack(t Type, b []byte) (Event, error) {
-	event, err := getEmptyEventForType(t)
-	if err != nil {
-		return nil, err
-	}
-
-	err = msgpack.Unmarshal(b, event)
-	return event, err
-}
-
-func getEmptyEventForType(t Type) (Event, error) {
 	switch t {
 	case accountDeviceCreatedType:
-		return new(AccountDeviceCreated), nil
+		var adc AccountDeviceCreated
+		err := msgpack.Unmarshal(b, &adc)
+		return adc, err
 	case accountDeviceDeletedType:
-		return new(AccountDeviceDeleted), nil
+		var add AccountDeviceDeleted
+		err := msgpack.Unmarshal(b, &add)
+		return add, err
 	case roomChannelCreatedType:
-		return new(RoomChannelCreated), nil
+		var rcc RoomChannelCreated
+		err := msgpack.Unmarshal(b, &rcc)
+		return rcc, err
 	case roomChannelDeletedType:
-		return new(RoomChannelDeleted), nil
+		var rcd RoomChannelDeleted
+		err := msgpack.Unmarshal(b, &rcd)
+		return rcd, err
 	case roomMemberCreatedType:
-		return new(RoomMemberCreated), nil
+		var rmc RoomMemberCreated
+		err := msgpack.Unmarshal(b, &rmc)
+		return rmc, err
 	case roomMemberDeletedType:
-		return new(RoomMemberDeleted), nil
+		var rmd RoomMemberDeleted
+		err := msgpack.Unmarshal(b, &rmd)
+		return rmd, err
 	case roomMemberAdminUpdatedType:
-		return new(RoomMemberAdminUpdated), nil
+		var rmau RoomMemberAdminUpdated
+		err := msgpack.Unmarshal(b, &rmau)
+		return rmau, err
 	case roomMemberBannedUpdatedType:
-		return new(RoomMemberBannedUpdated), nil
+		var rmbu RoomMemberBannedUpdated
+		err := msgpack.Unmarshal(b, &rmbu)
+		return rmbu, err
 	default:
 		return nil, fmt.Errorf("unexpected type %s", t)
 	}
@@ -76,16 +111,16 @@ type AccountDeviceCreated struct {
 	Created    time.Time `json:"created" msgpack:"created"`
 }
 
-func (adc *AccountDeviceCreated) GetType() Type {
+func (adc AccountDeviceCreated) GetType() Type {
 	return accountDeviceCreatedType
 }
 
 type AccountDeviceDeleted struct {
 	AccountID int `json:"accountId" msgpack:"accountId"`
-	DeviceID  int `json"deviceId" msgpack:"deviceId"`
+	DeviceID  int `json:"deviceId" msgpack:"deviceId"`
 }
 
-func (add *AccountDeviceDeleted) GetType() Type {
+func (add AccountDeviceDeleted) GetType() Type {
 	return accountDeviceDeletedType
 }
 
@@ -96,7 +131,7 @@ type RoomChannelCreated struct {
 	Created     time.Time `json:"created" msgpack:"created"`
 }
 
-func (rcc *RoomChannelCreated) GetType() Type {
+func (rcc RoomChannelCreated) GetType() Type {
 	return roomChannelCreatedType
 }
 
@@ -105,20 +140,20 @@ type RoomChannelDeleted struct {
 	ChannelID int `json:"channelId" msgpack:"channelId"`
 }
 
-func (rcd *RoomChannelDeleted) GetType() Type {
+func (rcd RoomChannelDeleted) GetType() Type {
 	return roomChannelDeletedType
 }
 
 type RoomMemberCreated struct {
 	RoomID     int       `json:"roomId" msgpack:"roomId"`
 	MemberID   int       `json:"memberId" msgpack:"memberId"`
-	MemberName string    `json:"memberName", msgpack:"memberName"`
+	MemberName string    `json:"memberName" msgpack:"memberName"`
 	Admin      bool      `json:"admin" msgpack:"admin"`
 	Banned     bool      `json:"banned" msgpack:"banned"`
 	Created    time.Time `json:"created" msgpack:"created"`
 }
 
-func (rmc *RoomMemberCreated) GetType() Type {
+func (rmc RoomMemberCreated) GetType() Type {
 	return roomMemberCreatedType
 }
 
@@ -127,7 +162,7 @@ type RoomMemberDeleted struct {
 	MemberID int `json:"memberId" msgpack:"memberId"`
 }
 
-func (rmd *RoomMemberDeleted) GetType() Type {
+func (rmd RoomMemberDeleted) GetType() Type {
 	return roomMemberDeletedType
 }
 
@@ -137,7 +172,7 @@ type RoomMemberAdminUpdated struct {
 	Admin    bool `json:"admin" msgpack:"admin"`
 }
 
-func (rmau *RoomMemberAdminUpdated) GetType() Type {
+func (rmau RoomMemberAdminUpdated) GetType() Type {
 	return roomMemberAdminUpdatedType
 }
 
@@ -147,6 +182,6 @@ type RoomMemberBannedUpdated struct {
 	Banned   bool `json:"banned" msgpack:"banned"`
 }
 
-func (rmbu *RoomMemberBannedUpdated) GetType() Type {
+func (rmbu RoomMemberBannedUpdated) GetType() Type {
 	return roomMemberBannedUpdatedType
 }

@@ -17,7 +17,7 @@ import (
 type subscriber struct {
 	sock               mangos.Socket
 	dialers            map[string]mangos.Dialer
-	listeners          []chan<- *pubsub.SubMessage
+	listeners          []chan<- pubsub.SubMessage
 	listenersLock      sync.RWMutex
 	messageHandlerOnce sync.Once
 }
@@ -120,7 +120,7 @@ func (s *subscriber) disconnect(addr string) error {
 	return nil
 }
 
-func (s *subscriber) AddListener(listener chan<- *pubsub.SubMessage) {
+func (s *subscriber) AddListener(listener chan<- pubsub.SubMessage) {
 	s.listenersLock.Lock()
 	defer s.listenersLock.Unlock()
 
@@ -139,24 +139,24 @@ func (s *subscriber) handleMessages() {
 	}()
 }
 
-func (s *subscriber) getNextMessage() *pubsub.SubMessage {
+func (s *subscriber) getNextMessage() pubsub.SubMessage {
 	b, err := s.sock.Recv()
 	if err != nil {
-		return &pubsub.SubMessage{Err: err}
+		return pubsub.SubMessage{Err: err}
 	}
 
 	var m message
 	err = msgpack.Unmarshal(b, &m)
 	if err != nil {
-		return &pubsub.SubMessage{Err: err}
+		return pubsub.SubMessage{Err: err}
 	}
 
-	event, err := events.UnmarshalJSON(m.Type, m.EventData)
+	event, err := events.UnmarshalMsgpack(m.Type, m.EventData)
 	if err != nil {
-		return &pubsub.SubMessage{Err: err}
+		return pubsub.SubMessage{Err: err}
 	}
 
-	return &pubsub.SubMessage{
+	return pubsub.SubMessage{
 		Event:     event,
 		Timestamp: m.Timestamp,
 	}

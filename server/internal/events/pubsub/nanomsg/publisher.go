@@ -37,12 +37,11 @@ func (p *publisher) Send(event events.Event) error {
 		return err
 	}
 
-	m := &message{
+	m := message{
 		Type:      event.GetType(),
 		EventData: eventData,
 		Timestamp: time.Now(),
 	}
-
 	b, err := msgpack.Marshal(m)
 	if err != nil {
 		return err

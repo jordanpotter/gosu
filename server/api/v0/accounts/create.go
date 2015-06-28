@@ -39,7 +39,7 @@ func (h *Handler) create(c *gin.Context) {
 		return
 	}
 
-	err = h.pub.Send(&events.AccountDeviceCreated{
+	err = h.pub.Send(events.AccountDeviceCreated{
 		AccountID:  account.ID,
 		DeviceID:   device.ID,
 		DeviceName: device.Name,
