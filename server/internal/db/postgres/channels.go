@@ -30,14 +30,14 @@ func toChannels(scs []storedChannel) []db.Channel {
 }
 
 func (c *conn) CreateChannel(roomID int, name string) (db.Channel, error) {
-	sc := storedChannel{}
+	var sc storedChannel
 	insertChannel := "INSERT INTO channels (room_id, name, created) VALUES ($1, $2, $3) RETURNING *"
 	err := c.Get(&sc, insertChannel, roomID, name, time.Now())
 	return sc.toChannel(), convertError(err)
 }
 
 func (c *conn) GetChannelsByRoom(roomID int) ([]db.Channel, error) {
-	scs := []storedChannel{}
+	var scs []storedChannel
 	selectChannels := "SELECT * FROM channels WHERE room_id=$1"
 	err := c.Select(&scs, selectChannels, roomID)
 	return toChannels(scs), convertError(err)

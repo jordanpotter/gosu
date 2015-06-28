@@ -28,7 +28,7 @@ func (c *conn) CreateRoom(name string, passwordHash []byte, adminAccountID int, 
 		return db.Room{}, convertError(err)
 	}
 
-	sr := storedRoom{}
+	var sr storedRoom
 	insertRoom := "INSERT INTO rooms (name, password_hash, created) VALUES ($1, $2, $3) RETURNING *"
 	err = tx.Get(&sr, insertRoom, name, passwordHash, time.Now())
 	if err != nil {
@@ -48,14 +48,14 @@ func (c *conn) CreateRoom(name string, passwordHash []byte, adminAccountID int, 
 }
 
 func (c *conn) GetRoom(id int) (db.Room, error) {
-	sr := storedRoom{}
+	var sr storedRoom
 	selectRoom := "SELECT * FROM rooms WHERE id=$1 LIMIT 1"
 	err := c.Get(&sr, selectRoom, id)
 	return sr.toRoom(), convertError(err)
 }
 
 func (c *conn) GetRoomByName(name string) (db.Room, error) {
-	sr := storedRoom{}
+	var sr storedRoom
 	selectRoom := "SELECT * FROM rooms WHERE name=$1 LIMIT 1"
 	err := c.Get(&sr, selectRoom, name)
 	return sr.toRoom(), convertError(err)

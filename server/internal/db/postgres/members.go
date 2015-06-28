@@ -43,42 +43,42 @@ func toMembers(sms []storedMember) []db.Member {
 }
 
 func (c *conn) CreateMember(accountID, roomID int, name string) (db.Member, error) {
-	sm := storedMember{}
+	var sm storedMember
 	insertMember := "INSERT INTO members (account_id, room_id, name, admin, banned, created) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *"
 	err := c.Get(&sm, insertMember, accountID, roomID, name, false, false, time.Now())
 	return sm.toMember(), convertError(err)
 }
 
 func (c *conn) GetMemberByAccountAndRoom(accountID, roomID int) (db.Member, error) {
-	sm := storedMember{}
+	var sm storedMember
 	selectMember := "SELECT * FROM members WHERE account_id=$1 AND room_id=$2 LIMIT 1"
 	err := c.Get(&sm, selectMember, accountID, roomID)
 	return sm.toMember(), convertError(err)
 }
 
 func (c *conn) GetMembersByAccount(accountID int) ([]db.Member, error) {
-	sms := []storedMember{}
+	var sms []storedMember
 	selectMembers := "SELECT * FROM members WHERE account_id=$1"
 	err := c.Select(&sms, selectMembers, accountID)
 	return toMembers(sms), convertError(err)
 }
 
 func (c *conn) GetMembersByRoom(roomID int) ([]db.Member, error) {
-	sms := []storedMember{}
+	var sms []storedMember
 	selectMembers := "SELECT * FROM members WHERE room_id=$1"
 	err := c.Select(&sms, selectMembers, roomID)
 	return toMembers(sms), convertError(err)
 }
 
 func (c *conn) SetMemberAdminForRoom(id, roomID int, admin bool) (db.Member, error) {
-	sm := storedMember{}
+	var sm storedMember
 	updateMember := "UPDATE members SET admin=$1 WHERE id=$2 AND room_id=$3 RETURNING *"
 	err := c.Get(&sm, updateMember, admin, id, roomID)
 	return sm.toMember(), convertError(err)
 }
 
 func (c *conn) SetMemberBannedForRoom(id, roomID int, banned bool) (db.Member, error) {
-	sm := storedMember{}
+	var sm storedMember
 	updateMember := "UPDATE members SET banned=$1 WHERE id=$2 AND room_id=$3 RETURNING *"
 	err := c.Get(&sm, updateMember, banned, id, roomID)
 	return sm.toMember(), convertError(err)
