@@ -20,13 +20,6 @@ type AccountDeviceCreated struct {
 	Timestamp  time.Time `json:"timestamp"`
 }
 
-type AccountDeviceDeleted struct {
-	EventName string    `json:"eventName"`
-	AccountID int       `json:"accountId"`
-	DeviceID  int       `json:"deviceId"`
-	Timestamp time.Time `json:"timestamp"`
-}
-
 func ToAccountDeviceCreated(adc events.AccountDeviceCreated, timestamp time.Time) AccountDeviceCreated {
 	return AccountDeviceCreated{
 		EventName:  AccountDeviceCreatedName,
@@ -36,6 +29,13 @@ func ToAccountDeviceCreated(adc events.AccountDeviceCreated, timestamp time.Time
 		Created:    adc.Created,
 		Timestamp:  timestamp,
 	}
+}
+
+type AccountDeviceDeleted struct {
+	EventName string    `json:"eventName"`
+	AccountID int       `json:"accountId"`
+	DeviceID  int       `json:"deviceId"`
+	Timestamp time.Time `json:"timestamp"`
 }
 
 func ToAccountDeviceDeleted(add events.AccountDeviceDeleted, timestamp time.Time) AccountDeviceDeleted {
