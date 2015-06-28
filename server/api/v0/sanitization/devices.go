@@ -12,8 +12,8 @@ type Device struct {
 	Created time.Time `json:"created"`
 }
 
-func ToDevice(dbDevice *db.Device) *Device {
-	return &Device{
+func ToDevice(dbDevice db.Device) Device {
+	return Device{
 		ID:      dbDevice.ID,
 		Name:    dbDevice.Name,
 		Created: dbDevice.Created,
@@ -23,7 +23,7 @@ func ToDevice(dbDevice *db.Device) *Device {
 func ToDevices(dbDevices []db.Device) []Device {
 	devices := make([]Device, 0, len(dbDevices))
 	for _, dbDevice := range dbDevices {
-		devices = append(devices, *ToDevice(&dbDevice))
+		devices = append(devices, ToDevice(dbDevice))
 	}
 	return devices
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jordanpotter/gosu/server/api/v0/sanitization"
 	"github.com/jordanpotter/gosu/server/internal/auth/password"
+	"github.com/jordanpotter/gosu/server/internal/events"
 )
 
 type CreateRequest struct {
@@ -32,7 +33,18 @@ func (h *Handler) create(c *gin.Context) {
 		return
 	}
 
-	_, err = h.dbConn.CreateDevice(account.ID, req.DeviceName, devicePasswordHash)
+	device, err := h.dbConn.CreateDevice(account.ID, req.DeviceName, devicePasswordHash)
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+
+	err = h.pub.Send(&events.AccountDeviceCreated{
+		AccountID:  account.ID,
+		DeviceID:   device.ID,
+		DeviceName: device.Name,
+		Created:    device.Created,
+	})
 	if err != nil {
 		c.AbortWithError(500, err)
 		return

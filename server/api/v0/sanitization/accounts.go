@@ -12,8 +12,8 @@ type Account struct {
 	Created time.Time `json:"created"`
 }
 
-func ToAccount(dbAccount *db.Account) *Account {
-	return &Account{
+func ToAccount(dbAccount db.Account) Account {
+	return Account{
 		ID:      dbAccount.ID,
 		Email:   dbAccount.Email,
 		Created: dbAccount.Created,
@@ -23,7 +23,7 @@ func ToAccount(dbAccount *db.Account) *Account {
 func ToAccounts(dbAccounts []db.Account) []Account {
 	accounts := make([]Account, 0, len(dbAccounts))
 	for _, dbAccount := range dbAccounts {
-		accounts = append(accounts, *ToAccount(&dbAccount))
+		accounts = append(accounts, ToAccount(dbAccount))
 	}
 	return accounts
 }

@@ -16,8 +16,8 @@ type Member struct {
 	Created   time.Time `json:"created"`
 }
 
-func ToMember(dbMember *db.Member) *Member {
-	return &Member{
+func ToMember(dbMember db.Member) Member {
+	return Member{
 		ID:        dbMember.ID,
 		RoomID:    dbMember.RoomID,
 		ChannelID: dbMember.ChannelID,
@@ -31,7 +31,7 @@ func ToMember(dbMember *db.Member) *Member {
 func ToMembers(dbMembers []db.Member) []Member {
 	members := make([]Member, 0, len(dbMembers))
 	for _, dbMember := range dbMembers {
-		members = append(members, *ToMember(&dbMember))
+		members = append(members, ToMember(dbMember))
 	}
 	return members
 }

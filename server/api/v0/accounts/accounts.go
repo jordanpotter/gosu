@@ -7,8 +7,8 @@ import (
 	"github.com/jordanpotter/gosu/server/api/v0/accounts/memberships"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
-	"github.com/jordanpotter/gosu/server/internal/middleware"
 	"github.com/jordanpotter/gosu/server/internal/events/pubsub"
+	"github.com/jordanpotter/gosu/server/internal/middleware"
 )
 
 type Handler struct {

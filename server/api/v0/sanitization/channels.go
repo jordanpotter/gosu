@@ -12,8 +12,8 @@ type Channel struct {
 	Created time.Time `json:"created"`
 }
 
-func ToChannel(dbChannel *db.Channel) *Channel {
-	return &Channel{
+func ToChannel(dbChannel db.Channel) Channel {
+	return Channel{
 		ID:      dbChannel.ID,
 		Name:    dbChannel.Name,
 		Created: dbChannel.Created,
@@ -23,7 +23,7 @@ func ToChannel(dbChannel *db.Channel) *Channel {
 func ToChannels(dbChannels []db.Channel) []Channel {
 	channels := make([]Channel, 0, len(dbChannels))
 	for _, dbChannel := range dbChannels {
-		channels = append(channels, *ToChannel(&dbChannel))
+		channels = append(channels, ToChannel(dbChannel))
 	}
 	return channels
 }

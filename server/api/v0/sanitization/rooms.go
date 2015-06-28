@@ -12,8 +12,8 @@ type Room struct {
 	Created time.Time `json:"created"`
 }
 
-func ToRoom(dbRoom *db.Room) *Room {
-	return &Room{
+func ToRoom(dbRoom db.Room) Room {
+	return Room{
 		ID:      dbRoom.ID,
 		Name:    dbRoom.Name,
 		Created: dbRoom.Created,
@@ -23,7 +23,7 @@ func ToRoom(dbRoom *db.Room) *Room {
 func ToRooms(dbRooms []db.Room) []Room {
 	rooms := make([]Room, 0, len(dbRooms))
 	for _, dbRoom := range dbRooms {
-		rooms = append(rooms, *ToRoom(&dbRoom))
+		rooms = append(rooms, ToRoom(dbRoom))
 	}
 	return rooms
 }
