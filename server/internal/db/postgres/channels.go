@@ -13,8 +13,8 @@ type storedChannel struct {
 	Created time.Time `db:"created"`
 }
 
-func (sc *storedChannel) toChannel() *db.Channel {
-	return &db.Channel{
+func (sc storedChannel) toChannel() db.Channel {
+	return db.Channel{
 		ID:      sc.ID,
 		Name:    sc.Name,
 		Created: sc.Created,
@@ -24,15 +24,15 @@ func (sc *storedChannel) toChannel() *db.Channel {
 func toChannels(scs []storedChannel) []db.Channel {
 	channels := make([]db.Channel, 0, len(scs))
 	for _, sc := range scs {
-		channels = append(channels, *sc.toChannel())
+		channels = append(channels, sc.toChannel())
 	}
 	return channels
 }
 
-func (c *conn) CreateChannel(roomID int, name string) (*db.Channel, error) {
-	sc := new(storedChannel)
+func (c *conn) CreateChannel(roomID int, name string) (db.Channel, error) {
+	sc := storedChannel{}
 	insertChannel := "INSERT INTO channels (room_id, name, created) VALUES ($1, $2, $3) RETURNING *"
-	err := c.Get(sc, insertChannel, roomID, name, time.Now())
+	err := c.Get(&sc, insertChannel, roomID, name, time.Now())
 	return sc.toChannel(), convertError(err)
 }
 

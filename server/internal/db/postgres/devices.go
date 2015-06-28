@@ -14,8 +14,8 @@ type storedDevice struct {
 	Created      time.Time `db:"created"`
 }
 
-func (sd *storedDevice) toDevice() *db.Device {
-	device := &db.Device{
+func (sd storedDevice) toDevice() db.Device {
+	device := db.Device{
 		ID:           sd.ID,
 		Name:         sd.Name,
 		PasswordHash: sd.PasswordHash,
@@ -27,15 +27,15 @@ func (sd *storedDevice) toDevice() *db.Device {
 func toDevices(sds []storedDevice) []db.Device {
 	devices := make([]db.Device, 0, len(sds))
 	for _, sd := range sds {
-		devices = append(devices, *sd.toDevice())
+		devices = append(devices, sd.toDevice())
 	}
 	return devices
 }
 
-func (c *conn) CreateDevice(accountID int, deviceName string, devicePasswordHash []byte) (*db.Device, error) {
-	sd := new(storedDevice)
+func (c *conn) CreateDevice(accountID int, deviceName string, devicePasswordHash []byte) (db.Device, error) {
+	sd := storedDevice{}
 	insertDevice := "INSERT INTO devices (account_id, name, password_hash, created) VALUES ($1, $2, $3, $4) RETURNING *"
-	err := c.Get(sd, insertDevice, accountID, deviceName, devicePasswordHash, time.Now())
+	err := c.Get(&sd, insertDevice, accountID, deviceName, devicePasswordHash, time.Now())
 	return sd.toDevice(), convertError(err)
 }
 
