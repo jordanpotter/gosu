@@ -2,6 +2,7 @@ package members
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -9,6 +10,7 @@ import (
 	"github.com/jordanpotter/gosu/server/internal/auth/password"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 	"github.com/jordanpotter/gosu/server/internal/db"
+	"github.com/jordanpotter/gosu/server/internal/events"
 	"github.com/jordanpotter/gosu/server/internal/middleware"
 )
 
@@ -60,18 +62,17 @@ func (h *Handler) join(c *gin.Context) {
 		return
 	}
 
-	// e := &types.RoomMemberCreated{
-	// 	RoomID:     roomID,
-	// 	MemberID:   member.ID,
-	// 	MemberName: member.Name,
-	// 	Admin:      member.Admin,
-	// 	Banned:     member.Banned,
-	// 	Created:    member.Created,
-	// }
-	// err = h.pub.Send(e)
-	// if err != nil {
-	// 	fmt.Printf("Failed to send event: %v", err)
-	// }
+	err = h.pub.Send(events.RoomMemberCreated{
+		RoomID:     roomID,
+		MemberID:   member.ID,
+		MemberName: member.Name,
+		Admin:      member.Admin,
+		Banned:     member.Banned,
+		Created:    member.Created,
+	})
+	if err != nil {
+		fmt.Printf("Failed to send event: %v", err)
+	}
 
 	c.JSON(200, sanitization.ToMember(member))
 }

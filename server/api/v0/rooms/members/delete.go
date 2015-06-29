@@ -2,10 +2,12 @@ package members
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
+	"github.com/jordanpotter/gosu/server/internal/events"
 	"github.com/jordanpotter/gosu/server/internal/middleware"
 )
 
@@ -63,14 +65,13 @@ func (h *Handler) delete(c *gin.Context) {
 		return
 	}
 
-	// e := &types.RoomMemberDeleted{
-	// 	RoomID:   roomID,
-	// 	MemberID: memberID,
-	// }
-	// err = h.pub.Send(e)
-	// if err != nil {
-	// 	fmt.Printf("Failed to send event: %v", err)
-	// }
+	err = h.pub.Send(events.RoomMemberDeleted{
+		RoomID:   roomID,
+		MemberID: memberID,
+	})
+	if err != nil {
+		fmt.Printf("Failed to send event: %v", err)
+	}
 
 	c.String(200, "ok")
 }

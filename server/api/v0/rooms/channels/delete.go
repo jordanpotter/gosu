@@ -1,10 +1,12 @@
 package channels
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jordanpotter/gosu/server/internal/db"
+	"github.com/jordanpotter/gosu/server/internal/events"
 )
 
 func (h *Handler) delete(c *gin.Context) {
@@ -31,14 +33,13 @@ func (h *Handler) delete(c *gin.Context) {
 		return
 	}
 
-	// e := &types.RoomChannelDeleted{
-	// 	RoomID:    roomID,
-	// 	ChannelID: channelID,
-	// }
-	// err = h.pub.Send(e)
-	// if err != nil {
-	// 	fmt.Printf("Failed to send event: %v", err)
-	// }
+	err = h.pub.Send(events.RoomChannelDeleted{
+		RoomID:    roomID,
+		ChannelID: channelID,
+	})
+	if err != nil {
+		fmt.Printf("Failed to send event: %v", err)
+	}
 
 	c.String(200, "ok")
 }

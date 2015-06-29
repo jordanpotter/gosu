@@ -1,6 +1,8 @@
 package accounts
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jordanpotter/gosu/server/api/v0/sanitization"
 	"github.com/jordanpotter/gosu/server/internal/auth/password"
@@ -46,8 +48,7 @@ func (h *Handler) create(c *gin.Context) {
 		Created:    device.Created,
 	})
 	if err != nil {
-		c.AbortWithError(500, err)
-		return
+		fmt.Printf("Failed to send event: %v", err)
 	}
 
 	c.JSON(200, sanitization.ToAccount(account))

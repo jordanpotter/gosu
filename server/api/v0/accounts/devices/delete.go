@@ -2,6 +2,7 @@ package devices
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -37,8 +38,7 @@ func (h *Handler) delete(c *gin.Context) {
 		DeviceID:  deviceID,
 	})
 	if err != nil {
-		c.AbortWithError(500, err)
-		return
+		fmt.Printf("Failed to send event: %v", err)
 	}
 
 	c.String(200, "ok")
