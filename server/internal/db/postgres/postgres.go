@@ -16,14 +16,14 @@ type conn struct {
 	*sqlx.DB
 }
 
-func New(addrs []config.PostgresNode, config *config.Postgres) (db.Conn, error) {
+func New(addrs []config.PostgresNode, config *config.Postgres, migrationsPath string) (db.Conn, error) {
 	fmt.Println("TODO: support multiple postgres endpoints")
 	postgres, err := getDBWithAddr(addrs[0], config)
 	if err != nil {
 		return nil, err
 	}
 
-	err = performMigrations(addrs[0], config, "./conf/db/migrations")
+	err = performMigrations(addrs[0], config, migrationsPath)
 	if err != nil {
 		return nil, err
 	}

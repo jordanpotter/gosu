@@ -16,13 +16,15 @@ import (
 )
 
 var (
-	port     int
-	etcdAddr string
+	port           int
+	etcdAddr       string
+	migrationsPath string
 )
 
 func init() {
 	flag.IntVar(&port, "port", 8080, "the port to use")
 	flag.StringVar(&etcdAddr, "etcd", "http://localhost:4001", "the etcd server addresses")
+	flag.StringVar(&migrationsPath, "migrations", "conf/db/migrations", "the path to migration assets")
 	flag.Parse()
 }
 
@@ -49,7 +51,7 @@ func getDBConn(configConn config.Conn) db.Conn {
 		panic(err)
 	}
 
-	dbConn, err := postgres.New(postgresAddrs, postgresConfig)
+	dbConn, err := postgres.New(postgresAddrs, postgresConfig, migrationsPath)
 	if err != nil {
 		panic(err)
 	}
