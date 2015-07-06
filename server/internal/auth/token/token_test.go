@@ -54,13 +54,13 @@ func TestEncryption(t *testing.T) {
 	}
 
 	if decrypted.Account.ID != testAccountID {
-		t.Errorf("Mismatch account id, %d != %d", decrypted.Account.ID, testAccountID)
+		t.Errorf("Mismatched account id, %d != %d", decrypted.Account.ID, testAccountID)
 	} else if decrypted.Room.ID != testRoomID {
-		t.Errorf("Mismatch room id, %d != %d", decrypted.Room.ID, testRoomID)
+		t.Errorf("Mismatched room id, %d != %d", decrypted.Room.ID, testRoomID)
 	} else if decrypted.Room.MemberID != testRoomMemberID {
-		t.Errorf("Mismatch room member id, %d != %d", decrypted.Room.MemberID, testRoomMemberID)
+		t.Errorf("Mismatched room member id, %d != %d", decrypted.Room.MemberID, testRoomMemberID)
 	} else if decrypted.Room.Admin != testRoomAdmin {
-		t.Errorf("Mismatch room admin, %t != %t", decrypted.Room.Admin, testRoomAdmin)
+		t.Errorf("Mismatched room admin, %t != %t", decrypted.Room.Admin, testRoomAdmin)
 	}
 }
 
@@ -81,9 +81,9 @@ func TestMissingFields(t *testing.T) {
 	}
 
 	if decrypted.Account.ID != testAccountID {
-		t.Errorf("Mismatch account id, %d != %d", decrypted.Account.ID, testAccountID)
+		t.Errorf("Mismatched account id, %d != %d", decrypted.Account.ID, testAccountID)
 	} else if decrypted.Room.ID != testRoomID {
-		t.Errorf("Mismatch room id, %d != %d", decrypted.Room.ID, testRoomID)
+		t.Errorf("Mismatched room id, %d != %d", decrypted.Room.ID, testRoomID)
 	} else if decrypted.Room.MemberID != 0 {
 		t.Errorf("Expected empty room member id, received %d", decrypted.Room.MemberID)
 	} else if decrypted.Room.Admin {
