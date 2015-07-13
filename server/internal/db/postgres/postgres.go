@@ -1,11 +1,9 @@
 package postgres
 
 import (
-	"database/sql"
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/lib/pq"
 	"github.com/mattes/migrate/migrate"
 
 	"github.com/jordanpotter/gosu/server/internal/config"
@@ -45,23 +43,4 @@ func performMigrations(addr config.PostgresNode, config *config.Postgres, migrat
 		return allErrors[0]
 	}
 	return nil
-}
-
-func convertError(err error) error {
-	if err == sql.ErrNoRows {
-		return db.NotFoundError
-	}
-
-	pgErr, ok := err.(*pq.Error)
-	if !ok {
-		return err
-	}
-
-	switch pgErr.Code {
-	case "23505":
-		return db.DuplicateError
-	}
-
-	fmt.Println("TODO: special case pq error:", pgErr.Code)
-	return err
 }

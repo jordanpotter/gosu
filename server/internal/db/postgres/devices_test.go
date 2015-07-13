@@ -2,6 +2,8 @@ package postgres
 
 import (
 	"bytes"
+	"fmt"
+	"math/rand"
 	"reflect"
 	"testing"
 
@@ -9,7 +11,7 @@ import (
 )
 
 func createTestDevice(t *testing.T, account db.Account) db.Device {
-	name := "device-name"
+	name := fmt.Sprintf("device-%d", rand.Uint32())
 	passwordHash := []byte("device-password")
 	device, err := dbConn.CreateDevice(account.ID, name, passwordHash)
 	if err != nil {
@@ -19,7 +21,7 @@ func createTestDevice(t *testing.T, account db.Account) db.Device {
 	} else if !bytes.Equal(device.PasswordHash, passwordHash) {
 		t.Errorf("Mismatched password hash: %v != %v", device.PasswordHash, passwordHash)
 	} else if device.Created.IsZero() {
-		t.Errorf("Invalid timestamp: %v", device.Created)
+		t.Errorf("Invalid device timestamp: %v", device.Created)
 	}
 	return device
 }

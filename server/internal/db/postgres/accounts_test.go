@@ -17,7 +17,7 @@ func createTestAccount(t *testing.T) db.Account {
 	} else if account.Email != email {
 		t.Errorf("Mismatched email: %s != %s", account.Email, email)
 	} else if account.Created.IsZero() {
-		t.Errorf("Invalid timestamp: %v", account.Created)
+		t.Errorf("Invalid account timestamp: %v", account.Created)
 	}
 	return account
 }
@@ -37,5 +37,13 @@ func TestAccountCreation(t *testing.T) {
 		t.Fatalf("Unexpected error during account retrieval by email: %v", err)
 	} else if !reflect.DeepEqual(account1, account3) {
 		t.Errorf("Accounts are not equal: %v != %v", account1, account3)
+	}
+}
+
+func TestAccountDuplicate(t *testing.T) {
+	account := createTestAccount(t)
+	_, err := dbConn.CreateAccount(account.Email)
+	if err != db.DuplicateError {
+		t.Error("Expected duplicate error")
 	}
 }

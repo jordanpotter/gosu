@@ -23,7 +23,7 @@ func createTestRoom(t *testing.T, account db.Account) db.Room {
 	} else if !bytes.Equal(room.PasswordHash, passwordHash) {
 		t.Errorf("Mismatched password hash: %v != %v", room.PasswordHash, passwordHash)
 	} else if room.Created.IsZero() {
-		t.Errorf("Invalid timestamp: %v", room.Created)
+		t.Errorf("Invalid room timestamp: %v", room.Created)
 	}
 	return room
 }
@@ -36,5 +36,14 @@ func TestRoomCreation(t *testing.T) {
 		t.Fatalf("Unexpected error during room retrieval by id: %v", err)
 	} else if !reflect.DeepEqual(room1, room2) {
 		t.Errorf("Rooms are not equaul, %v != %v", room1, room2)
+	}
+}
+
+func TestRoomDuplicate(t *testing.T) {
+	account := createTestAccount(t)
+	room := createTestRoom(t, account)
+	_, err := dbConn.CreateRoom(room.Name, []byte{}, account.ID, "Admin")
+	if err != db.DuplicateError {
+		t.Error("Expected duplicate error")
 	}
 }

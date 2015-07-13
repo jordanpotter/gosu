@@ -1,6 +1,8 @@
 package postgres
 
 import (
+	"fmt"
+	"math/rand"
 	"reflect"
 	"testing"
 
@@ -8,14 +10,14 @@ import (
 )
 
 func createTestChannel(t *testing.T, room db.Room) db.Channel {
-	name := "device-name"
+	name := fmt.Sprintf("channel-%d", rand.Uint32())
 	channel, err := dbConn.CreateChannel(room.ID, name)
 	if err != nil {
 		t.Fatalf("Unexpected error during channel creation: %v", err)
 	} else if channel.Name != name {
 		t.Errorf("Mismatched channel name: %s != %s", channel.Name, name)
 	} else if channel.Created.IsZero() {
-		t.Errorf("Invalid timestamp: %v", channel.Created)
+		t.Errorf("Invalid channel timestamp: %v", channel.Created)
 	}
 	return channel
 }
@@ -32,6 +34,16 @@ func TestChannelCreation(t *testing.T) {
 		t.Errorf("Too many channels for room: %d", len(allChannels))
 	} else if !reflect.DeepEqual(channel, allChannels[0]) {
 		t.Errorf("Channels are not equal: %v != %v", channel, allChannels[0])
+	}
+}
+
+func TestChannelDuplicate(t *testing.T) {
+	account := createTestAccount(t)
+	room := createTestRoom(t, account)
+	channel := createTestChannel(t, room)
+	_, err := dbConn.CreateChannel(room.ID, channel.Name)
+	if err != db.DuplicateError {
+		t.Error("Expected duplicate error")
 	}
 }
 
