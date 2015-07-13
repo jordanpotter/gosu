@@ -54,14 +54,22 @@ func TestMemberCreation(t *testing.T) {
 		t.Fatalf("Unexpected error during members retrieval by room: %v", err)
 	} else if len(allMembersByRoom) != 2 {
 		t.Errorf("Incorrect number of members for room: %d", len(allMembersByRoom))
-	} else if admin.ID != allMembersByRoom[0].AccountID {
-		t.Errorf("Account ids are not equaul: %d != %d", admin.ID, allMembersByRoom[0].AccountID)
-	} else if !reflect.DeepEqual(member1, allMembersByRoom[1]) {
-		t.Errorf("Members are not equal: %v != %v", member1, allMembersByRoom[0])
+	}
+
+	if admin.ID == allMembersByRoom[0].AccountID {
+		if !reflect.DeepEqual(member1, allMembersByRoom[1]) {
+			t.Errorf("Members are not equal: %v != %v", member1, allMembersByRoom[1])
+		}
+	} else if admin.ID == allMembersByRoom[1].AccountID {
+		if !reflect.DeepEqual(member1, allMembersByRoom[0]) {
+			t.Errorf("Members are not equal: %v != %v", member1, allMembersByRoom[0])
+		}
+	} else {
+		t.Errorf("Missing admin member with account id: %d", admin.ID)
 	}
 }
 
-func TestRoomAdminCreation(t *testing.T) {
+func TestRoomInitialAdminMemberCreation(t *testing.T) {
 	admin := createTestAccount(t)
 	room := createTestRoom(t, admin)
 	member, err := dbConn.GetMemberByAccountAndRoom(admin.ID, room.ID)
