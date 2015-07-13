@@ -21,6 +21,8 @@ func TestDeviceCreation(t *testing.T) {
 		t.Errorf("Unexpected error during device creation: %v", err)
 	} else if device.Name != deviceName {
 		t.Errorf("Mismatched device name, %s != %s", device.Name, deviceName)
+	} else if device.Created.IsZero() {
+		t.Errorf("Invalid timestamp, %v", device.Created)
 	}
 
 	allDevices, err := dbConn.GetDevicesByAccount(account.ID)

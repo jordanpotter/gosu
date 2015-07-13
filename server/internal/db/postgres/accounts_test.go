@@ -14,6 +14,8 @@ func TestAccountCreation(t *testing.T) {
 		t.Errorf("Unexpected error during account creation: %v", err)
 	} else if account1.Email != email {
 		t.Errorf("Mismatched email, %s != %s", account1.Email, email)
+	} else if account1.Created.IsZero() {
+		t.Errorf("Invalid timestamp, %v", account1.Created)
 	}
 
 	account2, err := dbConn.GetAccount(account1.ID)
