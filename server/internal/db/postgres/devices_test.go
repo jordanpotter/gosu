@@ -1,55 +1,47 @@
 package postgres
 
 import (
-	"fmt"
-	"math/rand"
+	"bytes"
 	"reflect"
 	"testing"
+
+	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
-func TestDeviceCreation(t *testing.T) {
-	email := fmt.Sprintf("test-%d@email.com", rand.Uint32())
-	account, err := dbConn.CreateAccount(email)
+func createTestDevice(t *testing.T, account db.Account) db.Device {
+	name := "device-name"
+	passwordHash := []byte("device-password")
+	device, err := dbConn.CreateDevice(account.ID, name, passwordHash)
 	if err != nil {
-		t.Errorf("Unexpected error during account creation: %v", err)
-	}
-
-	deviceName := "device-name"
-	devicePassword := []byte("device-password")
-	device, err := dbConn.CreateDevice(account.ID, deviceName, devicePassword)
-	if err != nil {
-		t.Errorf("Unexpected error during device creation: %v", err)
-	} else if device.Name != deviceName {
-		t.Errorf("Mismatched device name, %s != %s", device.Name, deviceName)
+		t.Fatalf("Unexpected error during device creation: %v", err)
+	} else if device.Name != name {
+		t.Errorf("Mismatched device name: %s != %s", device.Name, name)
+	} else if !bytes.Equal(device.PasswordHash, passwordHash) {
+		t.Errorf("Mismatched password hash: %v != %v", device.PasswordHash, passwordHash)
 	} else if device.Created.IsZero() {
-		t.Errorf("Invalid timestamp, %v", device.Created)
+		t.Errorf("Invalid timestamp: %v", device.Created)
 	}
+	return device
+}
 
+func TestDeviceCreation(t *testing.T) {
+	account := createTestAccount(t)
+	device := createTestDevice(t, account)
 	allDevices, err := dbConn.GetDevicesByAccount(account.ID)
 	if err != nil {
-		t.Errorf("Unexpected error during devices retrieval: %v", err)
+		t.Fatalf("Unexpected error during devices retrieval: %v", err)
 	} else if len(allDevices) != 1 {
 		t.Errorf("Too many devices for account: %d", len(allDevices))
 	} else if !reflect.DeepEqual(device, allDevices[0]) {
-		t.Errorf("Devices are not equal, %v != %v", device, allDevices[0])
+		t.Errorf("Devices are not equal: %v != %v", device, allDevices[0])
 	}
 }
 
 func TestDeviceDeletion(t *testing.T) {
-	email := fmt.Sprintf("test-%d@email.com", rand.Uint32())
-	account, err := dbConn.CreateAccount(email)
-	if err != nil {
-		t.Errorf("Unexpected error during account creation: %v", err)
-	}
+	account := createTestAccount(t)
+	device := createTestDevice(t, account)
 
-	deviceName := "device-name"
-	devicePassword := []byte("device-password")
-	device, err := dbConn.CreateDevice(account.ID, deviceName, devicePassword)
-	if err != nil {
-		t.Errorf("Unexpected error during device creation: %v", err)
-	}
-
-	err = dbConn.DeleteDeviceForAccount(device.ID, account.ID)
+	err := dbConn.DeleteDeviceForAccount(device.ID, account.ID)
 	if err != nil {
 		t.Errorf("Unexpected error during device deletion: %v", err)
 	}
@@ -62,7 +54,7 @@ func TestDeviceDeletion(t *testing.T) {
 
 	allDevices, err := dbConn.GetDevicesByAccount(account.ID)
 	if err != nil {
-		t.Errorf("Unexpected error during devices retrieval: %v", err)
+		t.Fatalf("Unexpected error during devices retrieval: %v", err)
 	} else if len(allDevices) != 0 {
 		t.Errorf("Too many devices for account: %d", len(allDevices))
 	}

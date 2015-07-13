@@ -5,30 +5,37 @@ import (
 	"math/rand"
 	"reflect"
 	"testing"
+
+	"github.com/jordanpotter/gosu/server/internal/db"
 )
 
-func TestAccountCreation(t *testing.T) {
+func createTestAccount(t *testing.T) db.Account {
 	email := fmt.Sprintf("test-%d@email.com", rand.Uint32())
-	account1, err := dbConn.CreateAccount(email)
+	account, err := dbConn.CreateAccount(email)
 	if err != nil {
-		t.Errorf("Unexpected error during account creation: %v", err)
-	} else if account1.Email != email {
-		t.Errorf("Mismatched email, %s != %s", account1.Email, email)
-	} else if account1.Created.IsZero() {
-		t.Errorf("Invalid timestamp, %v", account1.Created)
+		t.Fatalf("Unexpected error during account creation: %v", err)
+	} else if account.Email != email {
+		t.Errorf("Mismatched email: %s != %s", account.Email, email)
+	} else if account.Created.IsZero() {
+		t.Errorf("Invalid timestamp: %v", account.Created)
 	}
+	return account
+}
+
+func TestAccountCreation(t *testing.T) {
+	account1 := createTestAccount(t)
 
 	account2, err := dbConn.GetAccount(account1.ID)
 	if err != nil {
-		t.Errorf("Unexpected error during account retrieval by id: %v", err)
+		t.Fatalf("Unexpected error during account retrieval by id: %v", err)
 	} else if !reflect.DeepEqual(account1, account2) {
-		t.Errorf("Accounts are not equaul, %v != %v", account1, account2)
+		t.Errorf("Accounts are not equaul: %v != %v", account1, account2)
 	}
 
-	account3, err := dbConn.GetAccountByEmail(email)
+	account3, err := dbConn.GetAccountByEmail(account1.Email)
 	if err != nil {
-		t.Errorf("Unexpected error during account retrieval by email: %v", err)
+		t.Fatalf("Unexpected error during account retrieval by email: %v", err)
 	} else if !reflect.DeepEqual(account1, account3) {
-		t.Errorf("Accounts are not equal, %v != %v", account1, account3)
+		t.Errorf("Accounts are not equal: %v != %v", account1, account3)
 	}
 }
