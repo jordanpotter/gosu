@@ -11,7 +11,7 @@ CREATE TABLE devices (
     id              serial PRIMARY KEY,
     account_id      integer REFERENCES accounts(id) NOT NULL,
     name            varchar(100) NOT NULL,
-    password_hash   bytea NOT NULL, -- use bcrypt
+    password_hash   bytea NOT NULL, -- uses bcrypt
     created         timestamp without time zone NOT NULL
 );
 

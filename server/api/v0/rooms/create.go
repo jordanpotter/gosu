@@ -33,7 +33,7 @@ func (h *Handler) create(c *gin.Context) {
 	}
 	authToken := t.(*token.Token)
 
-	passwordHash, err := password.ComputeHash(req.Password)
+	passwordHash, err := password.ComputeBcryptHash(req.Password)
 	if err != nil {
 		c.AbortWithError(500, err)
 		return

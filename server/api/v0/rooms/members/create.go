@@ -47,7 +47,7 @@ func (h *Handler) join(c *gin.Context) {
 		return
 	}
 
-	passwordMatches := password.MatchesHash(req.Password, room.PasswordHash)
+	passwordMatches := password.MatchesBcryptHash(req.Password, room.PasswordHash)
 	if !passwordMatches {
 		c.AbortWithError(403, errors.New("invalid password"))
 		return

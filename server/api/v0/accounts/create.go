@@ -29,7 +29,7 @@ func (h *Handler) create(c *gin.Context) {
 		return
 	}
 
-	devicePasswordHash, err := password.ComputeHash(req.DevicePassword)
+	devicePasswordHash, err := password.ComputeBcryptHash(req.DevicePassword)
 	if err != nil {
 		c.AbortWithError(500, err)
 		return

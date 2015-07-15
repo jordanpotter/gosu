@@ -68,7 +68,7 @@ func (h *Handler) authenticate(c *gin.Context) {
 
 func hasValidDeviceCredentials(devices []db.Device, deviceName, devicePassword string) bool {
 	for _, device := range devices {
-		if deviceName == device.Name && password.MatchesHash(devicePassword, device.PasswordHash) {
+		if deviceName == device.Name && password.MatchesBcryptHash(devicePassword, device.PasswordHash) {
 			return true
 		}
 	}
