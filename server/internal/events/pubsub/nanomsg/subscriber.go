@@ -132,9 +132,11 @@ func (s *subscriber) handleMessages() {
 	go func() {
 		for {
 			m := s.getNextMessage()
+			s.listenersLock.RLock()
 			for _, listener := range s.listeners {
 				listener <- m
 			}
+			s.listenersLock.RUnlock()
 		}
 	}()
 }

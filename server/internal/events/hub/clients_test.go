@@ -29,7 +29,7 @@ func TestRemove(t *testing.T) {
 
 	err = cm.remove(id)
 	if err != nil {
-		t.Errorf("Unexpected error %v", err)
+		t.Errorf("Unexpected error: %v", err)
 	}
 }
 
@@ -40,7 +40,10 @@ func TestSend(t *testing.T) {
 		closeNotifier: make(chan bool, 1),
 	}
 	_ = cm.add(w)
-	m := []byte("message")
-	cm.send(m)
-	<-w.writeChan
+
+	for i := 0; i < 100; i++ {
+		m := make([]byte, i+1000)
+		cm.send(m)
+		<-w.writeChan
+	}
 }
