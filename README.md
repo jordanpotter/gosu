@@ -47,3 +47,7 @@ Postgres can be run locally via [Docker](docker.com) during development
 Likewise, we can use [Docker](docker.com) to enter psql
 
     docker run -it --rm --link postgres:postgres postgres:9.4.1 sh -c 'exec psql gosu -h "$POSTGRES_PORT_5432_TCP_ADDR" -p "$POSTGRES_PORT_5432_TCP_PORT" -U postgres'
+
+Be sure to create the `gosu` database. Leveraging the above command, we can do this easily
+
+    docker run -it --rm --link postgres:postgres postgres:9.4.1 sh -c 'exec psql -h "$POSTGRES_PORT_5432_TCP_ADDR" -p "$POSTGRES_PORT_5432_TCP_PORT" -U postgres -c "create database gosu"'
