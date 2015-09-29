@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gin-gonic/gin"
+	"github.com/jordanpotter/gosu/Godeps/_workspace/src/github.com/gin-gonic/gin"
 
 	"github.com/jordanpotter/gosu/server/internal/auth/token"
 )

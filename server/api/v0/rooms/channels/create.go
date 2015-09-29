@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
+	"github.com/jordanpotter/gosu/Godeps/_workspace/src/github.com/gin-gonic/gin"
 	"github.com/jordanpotter/gosu/server/api/v0/sanitization"
 	"github.com/jordanpotter/gosu/server/internal/db"
 	"github.com/jordanpotter/gosu/server/internal/events"

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"gopkg.in/vmihailenco/msgpack.v2"
+	"github.com/jordanpotter/gosu/Godeps/_workspace/src/gopkg.in/vmihailenco/msgpack.v2"
 )
 
 const (

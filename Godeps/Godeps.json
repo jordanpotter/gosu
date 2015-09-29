@@ -1,41 +1,116 @@
 {
 	"ImportPath": "github.com/jordanpotter/gosu",
-	"GoVersion": "go1.4.2",
+	"GoVersion": "go1.5.1",
 	"Packages": [
 		"./..."
 	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/coreos/go-etcd/etcd",
-			"Comment": "v2.0.0-7-g73a8ef7",
-			"Rev": "73a8ef737e8ea002281a28b4cb92a1de121ad4c6"
+			"Comment": "v2.0.0-34-gde3514f",
+			"Rev": "de3514f25635bbfb024fdaf2a8d5f67378492675"
 		},
 		{
 			"ImportPath": "github.com/dgrijalva/jwt-go",
-			"Comment": "v2.2.0-15-g61124b6",
-			"Rev": "61124b62ad244d655f87d944aefaa2ae5a0d2f16"
+			"Comment": "v2.3.0-6-gf62f64e",
+			"Rev": "f62f64ea222e5e6d6d86421b5507b0862a3ebf7f"
+		},
+		{
+			"ImportPath": "github.com/gdamore/mangos",
+			"Comment": "v1.1.0-22-g774a176",
+			"Rev": "774a176919d40f4a5da37f1cb5da5158430b3580"
 		},
 		{
 			"ImportPath": "github.com/gin-gonic/gin",
-			"Comment": "v1.0rc1-99-gd6425f1",
-			"Rev": "d6425f1692d4aa170ece887b62bb75c9c4da5829"
+			"Comment": "v1.0rc1-148-g52fcc5d",
+			"Rev": "52fcc5dbf6e94df33ad313858fb94b713e9d1b4a"
 		},
 		{
-			"ImportPath": "github.com/julienschmidt/httprouter",
-			"Rev": "bde5c16eb82ff15a1734a3818d9b9547065f65b1"
+			"ImportPath": "github.com/go-sql-driver/mysql",
+			"Comment": "v1.2-119-g527bcd5",
+			"Rev": "527bcd55aab2e53314f1a150922560174b493034"
+		},
+		{
+			"ImportPath": "github.com/gocql/gocql",
+			"Comment": "1st_gen_framing-275-gb71e1ee",
+			"Rev": "b71e1ee22469b33d78f51410003135d5b7ebd76d"
+		},
+		{
+			"ImportPath": "github.com/golang/snappy",
+			"Rev": "723cc1e459b8eea2dea4583200fd60757d40097a"
+		},
+		{
+			"ImportPath": "github.com/jmoiron/sqlx",
+			"Comment": "sqlx-v1.1-45-g3a92b1f",
+			"Rev": "3a92b1fd96032c4490fa618370fbf98ec69b680c"
+		},
+		{
+			"ImportPath": "github.com/lib/pq",
+			"Comment": "go1.0-cutoff-59-gb269bd0",
+			"Rev": "b269bd035a727d6c1081f76e7a239a1b00674c40"
+		},
+		{
+			"ImportPath": "github.com/manucorporat/sse",
+			"Rev": "fe6ea2c8e398672518ef204bf0fbd9af858d0e15"
+		},
+		{
+			"ImportPath": "github.com/mattes/migrate/driver",
+			"Comment": "v1.2.0-44-g531fdf6",
+			"Rev": "531fdf64e575c99965da13c1e54bdb1f05ad43f0"
+		},
+		{
+			"ImportPath": "github.com/mattes/migrate/file",
+			"Comment": "v1.2.0-44-g531fdf6",
+			"Rev": "531fdf64e575c99965da13c1e54bdb1f05ad43f0"
+		},
+		{
+			"ImportPath": "github.com/mattes/migrate/migrate",
+			"Comment": "v1.2.0-44-g531fdf6",
+			"Rev": "531fdf64e575c99965da13c1e54bdb1f05ad43f0"
+		},
+		{
+			"ImportPath": "github.com/mattes/migrate/pipe",
+			"Comment": "v1.2.0-44-g531fdf6",
+			"Rev": "531fdf64e575c99965da13c1e54bdb1f05ad43f0"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-colorable",
+			"Rev": "40e4aedc8fabf8c23e040057540867186712faa5"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-sqlite3",
+			"Comment": "v1.1.0-11-gb808f01",
+			"Rev": "b808f01f660667b1510acf216aa2b9fe7f555ddb"
+		},
+		{
+			"ImportPath": "github.com/ugorji/go/codec",
+			"Rev": "f29c4cd71cf225a64eb1b9b11056dcfdd7e2bf0b"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/bcrypt",
-			"Rev": "1351f936d976c60a0a48d728281922cf63eafb8d"
+			"Rev": "59a4410d829a8bb774b02b56d4aeab633414f233"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/blowfish",
-			"Rev": "1351f936d976c60a0a48d728281922cf63eafb8d"
+			"Rev": "59a4410d829a8bb774b02b56d4aeab633414f233"
 		},
 		{
-			"ImportPath": "gopkg.in/mgo.v2",
-			"Comment": "r2015.01.24",
-			"Rev": "c6a7dce14133ccac2dcac3793f1d6e2ef048503a"
+			"ImportPath": "golang.org/x/net/context",
+			"Rev": "c2528b2dd8352441850638a8bb678c2ad056fd3e"
+		},
+		{
+			"ImportPath": "gopkg.in/bluesuncorp/validator.v5",
+			"Comment": "v5.12",
+			"Rev": "d5acf1dac43705f8bfbb71d878e290e2bed3950b"
+		},
+		{
+			"ImportPath": "gopkg.in/inf.v0",
+			"Rev": "3887ee99ecf07df5b447e9b00d9c0b2adaa9f3e4"
+		},
+		{
+			"ImportPath": "gopkg.in/vmihailenco/msgpack.v2",
+			"Comment": "v2.4.2",
+			"Rev": "c374c7c3dc0758cb8ef9c653b6739362841e245d"
 		}
 	]
 }

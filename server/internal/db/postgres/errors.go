@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/jordanpotter/gosu/Godeps/_workspace/src/github.com/lib/pq"
 	"github.com/jordanpotter/gosu/server/internal/db"
-	"github.com/lib/pq"
 )
 
 func convertError(err error) error {

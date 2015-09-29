@@ -3,8 +3,8 @@ package postgres
 import (
 	"fmt"
 
-	"github.com/jmoiron/sqlx"
-	"github.com/mattes/migrate/migrate"
+	"github.com/jordanpotter/gosu/Godeps/_workspace/src/github.com/jmoiron/sqlx"
+	"github.com/jordanpotter/gosu/Godeps/_workspace/src/github.com/mattes/migrate/migrate"
 
 	"github.com/jordanpotter/gosu/server/internal/config"
 	"github.com/jordanpotter/gosu/server/internal/db"

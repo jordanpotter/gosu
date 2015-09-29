@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	jwt "github.com/jordanpotter/gosu/Godeps/_workspace/src/github.com/dgrijalva/jwt-go"
 )
 
 const (

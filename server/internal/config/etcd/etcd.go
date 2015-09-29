@@ -3,7 +3,7 @@ package etcd
 import (
 	"time"
 
-	"github.com/coreos/go-etcd/etcd"
+	"github.com/jordanpotter/gosu/Godeps/_workspace/src/github.com/coreos/go-etcd/etcd"
 	"github.com/jordanpotter/gosu/server/internal/config"
 )
 

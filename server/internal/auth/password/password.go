@@ -3,7 +3,7 @@ package password
 import (
 	"errors"
 
-	"golang.org/x/crypto/bcrypt"
+	"github.com/jordanpotter/gosu/Godeps/_workspace/src/golang.org/x/crypto/bcrypt"
 )
 
 func ComputeBcryptHash(password string) ([]byte, error) {

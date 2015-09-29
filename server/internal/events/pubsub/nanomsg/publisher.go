@@ -3,10 +3,10 @@ package nanomsg
 import (
 	"time"
 
-	"github.com/gdamore/mangos"
-	"github.com/gdamore/mangos/protocol/pub"
-	"github.com/gdamore/mangos/transport/tcp"
-	"gopkg.in/vmihailenco/msgpack.v2"
+	"github.com/jordanpotter/gosu/Godeps/_workspace/src/github.com/gdamore/mangos"
+	"github.com/jordanpotter/gosu/Godeps/_workspace/src/github.com/gdamore/mangos/protocol/pub"
+	"github.com/jordanpotter/gosu/Godeps/_workspace/src/github.com/gdamore/mangos/transport/tcp"
+	"github.com/jordanpotter/gosu/Godeps/_workspace/src/gopkg.in/vmihailenco/msgpack.v2"
 
 	"github.com/jordanpotter/gosu/server/internal/events"
 	"github.com/jordanpotter/gosu/server/internal/events/pubsub"

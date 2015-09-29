@@ -1,7 +1,7 @@
 package accounts
 
 import (
-	"github.com/gin-gonic/gin"
+	"github.com/jordanpotter/gosu/Godeps/_workspace/src/github.com/gin-gonic/gin"
 
 	"github.com/jordanpotter/gosu/server/api/v0/accounts/devices"
 	"github.com/jordanpotter/gosu/server/api/v0/accounts/memberships"
